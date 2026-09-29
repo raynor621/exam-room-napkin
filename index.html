@@ -745,7 +745,7 @@
       case 'bursa': { const v = !(state.bursa || state.bursitis); state.bursa = v; if (!v) state.bursitis = false; break; }
       case 'bursitis': state.bursitis = !state.bursitis; if (state.bursitis) state.bursa = true; break;
       case 'worn': state.tear = state.tear === 'worn' ? 'none' : 'worn'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; } break;
-      case 'off': state.tear = state.tear === 'off' ? 'none' : 'off'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; } break;
+      case 'off': state.tear = state.tear === 'off' ? 'none' : 'off'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; state.bursa = false; state.bursitis = false; } break;
       case 'repair': state.repair = !state.repair; if (state.repair) { state.cuff = Math.max(state.cuff, 1); state.tear = 'none'; state.bursitis = false; } break;
       case 'tenodesis': state.tenodesis = !state.tenodesis; if (state.tenodesis) state.biceps = true; break;
       case 'labBiceps': case 'labDisloc': state[k] = !state[k]; if (!state[k]) cue = null; break;
