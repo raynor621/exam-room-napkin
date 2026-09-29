@@ -20,7 +20,7 @@ Tap-to-reveal anatomy sketches for patient talks, drawn the way Dr. Raynor draws
 ## Files
 
 - `index.html`: the whole app, one self-contained file (no build step, no external CSS or fonts; the take-home QR loads one library from cdnjs and falls back to the typed address offline).
-- `sw.js`: service worker that caches the app shell so it opens without a connection once it has been loaded once.
+- `sw.js`: service worker. Page loads are network-first (a new version shows up on the next open); the cached shell is the offline fallback once the app has been loaded once.
 - `apple-touch-icon.png`: the home screen icon on the iPad.
 - `vercel.json`: static-site headers (the service worker is never cached, so updates land on the next open).
 
