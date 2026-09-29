@@ -116,8 +116,8 @@
   .drawing .layer.on .pop { transform: scale(1); }
   .drawing .scene { display: none; }
   .drawing .scene.on { display: block; }
-  .drawing.mirror .scene { transform: scaleX(-1); transform-origin: 500px 0; }
-  .drawing.mirror text { transform: scaleX(-1); transform-box: fill-box; transform-origin: center; }
+  /* Right/Left mirror is done with SVG transform attributes in user units (see setSide): CSS transform-origin on SVG
+     elements is resolved differently by Safari, which pushed the mirrored labels off the right edge on the iPad. */
   .seg { display: inline-flex; border: 2px solid var(--navy); border-radius: 999px; overflow: hidden; }
   .seg .btn { border: 0; border-radius: 0; min-height: 40px; padding: 4px 14px; }
   .seg .btn + .btn { border-left: 2px solid var(--navy); }
@@ -891,6 +891,15 @@
   function setSide(side) {
     const left = side === 'left';
     $('.drawing').classList.toggle('mirror', left);
+    // Mirror the drawing about x = 500 with attribute transforms (user units, identical in every browser).
+    $$('.drawing .scene').forEach(g => { if (left) g.setAttribute('transform', 'translate(1000 0) scale(-1 1)'); else g.removeAttribute('transform'); });
+    // Flip each label back to readable about its own anchor and swap start/end, so labels keep hanging outward.
+    $$('.drawing text').forEach(t => {
+      if (!t.dataset.anchor) t.dataset.anchor = t.getAttribute('text-anchor') || 'start';
+      const a = t.dataset.anchor, x = parseFloat(t.getAttribute('x')) || 0;
+      if (left) { t.setAttribute('transform', `translate(${2 * x} 0) scale(-1 1)`); t.setAttribute('text-anchor', a === 'end' ? 'start' : a === 'start' ? 'end' : a); }
+      else { t.removeAttribute('transform'); t.setAttribute('text-anchor', a); }
+    });
     $('#side-left').classList.toggle('on', left); $('#side-left').setAttribute('aria-pressed', left);
     $('#side-right').classList.toggle('on', !left); $('#side-right').setAttribute('aria-pressed', !left);
     clearInk();
