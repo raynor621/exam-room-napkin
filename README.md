@@ -26,7 +26,7 @@ Tap-to-reveal anatomy sketches for patient talks, drawn the way Dr. Raynor draws
 
 ## On the iPad
 
-Open the site in Safari, tap Share, then **Add to Home Screen**. It opens full-screen from then on and keeps the screen awake while a module is open.
+Open the site in Safari, tap Share, then **Add to Home Screen**. It lands as **Clinic Diagrams** with the navy badge icon (both set in the page head: `apple-mobile-web-app-title` and `apple-touch-icon`; the icon's SVG source and 1024 px master live beside the deploy folder in the vault). It opens full-screen from then on and keeps the screen awake while a module is open. iOS copies the icon and name when you add it, so after a change to either, remove it from the home screen and add it again.
 
 ## Editing
 
