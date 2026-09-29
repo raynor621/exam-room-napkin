@@ -137,6 +137,17 @@
   #bursa-shape { transform-box: fill-box; transform-origin: center; transition: transform .4s, fill .4s, stroke .4s; }
   #bursa.angry #bursa-shape { transform: scale(1.14, 1.07); fill: color-mix(in srgb, var(--hot) 55%, transparent); stroke: var(--hot); stroke-width: 3.4; }
 
+  /* ---------- Hip ---------- */
+  .drawing .cart { stroke: var(--bursa); stroke-width: 11; fill: none; stroke-linecap: round; opacity: .5; transition: opacity .4s; }
+  #h-cartilage.worn .cart { opacity: .25; stroke-dasharray: 3 9 !important; }
+  #h-cam .shave-line { opacity: 0; transition: opacity .3s; }
+  #h-cam .bump, #h-cam .bump-hatch, #h-cam .bump-lbl { transition: opacity .3s, fill .3s; }
+  #h-cam.shaved .bump { fill: transparent; stroke-dasharray: 5 5; opacity: .4; }
+  #h-cam.shaved .bump-hatch, #h-cam.shaved .bump-lbl { opacity: 0; }
+  #h-cam.shaved .shave-line { opacity: 1; }
+  #h-bursa-shape { transform-box: fill-box; transform-origin: center; transition: transform .4s, fill .4s, stroke .4s; }
+  #h-itband.angry #h-bursa-shape { transform: scale(1.35, 1.12); fill: color-mix(in srgb, var(--hot) 55%, transparent); stroke: var(--hot); stroke-width: 3.2; }
+
   /* ---------- Chips ---------- */
   .chips { display: flex; flex-direction: column; gap: 8px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
   .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -262,14 +273,14 @@
         </svg>
         <b>Shoulder</b><small>rotator cuff, bursitis, biceps</small>
       </div>
-      <div class="tile soon" role="button" tabindex="0" data-go="hip">
+      <div class="tile" role="button" tabindex="0" data-go="hip">
         <svg viewBox="0 0 120 100" aria-hidden="true">
           <path d="M24 30 A34 34 0 0 0 24 86" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/>
           <circle cx="58" cy="58" r="26" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
           <path d="M28 34 A32 32 0 0 0 28 82" stroke="var(--tendon)" stroke-width="7" fill="none" stroke-linecap="round"/>
           <path d="M80 70 L104 96" stroke="var(--ink)" stroke-width="12" stroke-linecap="round"/>
         </svg>
-        <b>Hip</b><small>next module</small>
+        <b>Hip</b><small>labrum, the bumps, the outside</small>
       </div>
       <div class="tile soon" role="button" tabindex="0" data-go="knee">
         <svg viewBox="0 0 120 100" aria-hidden="true">
@@ -280,30 +291,30 @@
         <b>Knee</b><small>next module</small>
       </div>
     </div>
-    <p style="font-size:14px; margin-top:8px;">Prototype v0.4 · shoulder, drawn the way Dr. Raynor draws it, plus the socket breakout · nothing you draw is saved</p>
+    <p style="font-size:14px; margin-top:8px;">Prototype v0.5 · shoulder and hip, drawn the way Dr. Raynor draws them · nothing you draw is saved</p>
   </section>
 
   <!-- ================= SHOULDER ================= -->
   <section class="view" id="view-shoulder">
     <div class="bar">
-      <button class="btn ghost" id="btn-home" aria-label="Back to joints">‹ Joints</button>
+      <button class="btn ghost js-home" id="btn-home" aria-label="Back to joints">‹ Joints</button>
       <h1>Shoulder</h1>
       <span class="seg" role="group" aria-label="Which shoulder">
-        <button class="btn on" id="side-right" aria-pressed="true">Right</button>
-        <button class="btn" id="side-left" aria-pressed="false">Left</button>
+        <button class="btn on js-side-right" id="side-right" aria-pressed="true">Right</button>
+        <button class="btn js-side-left" id="side-left" aria-pressed="false">Left</button>
       </span>
       <span class="spacer"></span>
-      <button class="btn" id="btn-draw" aria-pressed="false">
+      <button class="btn js-draw" id="btn-draw" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
         Draw
       </button>
-      <button class="btn ghost" id="btn-undo">Undo</button>
-      <button class="btn ghost" id="btn-clear">Clear ink</button>
-      <button class="btn ghost" id="btn-cues" aria-pressed="true">Cues</button>
-      <button class="btn ghost" id="btn-reset">↺ Start over</button>
+      <button class="btn ghost js-undo" id="btn-undo">Undo</button>
+      <button class="btn ghost js-clear" id="btn-clear">Clear ink</button>
+      <button class="btn ghost js-cues" id="btn-cues" aria-pressed="true">Cues</button>
+      <button class="btn ghost js-reset" id="btn-reset">↺ Start over</button>
     </div>
 
-    <div class="stage" id="stage">
+    <div class="stage js-stage" id="stage">
       <svg class="drawing" viewBox="0 30 1000 640" preserveAspectRatio="xMidYMid meet" aria-label="Napkin sketch of a shoulder, drawn the way Dr. Raynor draws it">
         <defs>
           <radialGradient id="glow"><stop offset="0" stop-color="var(--hot)" stop-opacity=".35"/><stop offset="1" stop-color="var(--hot)" stop-opacity="0"/></radialGradient>
@@ -480,20 +491,20 @@
         </g>
       </svg>
 
-      <canvas id="ink" aria-label="Your drawing on top of the sketch"></canvas>
-      <div class="cue" id="cue"></div>
+      <canvas class="js-ink" id="ink" aria-label="Your drawing on top of the sketch"></canvas>
+      <div class="cue js-cue" id="cue"></div>
 
       <!-- ===== CARDS ===== -->
-      <div class="overlay" id="overlay">
-        <div class="card" role="dialog" aria-modal="true" id="card">
+      <div class="overlay js-overlay" id="overlay">
+        <div class="card js-card" role="dialog" aria-modal="true" id="card">
 
           <section data-card="people">
             <h2>100 people crossing the street</h2>
             <p class="sub">All of them over 60. None of them have shoulder pain.</p>
             <div class="people-wrap">
-              <div class="people" id="people"></div>
+              <div class="people js-people" id="people"></div>
               <div class="people-text">
-                <p><span class="people-count" id="people-count">0</span> <span>of them have a rotator cuff tear on MRI.</span></p>
+                <p><span class="people-count js-count" id="people-count">0</span> <span>of them have a rotator cuff tear on MRI.</span></p>
                 <p class="quote">"They just got voluntold to get into an MRI scanner."</p>
                 <p class="kicker">A tear is not harming anything by being there.</p>
               </div>
@@ -542,7 +553,7 @@
             <h2>Take this home</h2>
             <p class="sub">Point your phone camera at the code. The drawing and the words are on the website.</p>
             <div class="qr-wrap">
-              <div class="qr" id="qr"></div>
+              <div class="qr js-qr" id="qr"></div>
               <div>
                 <p class="url" id="qr-url">www.brettraynormd.com/rotator-cuff-repair-faq</p>
                 <p>Questions after you leave: call Jodie at <strong>(214) 265-3210</strong>. That's the bat phone.</p>
@@ -551,12 +562,12 @@
             </div>
           </section>
 
-          <button class="btn on close" id="card-close">Back to the drawing</button>
+          <button class="btn on close js-card-close" id="card-close">Back to the drawing</button>
         </div>
       </div>
     </div>
 
-    <div class="chips" id="chips" data-scene="profile">
+    <div class="chips js-chips" id="chips" data-scene="profile">
       <div class="row scene-profile" id="row-layers">
         <span class="k">Draw it</span>
         <button class="chip" data-toggle="skeleton">Ball &amp; socket</button>
@@ -588,13 +599,316 @@
         <button class="chip card-chip" data-card="calendar">Calendar</button>
         <button class="chip card-chip" data-card="home">Take home</button>
         <span class="nav">
-          <button class="chip" id="btn-back">◀ Back</button>
-          <button class="chip primary" id="btn-next">Next ▶</button>
+          <button class="chip js-back" id="btn-back">◀ Back</button>
+          <button class="chip primary js-next" id="btn-next">Next ▶</button>
         </span>
       </div>
     </div>
   </section>
 </div>
+  <!-- ================= HIP ================= -->
+  <section class="view" id="view-hip">
+    <div class="bar">
+      <button class="btn ghost js-home" aria-label="Back to joints">‹ Joints</button>
+      <h1>Hip</h1>
+      <span class="seg" role="group" aria-label="Which hip">
+        <button class="btn on js-side-right" aria-pressed="true">Right</button>
+        <button class="btn js-side-left" aria-pressed="false">Left</button>
+      </span>
+      <span class="spacer"></span>
+      <button class="btn js-draw" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        Draw
+      </button>
+      <button class="btn ghost js-undo">Undo</button>
+      <button class="btn ghost js-clear">Clear ink</button>
+      <button class="btn ghost js-cues" aria-pressed="true">Cues</button>
+      <button class="btn ghost js-reset">↺ Start over</button>
+    </div>
+
+    <div class="stage js-stage">
+      <svg class="drawing" viewBox="0 0 1000 640" preserveAspectRatio="xMidYMid meet" aria-label="Napkin sketch of a hip from the front, drawn the way Dr. Raynor draws it">
+        <defs>
+          <radialGradient id="h-glow"><stop offset="0" stop-color="var(--hot)" stop-opacity=".4"/><stop offset="1" stop-color="var(--hot)" stop-opacity="0"/></radialGradient>
+          <symbol id="h-anchor" viewBox="-6 -12 12 24">
+            <rect x="-4.5" y="-11" width="9" height="22" rx="3.5" fill="var(--anchor)" stroke="var(--suture)" stroke-width="1.2"/>
+            <path d="M-3 -5h6M-3 0h6M-3 5h6" stroke="var(--paper)" stroke-width="1.4"/>
+          </symbol>
+        </defs>
+
+        <!-- Right hip seen from the front: the outside of the hip is on the LEFT, the pelvis runs up and to the right. Head centre (470,330), radius 110. -->
+        <g id="h-scene" class="scene on">
+
+          <!-- BALL AND SOCKET: femur (head, neck, greater trochanter, shaft) and the socket arching over the ball -->
+          <g class="layer" id="h-skeleton">
+            <g id="h-femur">
+              <path class="ink draw" d="M300,690 L298,470 C296,400 284,330 300,296 C308,276 330,266 352,268 L375,275 A110,110 0 1 1 541,414 C528,440 520,460 516,478 C532,492 534,512 520,520 C512,560 508,620 506,690"/>
+            </g>
+            <text class="lbl" x="470" y="340" text-anchor="middle">ball</text>
+            <text class="lbl small" x="524" y="640" text-anchor="start">thigh bone</text>
+            <path class="ink draw" d="M402,196 A150,150 0 0 1 600,405"/>
+            <path class="ink draw" d="M414,220 A124,124 0 0 1 577,392"/>
+            <path class="ink draw" d="M402,196 L414,220"/>
+            <path class="ink draw" d="M577,392 C590,396 604,404 598,420 C594,430 584,428 580,420"/>
+            <path class="ink draw" d="M398,200 C378,150 388,100 428,62"/>
+            <text class="lbl" x="612" y="192" text-anchor="start">socket</text>
+            <text class="lbl small" x="444" y="76" text-anchor="start">pelvis</text>
+          </g>
+
+          <!-- CARTILAGE: the smooth lining between ball and socket; arthritis wears it away -->
+          <g class="layer" id="h-cartilage">
+            <path class="cart draw" d="M420,232 A117,117 0 0 1 574,383"/>
+            <text class="lbl small" x="612" y="222" text-anchor="start">cartilage</text>
+          </g>
+          <g class="layer" id="h-arthritis">
+            <path d="M448,214 l8,-7 M466,211 l8,-7 M484,212 l8,-6 M502,216 l8,-6" stroke="var(--hot)" stroke-width="3" stroke-linecap="round"/>
+            <text class="lbl hot" x="612" y="252" text-anchor="start">arthritis</text>
+            <text class="lbl small hot" x="612" y="280" text-anchor="start">worn away, bone on bone</text>
+          </g>
+
+          <!-- LABRUM: the little bumper on the edge of the socket -->
+          <g class="layer" id="h-labrum">
+            <path class="pop" d="M400,194 L416,222 L396,248 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
+            <text class="lbl" x="372" y="150" text-anchor="end">labrum</text>
+            <text class="lbl small" x="372" y="178" text-anchor="end">the bumper on the edge of the socket</text>
+          </g>
+          <g class="layer" id="h-tear">
+            <circle cx="406" cy="212" r="34" fill="url(#h-glow)"/>
+            <path class="draw" d="M398,190 L418,226" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M392,184 l5,8 l5,-8 l5,8" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl hot" x="372" y="214" text-anchor="end">labral tear</text>
+            <text class="lbl small hot" x="372" y="242" text-anchor="end">torn off the socket edge</text>
+          </g>
+
+          <!-- THE SHAPES THAT PREDISPOSE: deep socket, shallow socket, cam bump -->
+          <g class="layer" id="h-pincer">
+            <path class="band" d="M402,196 A150,150 0 0 0 340,255 L363,268 A124,124 0 0 1 414,220 Z" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="6 5"/>
+            <path class="pop" d="M340,255 L363,268 L342,290 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round" opacity=".9"/>
+            <text class="lbl" x="330" y="96" text-anchor="end">deep socket</text>
+            <text class="lbl small" x="330" y="124" text-anchor="end">the labrum gets bumped into sooner</text>
+          </g>
+          <g class="layer" id="h-dysplasia">
+            <path class="draw" d="M400,198 L476,160" stroke="var(--ink)" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round"/>
+            <path class="pop" d="M400,194 L416,222 L366,266 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".8"/>
+            <path d="M366,300 l10,-22 M378,306 l10,-22 M390,312 l10,-22" stroke="var(--hot)" stroke-width="2.4" stroke-linecap="round"/>
+            <text class="lbl" x="330" y="96" text-anchor="end">shallow socket, big labrum</text>
+            <text class="lbl small" x="330" y="124" text-anchor="end">forces go across it the wrong way: dysplasia</text>
+          </g>
+          <g class="layer" id="h-cam">
+            <path class="bump pop" d="M348,268 C352,246 366,232 382,238 C392,242 392,252 386,259 L375,275 C368,272 358,270 348,268 Z" fill="color-mix(in srgb, var(--tendon) 30%, transparent)" stroke="var(--ink)" stroke-width="2.6" stroke-linejoin="round"/>
+            <path class="bump-hatch" d="M356,258 l10,-12 M366,262 l12,-14 M376,266 l8,-10" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+            <path class="shave-line" d="M344,272 C356,262 372,262 390,264" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="5 5"/>
+            <text class="lbl bump-lbl" x="330" y="96" text-anchor="end">cam bump</text>
+            <text class="lbl small bump-lbl" x="330" y="124" text-anchor="end">a big old bump of bone</text>
+          </g>
+
+          <!-- FLEX: the femur swings up (animated from script); the flash marks the bump hitting the labrum -->
+          <g id="h-impact" opacity="0">
+            <circle cx="398" cy="236" r="30" fill="url(#h-glow)"/>
+            <path d="M370,214 l-12,-10 M384,204 l-6,-14 M360,236 l-16,-2 M412,196 l4,-14" stroke="var(--hot)" stroke-width="3.4" stroke-linecap="round"/>
+          </g>
+          <g class="layer" id="h-flex-hint">
+            <path d="M420,620 C470,600 520,600 570,622" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-dasharray="6 5"/>
+            <path d="M560,612 l12,10 l-14,6" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl small" x="470" y="598" text-anchor="middle">flex the hip up</text>
+          </g>
+
+          <!-- SURGERY: shave the socket edge, anchors made of suture, shave the bump, close the capsule -->
+          <g class="layer" id="h-repair">
+            <path d="M398,182 l-8,-6 M404,172 l-9,-5 M412,164 l-9,-4" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
+            <use href="#h-anchor" x="406" y="196" width="12" height="24" transform="rotate(-62 412 208)"/>
+            <use href="#h-anchor" x="432" y="183" width="12" height="24" transform="rotate(-45 438 195)"/>
+            <use href="#h-anchor" x="460" y="175" width="12" height="24" transform="rotate(-25 466 187)"/>
+            <path class="draw" d="M412,216 C404,228 400,238 398,248" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="draw" d="M438,204 C426,222 412,236 400,250" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="draw" d="M466,196 C450,216 428,236 404,252" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            <text class="lbl" x="540" y="84" text-anchor="start">anchors</text>
+            <text class="lbl small" x="540" y="112" text-anchor="start">made all out of suture</text>
+          </g>
+          <g class="layer" id="h-shave">
+            <path d="M336,262 l6,-6 M350,238 l6,-6 M372,226 l4,-8" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
+            <text class="lbl" x="330" y="96" text-anchor="end">bump shaved down</text>
+            <text class="lbl small" x="330" y="124" text-anchor="end">extra room; crutches for a month</text>
+          </g>
+          <g class="layer" id="h-capsule">
+            <ellipse class="pop" cx="452" cy="345" rx="152" ry="134" transform="rotate(-18 452 345)" fill="none" stroke="var(--navy)" stroke-width="2.6" stroke-dasharray="9 6"/>
+            <path d="M318,262 L344,246" stroke="var(--hot)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M322,250 l10,12 M332,246 l-10,12 M334,244 l10,12 M344,240 l-10,12" stroke="var(--suture)" stroke-width="2.4" stroke-linecap="round"/>
+            <text class="lbl" x="612" y="470" text-anchor="start">capsule</text>
+            <text class="lbl small" x="612" y="498" text-anchor="start">the lining that holds the hip; closed with sutures</text>
+            <text class="lbl small" x="612" y="526" text-anchor="start">no turning the leg out for three weeks</text>
+          </g>
+
+          <!-- OUTSIDE THE HIP: abductors, IT band and bursa, the back -->
+          <g class="layer" id="h-abductors">
+            <path class="band" d="M338,112 L378,96 C356,160 328,230 312,290 L288,300 C298,236 318,168 338,112 Z" stroke="none"/>
+            <path class="draw" d="M338,112 C318,170 300,240 288,300" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="draw" d="M358,104 C336,166 320,232 300,296" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="draw" d="M378,96 C356,160 330,232 312,290" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
+            <text class="lbl" x="214" y="256" text-anchor="end">abductors</text>
+            <text class="lbl small" x="214" y="282" text-anchor="end">glute med and min</text>
+          </g>
+          <g class="layer" id="h-abtear">
+            <path d="M284,304 l8,-9 l6,9 l7,-9 l6,9 l7,-9" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl hot" x="214" y="318" text-anchor="end">abductor tear</text>
+            <text class="lbl small hot" x="214" y="344" text-anchor="end">common; surgery is not</text>
+          </g>
+          <g class="layer" id="h-itband">
+            <path class="band" d="M228,60 L252,60 L256,690 L236,690 Z" stroke="none"/>
+            <path class="draw" d="M230,60 L236,690" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+            <path class="draw" d="M252,60 L256,690" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+            <ellipse id="h-bursa-shape" class="pop" cx="272" cy="300" rx="13" ry="40" fill="color-mix(in srgb, var(--bursa) 40%, transparent)" stroke="var(--bursa)" stroke-width="2.4"/>
+            <text class="lbl" x="214" y="480" text-anchor="end">IT band</text>
+            <text class="lbl small" x="214" y="506" text-anchor="end">runs from pelvis to knee</text>
+            <text class="lbl small" x="214" y="380" text-anchor="end">bursa: the balloon in between</text>
+          </g>
+          <g class="layer" id="h-bursitis">
+            <text class="lbl hot" x="214" y="412" text-anchor="end">bursitis</text>
+            <text class="lbl small hot" x="214" y="438" text-anchor="end">angry about its job</text>
+          </g>
+          <g class="layer" id="h-back">
+            <rect x="900" y="60" width="52" height="30" rx="6" fill="var(--bone)" stroke="var(--ink)" stroke-width="2.4"/>
+            <rect x="900" y="104" width="52" height="30" rx="6" fill="var(--bone)" stroke="var(--ink)" stroke-width="2.4"/>
+            <rect x="900" y="148" width="52" height="30" rx="6" fill="var(--bone)" stroke="var(--ink)" stroke-width="2.4"/>
+            <path d="M900,94 L952,94 M900,138 L952,138" stroke="var(--ink-soft)" stroke-width="3"/>
+            <circle cx="893" cy="138" r="7" fill="var(--hot)"/>
+            <path class="draw" d="M926,190 C934,290 880,384 650,392" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round"/>
+            <path d="M664,382 l-14,10 l16,6" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="880" y="100" text-anchor="end">the back</text>
+            <text class="lbl small" x="880" y="126" text-anchor="end">a pinch up here</text>
+            <text class="lbl small" x="880" y="152" text-anchor="end">can feel like hip pain</text>
+          </g>
+        </g>
+      </svg>
+
+      <canvas class="js-ink" aria-label="Your drawing on top of the sketch"></canvas>
+      <div class="cue js-cue"></div>
+
+      <!-- ===== CARDS ===== -->
+      <div class="overlay js-overlay">
+        <div class="card js-card" role="dialog" aria-modal="true">
+
+          <section data-card="people">
+            <h2>100 people walking around</h2>
+            <p class="sub">Twenty-five and up. None of them have hip pain.</p>
+            <div class="people-wrap">
+              <div class="people js-people"></div>
+              <div class="people-text">
+                <p><span class="people-count js-count">0</span> <span>of them have a labral tear on MRI.</span></p>
+                <p class="quote">"Labral tears aren't harming anything by being there. It's just annoying when they keep on hurting."</p>
+                <p class="kicker">Having a labral tear is not bad. Having a painful labral tear, that's the thing.</p>
+              </div>
+            </div>
+          </section>
+
+          <section data-card="options">
+            <h2>What are we going to do about you?</h2>
+            <p class="sub">And we have options. Bottom rung first.</p>
+            <div class="ladder">
+              <div class="rung top"><b>5</b><div><div class="t">Surgery: hip arthroscopy</div><div class="q">Am I in a rush to do it? No. Am I going to let you hurt forever? No.</div></div></div>
+              <div class="rung"><b>4</b><div><div class="t">Other things we can inject</div><div class="q">If the steroid works and wears off, we don't keep shooting steroid into a young hip.</div></div></div>
+              <div class="rung"><b>3</b><div><div class="t">MRI and an injection</div><div class="q">Three reasons: it might calm it down, it gives us information, and insurance wants it before surgery.</div></div></div>
+              <div class="rung"><b>2</b><div><div class="t">Physical therapy</div><div class="q">Work on those glutes, stretch out that IT band. Not the wrong answer.</div></div></div>
+              <div class="rung"><b>1</b><div><div class="t">Do nothing and live with it</div><div class="q">You haven't harmed yourself. It's just annoying that it still hurts.</div></div></div>
+            </div>
+          </section>
+
+          <section data-card="pt">
+            <h2>Physical therapy alone</h2>
+            <p class="sub">Adolescent athletes with painful labral tears and impingement, treated without surgery first (Pennock and colleagues, 2018).</p>
+            <div class="flow">
+              <div class="box">Painful labral tear. Start physical therapy, rest, and change what you're doing.</div>
+              <div class="arrow">↓</div>
+              <div class="fork">
+                <div><div class="lab">Most of them</div><div class="box good">82% never needed surgery. Seventy percent with PT alone, another twelve after one injection.</div></div>
+                <div><div class="lab">The rest</div><div class="box hot">Surgery then. Everyone ended up improving about the same at two years.</div></div>
+              </div>
+            </div>
+            <p class="kicker">In the room: seventy-two to eighty-three percent get better without an operation. It's the ones that don't that we go do surgery on.</p>
+          </section>
+
+          <section data-card="calendar">
+            <h2>The recovery calendar</h2>
+            <p class="sub">Small incisions, big recovery. The restrictions are for a reason.</p>
+            <div class="timeline">
+              <div class="mile hot"><b>Day 0</b><span>An hour and a half, two hours. One night, home the next day.</span></div>
+              <div class="mile"><b>3 weeks</b><span>No turning the leg out: the capsule is healing.</span></div>
+              <div class="mile"><b>1 month</b><span>Crutches. Shaved bone is like a temporary stress fracture.</span></div>
+              <div class="mile"><b>6 weeks</b><span>Feeling okay. Pretty good at three months.</span></div>
+              <div class="mile"><b>6 months</b><span>Full recovery.</span></div>
+            </div>
+          </section>
+
+          <section data-card="depth">
+            <h2>How deep is the socket?</h2>
+            <p class="sub">The center-edge angle on your X-ray, in degrees.</p>
+            <div class="ladder">
+              <div class="rung"><b>25</b><div><div class="t">Normal</div><div class="q">A normal roof over the ball.</div></div></div>
+              <div class="rung"><b>20</b><div><div class="t">A little shallow</div><div class="q">A labral repair is soft-tissue surgery for a bony problem, so a bit less likely to work. Most people still want to try it first.</div></div></div>
+              <div class="rung"><b>18</b><div><div class="t">The floor for a scope</div><div class="q">Good studies show a hip arthroscopy still does very well down to eighteen.</div></div></div>
+              <div class="rung top"><b>14</b><div><div class="t">True dysplasia</div><div class="q">A different operation: cut the pelvis and move it over. Not something we do in forty-year-olds.</div></div></div>
+            </div>
+            <p class="kicker">Shallow sockets grow big labrums. Plenty of tissue to repair.</p>
+          </section>
+
+          <section data-card="home">
+            <h2>Take this home</h2>
+            <p class="sub">Point your phone camera at the code. The drawing and the words are on the website.</p>
+            <div class="qr-wrap">
+              <div class="qr js-qr"></div>
+              <div>
+                <p class="url">www.brettraynormd.com/faqs-hip-arthroscopy</p>
+                <p>Questions after you leave: call Jodie at <strong>(214) 265-3210</strong>. That's the bat phone.</p>
+                <p class="quote">"After the MRI, you're going to answer a weird phone call. That's me, and we're going to talk about what we're going to do."</p>
+              </div>
+            </div>
+          </section>
+
+          <button class="btn on close js-card-close">Back to the drawing</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chips js-chips">
+      <div class="row">
+        <span class="k">Draw it</span>
+        <button class="chip" data-toggle="skeleton">Ball &amp; socket</button>
+        <button class="chip" data-toggle="cartilage">Cartilage</button>
+        <button class="chip" data-toggle="arthritis">Arthritis</button>
+        <button class="chip" data-toggle="labrum">Labrum</button>
+        <button class="chip" data-toggle="tear">Labral tear</button>
+        <button class="chip" data-toggle="pincer">Deep socket</button>
+        <button class="chip" data-toggle="dysplasia">Shallow socket</button>
+        <button class="chip" data-toggle="cam">Cam bump</button>
+        <button class="chip" data-toggle="flex">Flex ▶</button>
+        <button class="chip" data-toggle="repair">Repair</button>
+        <button class="chip" data-toggle="shave">Shave the bump</button>
+        <button class="chip" data-toggle="capsule">Capsule</button>
+      </div>
+      <div class="row">
+        <span class="k">Outside</span>
+        <button class="chip" data-toggle="abductors">Abductors</button>
+        <button class="chip" data-toggle="abtear">Abductor tear</button>
+        <button class="chip" data-toggle="itband">IT band &amp; bursa</button>
+        <button class="chip" data-toggle="bursitis">Bursitis</button>
+        <button class="chip" data-toggle="back">The back</button>
+      </div>
+      <div class="row">
+        <span class="k">Show them</span>
+        <button class="chip card-chip" data-card="people">100 people</button>
+        <button class="chip card-chip" data-card="options">Options</button>
+        <button class="chip card-chip" data-card="pt">PT alone</button>
+        <button class="chip card-chip" data-card="calendar">Calendar</button>
+        <button class="chip card-chip" data-card="depth">Socket depth</button>
+        <button class="chip card-chip" data-card="home">Take home</button>
+        <span class="nav">
+          <button class="chip js-back">◀ Back</button>
+          <button class="chip primary js-next">Next ▶</button>
+        </span>
+      </div>
+    </div>
+  </section>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -605,22 +919,24 @@
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 
   /* ---------- views ---------- */
-  const views = { home: $('#view-home'), shoulder: $('#view-shoulder') };
+  const views = { home: $('#view-home'), shoulder: $('#view-shoulder'), hip: $('#view-hip') };
+  const modules = {};
+  let activeModule = null;
   function show(name) {
     Object.values(views).forEach(v => v.classList.remove('active'));
     views[name].classList.add('active');
-    if (name === 'shoulder') { requestAnimationFrame(sizeCanvas); keepAwake(); }
+    activeModule = modules[name] || null;
+    if (activeModule) { requestAnimationFrame(activeModule.sizeCanvas); keepAwake(); }
   }
   $$('.tile').forEach(t => {
     const go = () => {
       const j = t.dataset.go;
-      if (j === 'shoulder') show('shoulder');
-      else toast(j === 'hip' ? 'Hip is the next module: labrum, cam/pincer, abductors, IT band.' : 'Knee is after hip: meniscus zones, ACL, patella tracking.');
+      if (modules[j]) show(j);
+      else toast('Knee is the next module: meniscus zones, ACL, kneecap tracking.');
     };
     t.addEventListener('click', go);
     t.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
   });
-  $('#btn-home').addEventListener('click', () => show('home'));
 
   let toastTimer;
   function toast(msg) {
@@ -628,191 +944,75 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
   }
 
-  /* ---------- draw-on lengths ---------- */
-  $$('.drawing .draw').forEach(p => {
-    try {
-      const L = Math.ceil(p.getTotalLength());
-      p.style.strokeDasharray = L;
-      p.style.setProperty('--len', L);
-    } catch (e) { /* not a path */ }
-  });
-
-  /* ---------- state ---------- */
-  const SKELETON = () => ({ scene: 'profile', ball: true, socket: true, blade: true, cuff: 0, biceps: false, labrum: false, bursa: false, bursitis: false, tear: 'none', repair: false, tenodesis: false,
-                            labBiceps: false, labDisloc: false, labSlap: false, labPost: false, card: null });
-  let state = SKELETON();
-
-  /* Cue lines: Brett's words, from the 9/28 recording and the rotator cuff canonical script. */
-  const CUES = {
-    skeleton: 'So the shoulder is a ball and socket joint.',
-    blade: 'You’ve got your shoulder blade and collarbone up here.',
-    cuff1: 'Your rotator cuff is four tendons deep inside there. There’s one up top like that…',
-    cuff2: '…there’s one in the front…',
-    cuff3: '…and there’s two around the back that are harder to draw.',
-    biceps: 'The biceps splits in two, and the long head comes up and makes a ninety-degree turn through a tight little sheath right here, and starts onto your labrum right there.',
-    labrum: 'And the labrum goes all the way around like this.',
-    people: 'If I took an MRI of the next hundred people walking across the street over sixty…',
-    worn: 'It can hurt without being torn. The tendon gets irritated where it rubs and works: tendonitis.',
-    off: 'A full-thickness tear goes all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both full thickness.',
-    bursa: 'It can also hurt without being torn. This bone rubs on this bone up here, so in between there’s a little balloon sac called a bursa that helps it glide instead of rub.',
-    bursitis: 'Sometimes it gets angry about doing its job too much, and you get bursitis and tendinitis. The biceps is prone to getting inflamed too.',
-    options: 'The question is, what do we do about you? And we have options.',
-    study: 'If I had an MRI in front of me right now that said tear, I would inject that before I would ever do an operation.',
-    repair: 'We roughen up the bone, stick the tendon back down, and hold it there so it can heal back in.',
-    tenodesis: 'I cut your biceps and move it over here so it doesn’t have to piston in and out of that groove. Extra three minutes.',
-    calendar: 'Sling for six weeks. Load it at three months. Six-month full recovery.',
-    home: 'You have a phone. If this doesn’t work or wears off, you just call Jodie. That’s the bat phone.',
-    labScene: 'If we take the socket and look directly at it: this is posterior, this is anterior. The labrum goes all the way around.',
-    labBiceps: 'And the biceps inserts right at 12 o’clock. Three types of labral tears, in our simple orthopedic minds.',
-    labDisloc: 'Antero-inferior labral tears down here, a Bankart lesion: that’s what happens when the shoulder dislocates.',
-    labSlap: 'Above the equator is a superior labral tear, a SLAP tear, because it’s more fun to say. The biceps tugs on it. No instability, it just hurts. Kind of a vague pain.',
-    labPost: 'The third type: it extends from the superior labrum all the way down the back, below the equator. A posterior labral tear, posterior instability. Doesn’t feel like it’s coming out, just pain in the back with bench press and push-ups.'
-  };
-
-  const layers = {};
-  $$('.drawing .layer').forEach(g => layers[g.id] = g);
-  const on = (id, v) => layers[id].classList.toggle('on', !!v);
-  const chip = k => $(`.chip[data-toggle="${k}"]`);
-
-  let labReady = false;
-  function initLabrum() {
-    if (labReady) return; labReady = true;
-    $$('#scene-labrum .draw').forEach(p => { try { const L = Math.ceil(p.getTotalLength()); p.style.strokeDasharray = L; p.style.setProperty('--len', L); } catch (e) {} });
-    $$('#scene-labrum .seg').forEach(p => {
-      const L = p.getTotalLength(), f1 = +p.dataset.from, f2 = +p.dataset.to;
-      p.style.strokeDasharray = `${(f2 - f1) * L} ${L}`; p.style.strokeDashoffset = `${-f1 * L}`;
+  /* ---------- draw-on lengths (paths animate with stroke-dashoffset) ---------- */
+  function initDraw(root) {
+    $$('.draw', root).forEach(p => {
+      try { const L = Math.ceil(p.getTotalLength()); p.style.strokeDasharray = L; p.style.setProperty('--len', L); } catch (e) { /* not a path */ }
     });
-    const inner = $('#lab-inner'), outer = $('#lab-outer'), Li = inner.getTotalLength(), Lo = outer.getTotalLength();
-    const d = [-0.05, -0.025, 0, 0.025, 0.05].map(f => { const fi = (f + 1) % 1; const a = inner.getPointAtLength(fi * Li), b = outer.getPointAtLength(fi * Lo); return `M${a.x.toFixed(1)},${a.y.toFixed(1)} L${b.x.toFixed(1)},${b.y.toFixed(1)}`; }).join(' ');
-    $('#lab-slap-hatch').setAttribute('d', d);
   }
 
-  function render(cueKey) {
-    // scenes
-    $('#scene-profile').classList.toggle('on', state.scene === 'profile');
-    $('#scene-labrum').classList.toggle('on', state.scene === 'labrum');
-    if (state.scene === 'labrum') initLabrum();
-    $('#chips').dataset.scene = state.scene;
-
-    // profile layers
-    on('ball', state.ball); on('socket', state.socket); on('blade', state.blade);
-    on('cuff-top', state.cuff >= 1); on('cuff-front', state.cuff >= 2); on('cuff-back', state.cuff >= 3);
-    on('biceps', state.biceps); on('labrum', state.labrum);
-    on('bursa', state.bursa || state.bursitis); layers['bursa'].classList.toggle('angry', state.bursitis); on('bursitis', state.bursitis);
-    on('tear-worn', state.tear === 'worn');
-    layers['cuff-top'].classList.toggle('retracted', state.tear === 'off');
-    on('repair', state.repair);
-    on('tenodesis', state.tenodesis); layers['biceps'].classList.toggle('tenodesed', state.tenodesis);
-
-    // labrum scene layers
-    on('lab-base', state.scene === 'labrum');
-    on('lab-biceps', state.labBiceps); on('lab-disloc', state.labDisloc); on('lab-slap', state.labSlap); on('lab-post', state.labPost);
-
-    // chips
-    chip('skeleton').classList.toggle('on', state.ball && state.socket);
-    chip('blade').classList.toggle('on', state.blade);
-    chip('cuff').classList.toggle('on', state.cuff > 0);
-    $$('.chip[data-toggle="cuff"] .dots i').forEach((d, i) => d.classList.toggle('f', i < state.cuff));
-    chip('biceps').classList.toggle('on', state.biceps);
-    chip('labrum').classList.toggle('on', state.labrum);
-    chip('bursa').classList.toggle('on', state.bursa || state.bursitis);
-    chip('bursitis').classList.toggle('on', state.bursitis);
-    chip('worn').classList.toggle('on', state.tear === 'worn');
-    chip('off').classList.toggle('on', state.tear === 'off');
-    chip('repair').classList.toggle('on', state.repair);
-    chip('tenodesis').classList.toggle('on', state.tenodesis);
-    ['labBiceps', 'labDisloc', 'labSlap', 'labPost'].forEach(k => chip(k).classList.toggle('on', state[k]));
-
-    // card
-    $$('.card section').forEach(s => s.classList.toggle('show', s.dataset.card === state.card));
-    $$('.chip[data-card]').forEach(c => c.classList.toggle('on', c.dataset.card === state.card));
-    $('#overlay').classList.toggle('open', !!state.card);
-    if (state.card === 'people') animatePeople();
-    if (state.card === 'home') makeQR();
-
-    if (cueKey && CUES[cueKey]) $('#cue').textContent = CUES[cueKey];
-  }
-
-  /* ---------- chip toggles ---------- */
-  function toggle(k) {
-    let cue = k;
-    switch (k) {
-      case 'skeleton': { const v = !(state.ball && state.socket); state.ball = v; state.socket = v; if (!v) { state.cuff = 0; state.biceps = false; state.labrum = false; state.bursa = false; state.bursitis = false; state.tear = 'none'; state.repair = false; state.tenodesis = false; } break; }
-      case 'blade': state.blade = !state.blade; break;
-      case 'cuff': state.cuff = (state.cuff + 1) % 4; if (state.cuff === 0) { state.tear = 'none'; state.repair = false; } cue = state.cuff ? 'cuff' + state.cuff : null; break;
-      case 'biceps': state.biceps = !state.biceps; if (!state.biceps) state.tenodesis = false; break;
-      case 'labrum': state.labrum = !state.labrum; break;
-      case 'bursa': { const v = !(state.bursa || state.bursitis); state.bursa = v; if (!v) state.bursitis = false; break; }
-      case 'bursitis': state.bursitis = !state.bursitis; if (state.bursitis) state.bursa = true; break;
-      case 'worn': state.tear = state.tear === 'worn' ? 'none' : 'worn'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; } break;
-      case 'off': state.tear = state.tear === 'off' ? 'none' : 'off'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; state.bursa = false; state.bursitis = false; } break;
-      case 'repair': state.repair = !state.repair; if (state.repair) { state.cuff = Math.max(state.cuff, 1); state.tear = 'none'; state.bursitis = false; } break;
-      case 'tenodesis': state.tenodesis = !state.tenodesis; if (state.tenodesis) state.biceps = true; break;
-      case 'labBiceps': case 'labDisloc': state[k] = !state[k]; if (!state[k]) cue = null; break;
-      case 'labSlap': state.labSlap = !state.labSlap; if (!state.labSlap) { state.labPost = false; cue = null; } break;
-      case 'labPost': state.labPost = !state.labPost; if (state.labPost) state.labSlap = true; else cue = null; break;
+  /* ---------- ink canvas (finger or Pencil, nothing saved) ---------- */
+  function makeInk(stage, canvas) {
+    const ctx = canvas.getContext('2d');
+    let strokes = [], current = null, drawing = false, activePen = null;
+    function sizeCanvas() {
+      const r = stage.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, 3);
+      canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); redraw();
     }
-    state.card = null;
-    render(cue);
+    function inkColor() { return getComputedStyle(document.documentElement).getPropertyValue('--hot').trim() || '#d63a2f'; }
+    function drawStroke(s) {
+      const r = stage.getBoundingClientRect();
+      ctx.strokeStyle = inkColor(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      for (let i = 1; i < s.pts.length; i++) {
+        const a = s.pts[i - 1], b = s.pts[i];
+        ctx.lineWidth = 3 + 4 * (b.p || .5);
+        ctx.beginPath(); ctx.moveTo(a.x * r.width, a.y * r.height); ctx.lineTo(b.x * r.width, b.y * r.height); ctx.stroke();
+      }
+    }
+    function redraw() { ctx.clearRect(0, 0, canvas.width, canvas.height); strokes.forEach(drawStroke); }
+    function clearInk() { strokes = []; redraw(); }
+    function pos(e) { const r = stage.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, p: e.pointerType === 'pen' ? Math.max(.2, e.pressure || .5) : .5 }; }
+    canvas.addEventListener('pointerdown', e => {
+      if (!drawing) return;
+      if (activePen !== null && e.pointerType !== 'pen') return;
+      if (e.pointerType === 'pen') activePen = e.pointerId;
+      canvas.setPointerCapture(e.pointerId);
+      current = { id: e.pointerId, pts: [pos(e)] }; strokes.push(current);
+      e.preventDefault();
+    });
+    canvas.addEventListener('pointermove', e => {
+      if (!current || e.pointerId !== current.id) return;
+      const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      evs.forEach(ev => current.pts.push(pos(ev)));
+      drawStroke({ pts: current.pts.slice(-Math.max(2, evs.length + 1)) });
+      e.preventDefault();
+    });
+    const end = e => { if (current && e.pointerId === current.id) { if (current.pts.length === 1) current.pts.push(current.pts[0]); redraw(); current = null; } if (e.pointerId === activePen) activePen = null; };
+    canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end); canvas.addEventListener('pointerleave', end);
+    window.addEventListener('resize', sizeCanvas);
+    matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', redraw);
+    return { sizeCanvas, clearInk, undo() { strokes.pop(); redraw(); }, setDrawing(v) { drawing = v; stage.classList.toggle('drawing-mode', v); } };
   }
-  $$('.chip[data-toggle]').forEach(c => c.addEventListener('click', () => toggle(c.dataset.toggle)));
-  $$('.chip[data-scene-go]').forEach(c => c.addEventListener('click', () => {
-    state.scene = c.dataset.sceneGo; state.card = null;
-    if (state.scene === 'labrum') { clearInk(); render('labScene'); } else { clearInk(); render('labrum'); }
-  }));
-  $$('.chip[data-card]').forEach(c => c.addEventListener('click', () => { state.card = state.card === c.dataset.card ? null : c.dataset.card; render(state.card); }));
-  $('#card-close').addEventListener('click', () => { state.card = null; render(); });
-  $('#overlay').addEventListener('click', e => { if (e.target === e.currentTarget) { state.card = null; render(); } });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.card) { state.card = null; render(); } });
 
-  /* ---------- walkthrough (the order of the talk) ---------- */
-  const STEPS = [
-    ['skeleton', s => { Object.assign(s, SKELETON()); }],
-    ['cuff1',    s => { s.cuff = 1; }],
-    ['cuff2',    s => { s.cuff = 2; }],
-    ['cuff3',    s => { s.cuff = 3; }],
-    ['biceps',   s => { s.biceps = true; }],
-    ['labrum',   s => { s.labrum = true; }],
-    ['people',   s => { s.card = 'people'; }],
-    ['worn',     s => { s.card = null; s.tear = 'worn'; }],
-    ['off',      s => { s.tear = 'off'; }],
-    ['bursa',    s => { s.tear = 'none'; s.bursa = true; }],
-    ['bursitis', s => { s.bursitis = true; }],
-    ['options',  s => { s.card = 'options'; }],
-    ['study',    s => { s.card = 'study'; }],
-    ['repair',   s => { s.card = null; s.bursitis = false; s.tear = 'none'; s.repair = true; }],
-    ['tenodesis',s => { s.tenodesis = true; }],
-    ['calendar', s => { s.card = 'calendar'; }],
-    ['home',     s => { s.card = 'home'; }]
-  ];
-  const CARD_STEPS = new Set(['people', 'options', 'study', 'calendar', 'home']);
-  let step = 0;
-  function goStep(i) {
-    i = Math.max(0, Math.min(STEPS.length - 1, i));
-    state = SKELETON();
-    for (let k = 0; k <= i; k++) STEPS[k][1](state);
-    if (!CARD_STEPS.has(STEPS[i][0])) state.card = null;
-    step = i;
-    render(STEPS[i][0]);
-    $('#btn-next').textContent = i === STEPS.length - 1 ? 'Done ✓' : 'Next ▶';
+  /* ---------- Right/Left mirror: SVG transform attributes in user units, so Safari agrees with Chrome ---------- */
+  function makeMirror(svg) {
+    return function setSide(left) {
+      svg.classList.toggle('mirror', left);
+      $$('.scene', svg).forEach(g => { if (left) g.setAttribute('transform', 'translate(1000 0) scale(-1 1)'); else g.removeAttribute('transform'); });
+      $$('text', svg).forEach(t => {
+        if (!t.dataset.anchor) t.dataset.anchor = t.getAttribute('text-anchor') || 'start';
+        const a = t.dataset.anchor, x = parseFloat(t.getAttribute('x')) || 0;
+        if (left) { t.setAttribute('transform', `translate(${2 * x} 0) scale(-1 1)`); t.setAttribute('text-anchor', a === 'end' ? 'start' : a === 'start' ? 'end' : a); }
+        else { t.removeAttribute('transform'); t.setAttribute('text-anchor', a); }
+      });
+    };
   }
-  $('#btn-next').addEventListener('click', () => { if (state.scene !== 'profile') { state.scene = 'profile'; } if (step >= STEPS.length - 1) { goStep(0); clearInk(); } else goStep(step + 1); });
-  $('#btn-back').addEventListener('click', () => { if (state.scene !== 'profile') { state.scene = 'profile'; } goStep(step - 1); });
-  $('#btn-reset').addEventListener('click', () => { goStep(0); clearInk(); });
 
-  /* ---------- cues ---------- */
-  $('#btn-cues').addEventListener('click', e => {
-    const b = e.currentTarget; const now = b.getAttribute('aria-pressed') !== 'true';
-    b.setAttribute('aria-pressed', now); b.classList.toggle('on', now); $('#cue').classList.toggle('hidden', !now);
-  });
-  $('#btn-cues').classList.add('on');
-
-  /* ---------- 100 people ---------- */
-  const PEOPLE_HITS = 37;
-  (function buildPeople() {
-    const wrap = $('#people');
-    let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-    const idx = Array.from({ length: 100 }, (_, i) => i).sort(() => rnd() - .5).slice(0, PEOPLE_HITS);
+  /* ---------- 100 people grid ---------- */
+  function buildPeople(wrap, hits, seed) {
+    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    const idx = Array.from({ length: 100 }, (_, i) => i).sort(() => rnd() - .5).slice(0, hits);
     const hit = new Set(idx);
     for (let i = 0; i < 100; i++) {
       const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -820,106 +1020,371 @@
       s.innerHTML = '<circle cx="10" cy="6" r="5"/><path d="M4 13h12a2 2 0 0 1 2 2v9h-3v8h-4v-8h-2v8H5v-8H2v-9a2 2 0 0 1 2-2z"/>';
       wrap.appendChild(s);
     }
-  })();
-  let peopleTimer;
-  function animatePeople() {
-    const all = $$('#people svg'); all.forEach(s => s.classList.remove('hit'));
-    const hits = all.filter(s => s.dataset.hit === '1'); const counter = $('#people-count');
-    counter.textContent = '0'; clearTimeout(peopleTimer);
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) { hits.forEach(s => s.classList.add('hit')); counter.textContent = hits.length; return; }
+  }
+  const peopleTimers = new WeakMap();
+  function animatePeople(wrap, counter) {
+    const all = $$('svg', wrap); all.forEach(s => s.classList.remove('hit'));
+    const hits = all.filter(s => s.dataset.hit === '1');
+    counter.textContent = '0'; clearTimeout(peopleTimers.get(wrap));
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { hits.forEach(s => s.classList.add('hit')); counter.textContent = hits.length; return; }
     let n = 0;
-    const tick = () => { if (n >= hits.length) return; hits[n].classList.add('hit'); n++; counter.textContent = n; peopleTimer = setTimeout(tick, 45); };
-    peopleTimer = setTimeout(tick, 250);
+    const tick = () => { if (n >= hits.length) return; hits[n].classList.add('hit'); n++; counter.textContent = n; peopleTimers.set(wrap, setTimeout(tick, 45)); };
+    peopleTimers.set(wrap, setTimeout(tick, 250));
   }
 
-  /* ---------- QR ---------- */
-  let qrDone = false;
-  function makeQR() {
-    if (qrDone) return;
-    const el = $('#qr'); const url = 'https://www.brettraynormd.com/rotator-cuff-repair-faq';
+  /* ---------- take-home QR ---------- */
+  function makeQR(el, url) {
+    if (el.dataset.done) return;
     if (window.QRCode) {
-      try { new QRCode(el, { text: url, width: 180, height: 180, colorDark: '#14325c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); qrDone = true; return; } catch (e) { /* fall through */ }
+      try { new QRCode(el, { text: url, width: 180, height: 180, colorDark: '#14325c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); el.dataset.done = '1'; return; } catch (e) { /* fall through */ }
     }
     el.innerHTML = '<div style="font-size:13px;color:#14325c;text-align:center;padding:8px">QR needs a connection. Type the address instead.</div>';
   }
-
-  /* ---------- ink canvas ---------- */
-  const stage = $('#stage'), canvas = $('#ink'), ctx = canvas.getContext('2d');
-  let strokes = [], current = null, drawing = false, activePen = null;
-  function sizeCanvas() {
-    const r = stage.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, 3);
-    canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); redraw();
-  }
-  function inkColor() { return getComputedStyle(document.documentElement).getPropertyValue('--hot').trim() || '#d63a2f'; }
-  function drawStroke(s) {
-    const r = stage.getBoundingClientRect();
-    ctx.strokeStyle = inkColor(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    for (let i = 1; i < s.pts.length; i++) {
-      const a = s.pts[i - 1], b = s.pts[i];
-      ctx.lineWidth = 3 + 4 * (b.p || .5);
-      ctx.beginPath(); ctx.moveTo(a.x * r.width, a.y * r.height); ctx.lineTo(b.x * r.width, b.y * r.height); ctx.stroke();
-    }
-  }
-  function redraw() { ctx.clearRect(0, 0, canvas.width, canvas.height); strokes.forEach(drawStroke); }
-  function clearInk() { strokes = []; redraw(); }
-  function pos(e) { const r = stage.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, p: e.pointerType === 'pen' ? Math.max(.2, e.pressure || .5) : .5 }; }
-  canvas.addEventListener('pointerdown', e => {
-    if (!drawing) return;
-    if (activePen !== null && e.pointerType !== 'pen') return;
-    if (e.pointerType === 'pen') activePen = e.pointerId;
-    canvas.setPointerCapture(e.pointerId);
-    current = { id: e.pointerId, pts: [pos(e)] }; strokes.push(current);
-    e.preventDefault();
-  });
-  canvas.addEventListener('pointermove', e => {
-    if (!current || e.pointerId !== current.id) return;
-    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
-    evs.forEach(ev => current.pts.push(pos(ev)));
-    const last = current.pts.slice(-Math.max(2, evs.length + 1));
-    drawStroke({ pts: last });
-    e.preventDefault();
-  });
-  const end = e => { if (current && e.pointerId === current.id) { if (current.pts.length === 1) current.pts.push(current.pts[0]); redraw(); current = null; } if (e.pointerId === activePen) activePen = null; };
-  canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end); canvas.addEventListener('pointerleave', end);
-  $('#btn-draw').addEventListener('click', e => {
-    drawing = !drawing; e.currentTarget.classList.toggle('on', drawing); e.currentTarget.setAttribute('aria-pressed', drawing);
-    stage.classList.toggle('drawing-mode', drawing);
-  });
-  $('#btn-undo').addEventListener('click', () => { strokes.pop(); redraw(); });
-  function setSide(side) {
-    const left = side === 'left';
-    $('.drawing').classList.toggle('mirror', left);
-    // Mirror the drawing about x = 500 with attribute transforms (user units, identical in every browser).
-    $$('.drawing .scene').forEach(g => { if (left) g.setAttribute('transform', 'translate(1000 0) scale(-1 1)'); else g.removeAttribute('transform'); });
-    // Flip each label back to readable about its own anchor and swap start/end, so labels keep hanging outward.
-    $$('.drawing text').forEach(t => {
-      if (!t.dataset.anchor) t.dataset.anchor = t.getAttribute('text-anchor') || 'start';
-      const a = t.dataset.anchor, x = parseFloat(t.getAttribute('x')) || 0;
-      if (left) { t.setAttribute('transform', `translate(${2 * x} 0) scale(-1 1)`); t.setAttribute('text-anchor', a === 'end' ? 'start' : a === 'start' ? 'end' : a); }
-      else { t.removeAttribute('transform'); t.setAttribute('text-anchor', a); }
-    });
-    $('#side-left').classList.toggle('on', left); $('#side-left').setAttribute('aria-pressed', left);
-    $('#side-right').classList.toggle('on', !left); $('#side-right').setAttribute('aria-pressed', !left);
-    clearInk();
-  }
-  $('#side-right').addEventListener('click', () => setSide('right'));
-  $('#side-left').addEventListener('click', () => setSide('left'));
-  $('#btn-clear').addEventListener('click', clearInk);
-  window.addEventListener('resize', sizeCanvas);
-  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', redraw);
 
   /* ---------- keep the screen awake during a visit ---------- */
   let lock = null;
   async function keepAwake() {
     try { if ('wakeLock' in navigator && !lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) { lock = null; }
   }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && views.shoulder.classList.contains('active')) keepAwake(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && activeModule) keepAwake(); });
+
+  /* ---------- a module: one joint's view, drawing, chips, walkthrough, cards ---------- */
+  function makeModule(cfg) {
+    const view = cfg.view, svg = $('.drawing', view), stage = $('.js-stage', view), canvas = $('.js-ink', view);
+    const cueEl = $('.js-cue', view), overlay = $('.js-overlay', view), card = $('.js-card', view), chipsEl = $('.js-chips', view);
+    const layers = {}; $$('.layer', svg).forEach(g => layers[g.id] = g);
+    const on = (id, v) => { if (layers[id]) layers[id].classList.toggle('on', !!v); };
+    const chip = k => $(`.chip[data-toggle="${k}"]`, view);
+    const ink = makeInk(stage, canvas), setSide = makeMirror(svg);
+    let state = cfg.SKELETON();
+    const api = { on, chip, layers, svg, view, card, chipsEl, state: () => state };
+    initDraw(svg);
+    if (cfg.init) cfg.init(api);
+
+    function render(cueKey) {
+      cfg.render(state, api);
+      $$('section', card).forEach(s => s.classList.toggle('show', s.dataset.card === state.card));
+      $$('.chip[data-card]', view).forEach(c => c.classList.toggle('on', c.dataset.card === state.card));
+      overlay.classList.toggle('open', !!state.card);
+      if (state.card && cfg.onCard) cfg.onCard(state.card, card);
+      if (cueKey && cfg.CUES[cueKey]) cueEl.textContent = cfg.CUES[cueKey];
+    }
+    function toggle(k) {
+      const cue = cfg.toggle(state, k);
+      state.card = null;
+      render(cue === undefined ? k : cue);
+    }
+    $$('.chip[data-toggle]', view).forEach(c => c.addEventListener('click', () => toggle(c.dataset.toggle)));
+    $$('.chip[data-scene-go]', view).forEach(c => c.addEventListener('click', () => {
+      state.card = null; ink.clearInk();
+      const cue = cfg.onScene ? cfg.onScene(state, c.dataset.sceneGo) : null;
+      render(cue);
+    }));
+    $$('.chip[data-card]', view).forEach(c => c.addEventListener('click', () => { state.card = state.card === c.dataset.card ? null : c.dataset.card; render(state.card); }));
+    $('.js-card-close', view).addEventListener('click', () => { state.card = null; render(); });
+    overlay.addEventListener('click', e => { if (e.target === e.currentTarget) { state.card = null; render(); } });
+
+    /* walkthrough: the order of the talk */
+    const STEPS = cfg.STEPS, CARD_STEPS = new Set(cfg.CARD_STEPS);
+    let step = 0;
+    function goStep(i) {
+      i = Math.max(0, Math.min(STEPS.length - 1, i));
+      state = cfg.SKELETON();
+      for (let k = 0; k <= i; k++) STEPS[k][1](state);
+      if (!CARD_STEPS.has(STEPS[i][0])) state.card = null;
+      step = i;
+      render(STEPS[i][0]);
+      $('.js-next', view).textContent = i === STEPS.length - 1 ? 'Done ✓' : 'Next ▶';
+    }
+    $('.js-next', view).addEventListener('click', () => { if (cfg.beforeStep) cfg.beforeStep(state); if (step >= STEPS.length - 1) { goStep(0); ink.clearInk(); } else goStep(step + 1); });
+    $('.js-back', view).addEventListener('click', () => { if (cfg.beforeStep) cfg.beforeStep(state); goStep(step - 1); });
+    $('.js-reset', view).addEventListener('click', () => { goStep(0); ink.clearInk(); });
+
+    /* bar buttons */
+    $('.js-home', view).addEventListener('click', () => show('home'));
+    const cuesBtn = $('.js-cues', view);
+    cuesBtn.addEventListener('click', () => {
+      const now = cuesBtn.getAttribute('aria-pressed') !== 'true';
+      cuesBtn.setAttribute('aria-pressed', now); cuesBtn.classList.toggle('on', now); cueEl.classList.toggle('hidden', !now);
+    });
+    cuesBtn.classList.add('on');
+    const drawBtn = $('.js-draw', view); let drawing = false;
+    drawBtn.addEventListener('click', () => { drawing = !drawing; drawBtn.classList.toggle('on', drawing); drawBtn.setAttribute('aria-pressed', drawing); ink.setDrawing(drawing); });
+    $('.js-undo', view).addEventListener('click', ink.undo);
+    $('.js-clear', view).addEventListener('click', ink.clearInk);
+    const sideR = $('.js-side-right', view), sideL = $('.js-side-left', view);
+    function side(left) {
+      setSide(left);
+      sideL.classList.toggle('on', left); sideL.setAttribute('aria-pressed', left);
+      sideR.classList.toggle('on', !left); sideR.setAttribute('aria-pressed', !left);
+      ink.clearInk();
+    }
+    sideR.addEventListener('click', () => side(false));
+    sideL.addEventListener('click', () => side(true));
+
+    goStep(0);
+    ink.sizeCanvas();
+    return { sizeCanvas: ink.sizeCanvas, goStep, render, closeCard() { if (state.card) { state.card = null; render(); return true; } return false; } };
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && activeModule) activeModule.closeCard(); });
+
+  /* ======================================================================
+     SHOULDER: rotator cuff talk, plus the socket breakout
+     ====================================================================== */
+  modules.shoulder = makeModule({
+    view: views.shoulder,
+    SKELETON: () => ({ scene: 'profile', ball: true, socket: true, blade: true, cuff: 0, biceps: false, labrum: false, bursa: false, bursitis: false, tear: 'none', repair: false, tenodesis: false,
+                       labBiceps: false, labDisloc: false, labSlap: false, labPost: false, card: null }),
+    /* Cue lines: Brett's words, from the 9/28 recording and the rotator cuff canonical script. */
+    CUES: {
+      skeleton: 'So the shoulder is a ball and socket joint.',
+      blade: 'You’ve got your shoulder blade and collarbone up here.',
+      cuff1: 'Your rotator cuff is four tendons deep inside there. There’s one up top like that…',
+      cuff2: '…there’s one in the front…',
+      cuff3: '…and there’s two around the back that are harder to draw.',
+      biceps: 'The biceps splits in two, and the long head comes up and makes a ninety-degree turn through a tight little sheath right here, and starts onto your labrum right there.',
+      labrum: 'And the labrum goes all the way around like this.',
+      people: 'If I took an MRI of the next hundred people walking across the street over sixty…',
+      worn: 'It can hurt without being torn. The tendon gets irritated where it rubs and works: tendonitis.',
+      off: 'A full-thickness tear goes all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both full thickness.',
+      bursa: 'It can also hurt without being torn. This bone rubs on this bone up here, so in between there’s a little balloon sac called a bursa that helps it glide instead of rub.',
+      bursitis: 'Sometimes it gets angry about doing its job too much, and you get bursitis and tendinitis. The biceps is prone to getting inflamed too.',
+      options: 'The question is, what do we do about you? And we have options.',
+      study: 'If I had an MRI in front of me right now that said tear, I would inject that before I would ever do an operation.',
+      repair: 'We roughen up the bone, stick the tendon back down, and hold it there so it can heal back in.',
+      tenodesis: 'I cut your biceps and move it over here so it doesn’t have to piston in and out of that groove. Extra three minutes.',
+      calendar: 'Sling for six weeks. Load it at three months. Six-month full recovery.',
+      home: 'You have a phone. If this doesn’t work or wears off, you just call Jodie. That’s the bat phone.',
+      labScene: 'If we take the socket and look directly at it: this is posterior, this is anterior. The labrum goes all the way around.',
+      labBiceps: 'And the biceps inserts right at 12 o’clock. Three types of labral tears, in our simple orthopedic minds.',
+      labDisloc: 'Antero-inferior labral tears down here, a Bankart lesion: that’s what happens when the shoulder dislocates.',
+      labSlap: 'Above the equator is a superior labral tear, a SLAP tear, because it’s more fun to say. The biceps tugs on it. No instability, it just hurts. Kind of a vague pain.',
+      labPost: 'The third type: it extends from the superior labrum all the way down the back, below the equator. A posterior labral tear, posterior instability. Doesn’t feel like it’s coming out, just pain in the back with bench press and push-ups.'
+    },
+    init(api) {
+      let labReady = false;
+      api.initLabrum = function () {
+        if (labReady) return; labReady = true;
+        initDraw($('#scene-labrum'));
+        $$('#scene-labrum .seg').forEach(p => {
+          const L = p.getTotalLength(), f1 = +p.dataset.from, f2 = +p.dataset.to;
+          p.style.strokeDasharray = `${(f2 - f1) * L} ${L}`; p.style.strokeDashoffset = `${-f1 * L}`;
+        });
+        const inner = $('#lab-inner'), outer = $('#lab-outer'), Li = inner.getTotalLength(), Lo = outer.getTotalLength();
+        const d = [-0.05, -0.025, 0, 0.025, 0.05].map(f => { const fi = (f + 1) % 1; const a = inner.getPointAtLength(fi * Li), b = outer.getPointAtLength(fi * Lo); return `M${a.x.toFixed(1)},${a.y.toFixed(1)} L${b.x.toFixed(1)},${b.y.toFixed(1)}`; }).join(' ');
+        $('#lab-slap-hatch').setAttribute('d', d);
+      };
+    },
+    render(state, api) {
+      const { on, chip, layers } = api;
+      $('#scene-profile').classList.toggle('on', state.scene === 'profile');
+      $('#scene-labrum').classList.toggle('on', state.scene === 'labrum');
+      if (state.scene === 'labrum') api.initLabrum();
+      api.chipsEl.dataset.scene = state.scene;
+
+      on('ball', state.ball); on('socket', state.socket); on('blade', state.blade);
+      on('cuff-top', state.cuff >= 1); on('cuff-front', state.cuff >= 2); on('cuff-back', state.cuff >= 3);
+      on('biceps', state.biceps); on('labrum', state.labrum);
+      on('bursa', state.bursa || state.bursitis); layers['bursa'].classList.toggle('angry', state.bursitis); on('bursitis', state.bursitis);
+      on('tear-worn', state.tear === 'worn');
+      layers['cuff-top'].classList.toggle('retracted', state.tear === 'off');
+      on('repair', state.repair);
+      on('tenodesis', state.tenodesis); layers['biceps'].classList.toggle('tenodesed', state.tenodesis);
+
+      on('lab-base', state.scene === 'labrum');
+      on('lab-biceps', state.labBiceps); on('lab-disloc', state.labDisloc); on('lab-slap', state.labSlap); on('lab-post', state.labPost);
+
+      chip('skeleton').classList.toggle('on', state.ball && state.socket);
+      chip('blade').classList.toggle('on', state.blade);
+      chip('cuff').classList.toggle('on', state.cuff > 0);
+      $$('.chip[data-toggle="cuff"] .dots i', api.view).forEach((d, i) => d.classList.toggle('f', i < state.cuff));
+      chip('biceps').classList.toggle('on', state.biceps);
+      chip('labrum').classList.toggle('on', state.labrum);
+      chip('bursa').classList.toggle('on', state.bursa || state.bursitis);
+      chip('bursitis').classList.toggle('on', state.bursitis);
+      chip('worn').classList.toggle('on', state.tear === 'worn');
+      chip('off').classList.toggle('on', state.tear === 'off');
+      chip('repair').classList.toggle('on', state.repair);
+      chip('tenodesis').classList.toggle('on', state.tenodesis);
+      ['labBiceps', 'labDisloc', 'labSlap', 'labPost'].forEach(k => chip(k).classList.toggle('on', state[k]));
+    },
+    toggle(state, k) {
+      let cue = k;
+      switch (k) {
+        case 'skeleton': { const v = !(state.ball && state.socket); state.ball = v; state.socket = v; if (!v) { state.cuff = 0; state.biceps = false; state.labrum = false; state.bursa = false; state.bursitis = false; state.tear = 'none'; state.repair = false; state.tenodesis = false; } break; }
+        case 'blade': state.blade = !state.blade; break;
+        case 'cuff': state.cuff = (state.cuff + 1) % 4; if (state.cuff === 0) { state.tear = 'none'; state.repair = false; } cue = state.cuff ? 'cuff' + state.cuff : null; break;
+        case 'biceps': state.biceps = !state.biceps; if (!state.biceps) state.tenodesis = false; break;
+        case 'labrum': state.labrum = !state.labrum; break;
+        case 'bursa': { const v = !(state.bursa || state.bursitis); state.bursa = v; if (!v) state.bursitis = false; break; }
+        case 'bursitis': state.bursitis = !state.bursitis; if (state.bursitis) state.bursa = true; break;
+        case 'worn': state.tear = state.tear === 'worn' ? 'none' : 'worn'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; } break;
+        case 'off': state.tear = state.tear === 'off' ? 'none' : 'off'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; state.bursa = false; state.bursitis = false; } break;
+        case 'repair': state.repair = !state.repair; if (state.repair) { state.cuff = Math.max(state.cuff, 1); state.tear = 'none'; state.bursitis = false; } break;
+        case 'tenodesis': state.tenodesis = !state.tenodesis; if (state.tenodesis) state.biceps = true; break;
+        case 'labBiceps': case 'labDisloc': state[k] = !state[k]; if (!state[k]) cue = null; break;
+        case 'labSlap': state.labSlap = !state.labSlap; if (!state.labSlap) { state.labPost = false; cue = null; } break;
+        case 'labPost': state.labPost = !state.labPost; if (state.labPost) state.labSlap = true; else cue = null; break;
+      }
+      return cue;
+    },
+    onScene(state, scene) { state.scene = scene; return scene === 'labrum' ? 'labScene' : 'labrum'; },
+    beforeStep(state) { if (state.scene !== 'profile') state.scene = 'profile'; },
+    STEPS: [
+      ['skeleton', s => { }],
+      ['cuff1',    s => { s.cuff = 1; }],
+      ['cuff2',    s => { s.cuff = 2; }],
+      ['cuff3',    s => { s.cuff = 3; }],
+      ['biceps',   s => { s.biceps = true; }],
+      ['labrum',   s => { s.labrum = true; }],
+      ['people',   s => { s.card = 'people'; }],
+      ['worn',     s => { s.card = null; s.tear = 'worn'; }],
+      ['off',      s => { s.tear = 'off'; }],
+      ['bursa',    s => { s.tear = 'none'; s.bursa = true; }],
+      ['bursitis', s => { s.bursitis = true; }],
+      ['options',  s => { s.card = 'options'; }],
+      ['study',    s => { s.card = 'study'; }],
+      ['repair',   s => { s.card = null; s.bursitis = false; s.tear = 'none'; s.repair = true; }],
+      ['tenodesis',s => { s.tenodesis = true; }],
+      ['calendar', s => { s.card = 'calendar'; }],
+      ['home',     s => { s.card = 'home'; }]
+    ],
+    CARD_STEPS: ['people', 'options', 'study', 'calendar', 'home'],
+    onCard(name, card) {
+      if (name === 'people') animatePeople($('.js-people', card), $('.js-count', card));
+      if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/rotator-cuff-repair-faq');
+    }
+  });
+  buildPeople($('.js-people', views.shoulder), 37, 7);
+
+  /* ======================================================================
+     HIP: the young hip talk (labrum, bumps, scope) and the outside of the hip
+     ====================================================================== */
+  const FLEX_KEYS = '0 470 330; 22 470 330; 22 470 330; 0 470 330';
+  modules.hip = makeModule({
+    view: views.hip,
+    SKELETON: () => ({ ball: true, cartilage: false, arthritis: false, labrum: false, tear: false, pincer: false, dysplasia: false, cam: false, flex: false,
+                       repair: false, shave: false, capsule: false, abductors: false, abtear: false, itband: false, bursitis: false, back: false, card: null }),
+    /* Cue lines: Brett's words from the 9/29 hip recording, plus the young-hip canonical script. */
+    CUES: {
+      skeleton: 'So the hip is like a ball and socket, kind of like that.',
+      cartilage: 'Inside your hip you have your cartilage, and when that wears away, that’s what arthritis is.',
+      arthritis: 'If you had bad arthritis, you just need to go get your hip replaced. My hip replacement guy would say: why are you here? Please leave immediately.',
+      labrum: 'The labrum is this little bumper that sits on the edge of the socket. It actually goes all the way around; it’s just easier to draw up here. It creates a suction cup and deepens the socket.',
+      tear: 'You can get tearing of that labrum, where it tears away from the edge of the socket, and it can cause pain.',
+      people: 'Somewhere between seventy and eighty percent of us walking around have a labral tear and have no idea.',
+      pincer: 'Some people have a really deep socket, so the labrum gets bumped into sooner.',
+      dysplasia: 'Some people have a really shallow socket and their labrum’s really big, and the forces go abnormally across there. That’s called dysplasia.',
+      cam: 'Some people have a big old bump of bone right there called a cam lesion that bumps into the labrum sooner. More forceful and more often, so it creates a labral tear.',
+      flex: 'When the hip flexes up, that bump runs into the labrum. Over and over.',
+      flexclear: 'With the bump shaved down, the hip flexes up without bumping into the labrum. That protects the repair.',
+      options: 'Most of the time we don’t have to do surgery for that. We do physical therapy, we’ll do an injection. But sometimes those do continue to hurt and it needs an operation.',
+      pt: 'Somewhere between seventy-two and eighty-three percent of the time we can get people better with PT alone. It’s just the ones that don’t that we go do surgery on.',
+      repair: 'We go in with a camera and an instrument, shave the socket back ever so slightly, and put little anchors in the bone, usually made all out of suture. One, two, three, sometimes four, to repair that labrum up to the edge of the socket.',
+      shave: 'Then we shave down that little bone spur to give it extra room, to keep it from bumping back up into there. That’s the surgery for it.',
+      capsule: 'There’s a lining, the ligaments that hold the hip, called the capsule. We make an incision in it to work in there, and at the end we close it back together with sutures. So no externally rotating your hip for three weeks.',
+      calendar: 'It’s a nice surgery because the incisions are small, but it’s a big recovery. Crutches for a month. Okay at six weeks, pretty good at three months, full recovery is six months.',
+      abductors: 'Your hip abductor tendons, the gluteus medius and minimus, sit over here on the outside of your hip and insert right there.',
+      abtear: 'You can get tears of those too. Really common. Not common that we have to do surgery on it.',
+      itband: 'Your IT band runs from your pelvis all the way down to your knee, right up against that bone, which is a bad design. So there’s a little balloon sac in between called a bursa that helps it glide instead of rub.',
+      bursitis: 'Sometimes it gets angry about doing its job too much and you get bursitis, even some tendonitis here. Most of the time we can inject that and calm it down.',
+      back: 'Sometimes the back can cause pain in the hip. The brain can’t tell the difference between a pinch in your back and pain that radiates down that way. Something we always have to be thinking about.',
+      depth: 'Twenty-five degrees is a normal socket. Down around twenty is a little shallow. Fourteen is true dysplasia, and that’s a different conversation.',
+      home: 'I don’t care if you have a labral tear. I really don’t. I just care if your hip hurts. We’re going to get this better one way or another.'
+    },
+    init(api) {
+      api.flex = { running: false, contact: false };
+      api.setFlex = function (running, contact) {
+        const femur = $('#h-femur'), im = $('#h-impact');
+        $$('animateTransform', femur).forEach(x => x.remove());
+        $$('animate', im).forEach(x => x.remove());
+        im.setAttribute('opacity', '0');
+        $('#h-flex-hint').classList.toggle('on', running);
+        api.flex = { running, contact: running && contact };
+        if (!running) return;
+        const a = document.createElementNS('http://www.w3.org/2000/svg', 'animateTransform');
+        a.setAttribute('attributeName', 'transform'); a.setAttribute('type', 'rotate');
+        a.setAttribute('values', FLEX_KEYS); a.setAttribute('keyTimes', '0;0.42;0.6;1'); a.setAttribute('calcMode', 'spline');
+        a.setAttribute('keySplines', '0.4 0 0.6 1; 0 0 1 1; 0.4 0 0.6 1'); a.setAttribute('dur', '3s'); a.setAttribute('repeatCount', 'indefinite');
+        femur.appendChild(a);
+        if (contact) {
+          const o = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+          o.setAttribute('attributeName', 'opacity'); o.setAttribute('values', '0;0;1;1;0;0'); o.setAttribute('keyTimes', '0;0.36;0.44;0.62;0.7;1'); o.setAttribute('dur', '3s'); o.setAttribute('repeatCount', 'indefinite');
+          im.appendChild(o);
+        }
+      };
+    },
+    render(state, api) {
+      const { on, chip, layers } = api;
+      on('h-skeleton', state.ball);
+      on('h-cartilage', state.cartilage || state.arthritis); layers['h-cartilage'].classList.toggle('worn', state.arthritis); on('h-arthritis', state.arthritis);
+      on('h-labrum', state.labrum || state.tear || state.repair); on('h-tear', state.tear);
+      on('h-pincer', state.pincer); on('h-dysplasia', state.dysplasia);
+      on('h-cam', state.cam || state.shave); layers['h-cam'].classList.toggle('shaved', state.shave);
+      on('h-repair', state.repair); on('h-shave', state.shave); on('h-capsule', state.capsule);
+      on('h-abductors', state.abductors || state.abtear); on('h-abtear', state.abtear);
+      on('h-itband', state.itband || state.bursitis); layers['h-itband'].classList.toggle('angry', state.bursitis); on('h-bursitis', state.bursitis);
+      on('h-back', state.back);
+      const contact = (state.cam && !state.shave) || (state.pincer && !state.repair);
+      if (state.flex !== api.flex.running || (state.flex && contact !== api.flex.contact)) api.setFlex(state.flex, contact);
+      chip('skeleton').classList.toggle('on', state.ball);
+      ['cartilage', 'arthritis', 'labrum', 'tear', 'pincer', 'dysplasia', 'cam', 'flex', 'repair', 'shave', 'capsule', 'abductors', 'abtear', 'itband', 'bursitis', 'back'].forEach(k => { const c = chip(k); if (c) c.classList.toggle('on', !!state[k]); });
+    },
+    toggle(state, k) {
+      let cue = k;
+      switch (k) {
+        case 'skeleton': state.ball = !state.ball; if (!state.ball) { Object.assign(state, { cartilage: false, arthritis: false, labrum: false, tear: false, pincer: false, dysplasia: false, cam: false, flex: false, repair: false, shave: false, capsule: false }); } break;
+        case 'cartilage': state.cartilage = !state.cartilage; if (!state.cartilage) state.arthritis = false; break;
+        case 'arthritis': state.arthritis = !state.arthritis; if (state.arthritis) state.cartilage = true; break;
+        case 'labrum': state.labrum = !state.labrum; if (!state.labrum) { state.tear = false; state.repair = false; cue = null; } break;
+        case 'tear': state.tear = !state.tear; if (state.tear) { state.labrum = true; state.repair = false; } else cue = null; break;
+        case 'pincer': state.pincer = !state.pincer; if (state.pincer) { state.labrum = true; state.dysplasia = false; state.cam = false; state.shave = false; } else cue = null; break;
+        case 'dysplasia': state.dysplasia = !state.dysplasia; if (state.dysplasia) { state.labrum = true; state.pincer = false; state.cam = false; state.shave = false; } else cue = null; break;
+        case 'cam': state.cam = !state.cam; if (state.cam) { state.labrum = true; state.shave = false; state.pincer = false; state.dysplasia = false; } else { state.shave = false; cue = null; } break;
+        case 'flex': state.flex = !state.flex; if (state.flex) { cue = ((state.cam && !state.shave) || (state.pincer && !state.repair)) ? 'flex' : 'flexclear'; } else cue = null; break;
+        case 'repair': state.repair = !state.repair; if (state.repair) { state.labrum = true; state.tear = false; } else cue = null; break;
+        case 'shave': state.shave = !state.shave; if (state.shave) { state.cam = true; } else cue = null; break;
+        case 'capsule': state.capsule = !state.capsule; if (!state.capsule) cue = null; break;
+        case 'abductors': state.abductors = !state.abductors; if (!state.abductors) { state.abtear = false; cue = null; } break;
+        case 'abtear': state.abtear = !state.abtear; if (state.abtear) state.abductors = true; else cue = null; break;
+        case 'itband': state.itband = !state.itband; if (!state.itband) { state.bursitis = false; cue = null; } break;
+        case 'bursitis': state.bursitis = !state.bursitis; if (state.bursitis) state.itband = true; else cue = null; break;
+        case 'back': state.back = !state.back; if (!state.back) cue = null; break;
+      }
+      return cue;
+    },
+    STEPS: [
+      ['skeleton',  s => { }],
+      ['cartilage', s => { s.cartilage = true; }],
+      ['labrum',    s => { s.labrum = true; }],
+      ['tear',      s => { s.tear = true; }],
+      ['people',    s => { s.card = 'people'; }],
+      ['pincer',    s => { s.card = null; s.pincer = true; }],
+      ['dysplasia', s => { s.pincer = false; s.dysplasia = true; }],
+      ['cam',       s => { s.dysplasia = false; s.cam = true; }],
+      ['flex',      s => { s.flex = true; }],
+      ['options',   s => { s.flex = false; s.card = 'options'; }],
+      ['pt',        s => { s.card = 'pt'; }],
+      ['repair',    s => { s.card = null; s.tear = false; s.repair = true; }],
+      ['shave',     s => { s.shave = true; }],
+      ['flexclear', s => { s.flex = true; }],
+      ['capsule',   s => { s.flex = false; s.capsule = true; }],
+      ['calendar',  s => { s.card = 'calendar'; }],
+      ['abductors', s => { s.card = null; s.capsule = false; s.abductors = true; }],
+      ['itband',    s => { s.itband = true; }],
+      ['bursitis',  s => { s.bursitis = true; }],
+      ['back',      s => { s.bursitis = false; s.back = true; }],
+      ['home',      s => { s.card = 'home'; }]
+    ],
+    CARD_STEPS: ['people', 'options', 'pt', 'calendar', 'home'],
+    onCard(name, card) {
+      if (name === 'people') animatePeople($('.js-people', card), $('.js-count', card));
+      if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/faqs-hip-arthroscopy');
+    }
+  });
+  buildPeople($('.js-people', views.hip), 75, 11);
 
   /* ---------- boot ---------- */
-  goStep(0);
-  sizeCanvas();
   const boot = () => {};
   if (window.claude?.hot?.ready) window.claude.hot.ready(boot); else boot();
 })();
