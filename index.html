@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Napkin">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbf9f3">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Exam Room Napkin</title>
+<style>
+  /* Layout: one-screen app. Top bar / paper stage (SVG drawing + ink canvas) / two rows of large chips. Cards overlay the stage. */
+  :root {
+    --paper: #fbf9f3;          /* napkin */
+    --paper-2: #f2eee3;        /* chip row, cards */
+    --ink: #1e2a44;            /* navy ballpoint */
+    --ink-soft: #5b6478;       /* muted labels */
+    --bone: #fffdf7;
+    --tendon: #cf5546;         /* red-clay marker */
+    --muscle: #b9463a;
+    --biceps: #d99a2b;         /* amber */
+    --biceps-ink: #a8731a;
+    --bursa: #4f8fc9;          /* sky */
+    --hot: #d63a2f;            /* tear, inflammation, red ink */
+    --anchor: #6e7787;
+    --suture: #244a9a;
+    --navy: #14325c;           /* practice navy (UI) */
+    --navy-soft: #cfe1f5;      /* practice light blue */
+    --chip-bg: #ffffff;
+    --chip-fg: #14325c;
+    --chip-on-bg: #14325c;
+    --chip-on-fg: #ffffff;
+    --shadow: 0 10px 30px rgba(20, 30, 60, .18);
+    --font-hand: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --dash: 6 6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --bone: #2b3548;
+      --tendon: #e2705f; --muscle: #c9584c; --biceps: #e7b04d; --biceps-ink: #e7b04d; --bursa: #72b3f0; --hot: #ff6b5e;
+      --anchor: #b7bfcc; --suture: #8fb2ff; --navy: #9cc4ee; --navy-soft: #2a4466;
+      --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b;
+      --shadow: 0 10px 30px rgba(0,0,0,.5);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --bone: #2b3548;
+    --tendon: #e2705f; --muscle: #c9584c; --biceps: #e7b04d; --biceps-ink: #e7b04d; --bursa: #72b3f0; --hot: #ff6b5e;
+    --anchor: #b7bfcc; --suture: #8fb2ff; --navy: #9cc4ee; --navy-soft: #2a4466;
+    --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b;
+    --shadow: 0 10px 30px rgba(0,0,0,.5);
+    color-scheme: dark;
+  }
+
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--font-ui); font-size: 17px; line-height: 1.35;
+    overflow: hidden; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--bursa); outline-offset: 2px; }
+
+  .app { height: 100%; display: flex; flex-direction: column; padding-inline: 16px; padding-block: 0; box-sizing: border-box; }
+  .view { display: none; height: 100%; min-height: 0; flex-direction: column; }
+  .view.active { display: flex; }
+
+  /* ---------- Top bar ---------- */
+  .bar { display: flex; align-items: center; gap: 10px; padding-block: 8px; flex-wrap: wrap; }
+  .bar h1 { font-family: var(--font-hand); font-weight: 700; font-size: 26px; margin: 0; line-height: 1; letter-spacing: -.2px; }
+  .bar .spacer { flex: 1; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 14px;
+    border: 2px solid var(--navy); border-radius: 999px; background: var(--chip-bg); color: var(--chip-fg);
+    font-weight: 600; font-size: 16px; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation;
+  }
+  .btn.on { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+  .btn.ghost { border-color: transparent; background: transparent; color: var(--ink-soft); }
+  .btn svg { width: 20px; height: 20px; }
+
+  /* ---------- Stage ---------- */
+  .stage { position: relative; flex: 1; min-height: 0; border-radius: 18px; background: var(--paper);
+           box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent); overflow: hidden; }
+  .stage svg.drawing { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; touch-action: none; }
+  .stage.drawing-mode canvas { pointer-events: auto; cursor: crosshair; }
+  .stage.drawing-mode::after {
+    content: 'Drawing on. Tap Draw again to turn it off.'; position: absolute; left: 12px; top: 10px;
+    font-size: 13px; color: var(--hot); background: var(--paper); padding: 4px 10px; border-radius: 999px; border: 1px solid var(--hot); pointer-events: none;
+  }
+  .cue { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 16px; text-align: center; pointer-events: none;
+         font-family: var(--font-hand); font-size: 18px; color: var(--ink-soft); line-height: 1.3; text-wrap: balance; font-style: italic;
+         background: linear-gradient(to top, var(--paper) 55%, transparent); }
+  .cue.hidden { display: none; }
+
+  /* ---------- Drawing (SVG) ---------- */
+  .drawing { font-family: var(--font-hand); }
+  .drawing .ink { stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .drawing .band { fill: color-mix(in srgb, var(--tendon) 22%, transparent); }
+  .drawing .lbl { fill: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: -.2px; }
+  .drawing .lbl.small { font-size: 17px; font-weight: 500; }
+  .drawing .lbl.hot { fill: var(--hot); }
+  .drawing .layer { opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+  .drawing .layer.on { opacity: 1; }
+  .drawing .draw { stroke-dashoffset: var(--len); transition: stroke-dashoffset .7s ease-out; }
+  .drawing .layer.on .draw { stroke-dashoffset: 0; }
+  .drawing .pop { transform-box: fill-box; transform-origin: center; transform: scale(.6); transition: transform .35s cubic-bezier(.2,1.4,.4,1); }
+  .drawing .layer.on .pop { transform: scale(1); }
+  .drawing .scene { display: none; }
+  .drawing .scene.on { display: block; }
+  .drawing.mirror .scene { transform: scaleX(-1); transform-origin: 500px 0; }
+  .drawing.mirror text { transform: scaleX(-1); transform-box: fill-box; transform-origin: center; }
+  .seg { display: inline-flex; border: 2px solid var(--navy); border-radius: 999px; overflow: hidden; }
+  .seg .btn { border: 0; border-radius: 0; min-height: 40px; padding: 4px 14px; }
+  .seg .btn + .btn { border-left: 2px solid var(--navy); }
+  .drawing .tube { fill: color-mix(in srgb, var(--biceps) 32%, transparent); }
+  .chips[data-scene="profile"] .scene-labrum, .chips[data-scene="labrum"] .scene-profile { display: none; }
+  .chip.scene-chip { border-width: 2px; border-color: var(--ink-soft); color: var(--ink); }
+  /* torn-off swaps the top tendon */
+  #cuff-top .intact { transition: opacity .3s; }
+  #cuff-top.retracted .intact { opacity: 0; }
+  #cuff-top .retracted-only { opacity: 0; transition: opacity .3s .1s; }
+  #cuff-top.retracted .retracted-only { opacity: 1; }
+  /* tenodesis edits the biceps */
+  #biceps .joint-part, #biceps .upper-part, #biceps .pain-part { transition: opacity .3s; }
+  #biceps.tenodesed .joint-part, #biceps.tenodesed .upper-part, #biceps.tenodesed .pain-part { opacity: 0; }
+  @keyframes pulse { 0%, 100% { transform: scale(1); opacity: .9 } 50% { transform: scale(1.5); opacity: .5 } }
+  .drawing .pulse { transform-box: fill-box; transform-origin: center; animation: pulse 1.6s ease-in-out infinite; }
+  #bursa-shape { transform-box: fill-box; transform-origin: center; transition: transform .4s, fill .4s, stroke .4s; }
+  #bursa.angry #bursa-shape { transform: scale(1.14, 1.07); fill: color-mix(in srgb, var(--hot) 55%, transparent); stroke: var(--hot); stroke-width: 3.4; }
+
+  /* ---------- Chips ---------- */
+  .chips { display: flex; flex-direction: column; gap: 8px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .row .k { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); width: 84px; flex: 0 0 auto; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 8px 18px;
+    border: 2px solid var(--navy); border-radius: 999px; background: var(--chip-bg); color: var(--chip-fg);
+    font-weight: 600; font-size: 17px; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation;
+    transition: background .15s, color .15s, transform .08s;
+  }
+  .chip:active { transform: scale(.97); }
+  .chip.on { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+  .chip .dots { display: inline-flex; gap: 4px; }
+  .chip .dots i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid currentColor; display: block; }
+  .chip .dots i.f { background: currentColor; }
+  .chip.card-chip { border-style: dashed; }
+  .nav { margin-left: auto; display: inline-flex; gap: 8px; }
+  .nav .chip { border-radius: 14px; font-weight: 700; }
+  .nav .chip.primary { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+
+  /* ---------- Cards ---------- */
+  .overlay { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; padding: 16px;
+             background: color-mix(in srgb, var(--ink) 35%, transparent); z-index: 5; }
+  .overlay.open { display: flex; }
+  .card { width: min(780px, 100%); max-height: 100%; overflow: auto; background: var(--paper); color: var(--ink);
+          border-radius: 20px; box-shadow: var(--shadow); padding: 16px 22px 14px; box-sizing: border-box; border: 2px solid var(--ink); }
+  .card h2 { font-family: var(--font-hand); font-size: 28px; font-weight: 700; margin: 0 0 4px; line-height: 1.1; text-wrap: balance; letter-spacing: -.3px; }
+  .card .sub { color: var(--ink-soft); margin: 0 0 10px; font-size: 15px; }
+  .card p { margin: 8px 0; font-size: 18px; max-width: 62ch; }
+  .card .quote { font-family: var(--font-hand); font-size: 20px; line-height: 1.25; margin: 8px 0; color: var(--ink); font-style: italic; }
+  .card .kicker { font-weight: 700; color: var(--hot); }
+  .card .close { margin-top: 10px; min-height: 40px; }
+  .card section { display: none; }
+  .card section.show { display: block; }
+
+  /* 100 people */
+  .people-wrap { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .people { flex: 1 1 360px; max-width: 440px; display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; margin: 4px 0; }
+  .people-text { flex: 1 1 220px; min-width: 0; }
+  .people svg { width: 100%; height: auto; aspect-ratio: 1 / 1.6; display: block; fill: color-mix(in srgb, var(--ink) 28%, transparent); transition: fill .3s; }
+  .people svg.hit { fill: var(--tendon); }
+  .people-count { font-family: var(--font-hand); font-size: 40px; font-weight: 700; color: var(--tendon); line-height: 1; font-variant-numeric: tabular-nums; }
+  @media (max-width: 560px) { .people { grid-template-columns: repeat(10, 1fr); } }
+
+  /* options ladder */
+  .ladder { display: grid; gap: 6px; margin: 6px 0 2px; }
+  .rung { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: start; padding: 7px 12px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper-2); }
+  .rung b { font-family: var(--font-hand); font-size: 26px; line-height: 1; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .rung .t { font-weight: 700; font-size: 18px; }
+  .rung .q { color: var(--ink-soft); font-size: 15px; }
+  .rung.top { border-style: dashed; }
+
+  /* study flow */
+  .flow { display: grid; gap: 8px; margin: 10px 0; }
+  .flow .box { padding: 10px 14px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper-2); font-size: 18px; }
+  .flow .box.good { border-color: var(--bursa); }
+  .flow .box.hot { border-color: var(--hot); }
+  .flow .fork { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .flow .arrow { text-align: center; color: var(--ink-soft); font-size: 22px; line-height: 1; }
+  .flow .fork .lab { font-family: var(--font-hand); font-size: 20px; color: var(--navy); font-weight: 700; margin-bottom: 4px; }
+
+  /* calendar */
+  .timeline { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 18px 0 6px; padding-top: 22px; }
+  .timeline::before { content: ''; position: absolute; left: 6%; right: 6%; top: 8px; height: 4px; background: var(--ink); border-radius: 2px; }
+  .mile { position: relative; text-align: center; }
+  .mile::before { content: ''; position: absolute; left: 50%; top: -20px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--paper); border: 4px solid var(--ink); }
+  .mile.hot::before { background: var(--hot); border-color: var(--hot); }
+  .mile b { display: block; font-family: var(--font-hand); font-size: 22px; line-height: 1; margin-bottom: 6px; }
+  .mile span { font-size: 15px; color: var(--ink-soft); display: block; }
+  @media (max-width: 560px) { .timeline { grid-template-columns: 1fr; padding-top: 0; gap: 6px; } .timeline::before { display: none; } .mile { text-align: left; padding-left: 26px; } .mile::before { left: 0; top: 8px; margin-left: 0; } }
+
+  /* take home */
+  .qr-wrap { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+  .qr-wrap > div:last-child { flex: 1 1 260px; min-width: 0; }
+  .qr { flex: 0 0 auto; width: 190px; height: 190px; background: #fff; padding: 8px; border-radius: 12px; box-sizing: border-box; display: grid; place-items: center; }
+  .qr img, .qr canvas { display: block; max-width: 100%; }
+  .url { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 15px; word-break: break-all; }
+
+  /* ---------- Home ---------- */
+  .home { justify-content: center; align-items: center; text-align: center; gap: 12px; padding-block: 20px; }
+  .home h1 { font-family: var(--font-hand); font-size: clamp(36px, 6vw, 60px); font-weight: 800; margin: 0; line-height: 1; letter-spacing: -.5px; }
+  .home p { margin: 0 0 8px; color: var(--ink-soft); font-size: 18px; }
+  .tiles { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 900px; }
+  .tile { flex: 1 1 220px; max-width: 280px; aspect-ratio: 1 / 1; border: 2px solid var(--ink); border-radius: 22px; background: var(--paper-2);
+          display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; padding: 10px; box-sizing: border-box; }
+  .tile:active { transform: scale(.98); }
+  .tile svg { width: 60%; height: auto; }
+  .tile b { font-family: var(--font-hand); font-size: 28px; font-weight: 700; line-height: 1; }
+  .tile small { color: var(--ink-soft); font-size: 14px; }
+  .tile.soon { opacity: .6; border-style: dashed; }
+  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper);
+           padding: 10px 18px; border-radius: 999px; font-size: 15px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 9; }
+  .toast.show { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drawing .layer, .drawing .draw, .drawing .pop, #cuff-top .intact, #cuff-top .retracted-only, #bursa-shape, .chip, .people svg { transition: none !important; }
+    .drawing .pulse { animation: none; }
+  }
+  @media (max-width: 700px) {
+    .bar h1 { font-size: 22px; }
+    .chip { min-height: 46px; font-size: 15px; padding: 6px 13px; }
+    .row .k { display: none; }
+    .cue { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+
+<div class="app">
+
+  <!-- ================= HOME ================= -->
+  <section class="view home active" id="view-home">
+    <h1>Exam Room Napkin</h1>
+    <p>Tap a joint. Draw it as you talk.</p>
+    <div class="tiles">
+      <div class="tile" role="button" tabindex="0" data-go="shoulder">
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M28 20 L92 20" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <circle cx="60" cy="58" r="24" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
+          <path d="M34 40 A28 28 0 0 0 34 76" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M40 34 A30 30 0 0 1 82 36" stroke="var(--tendon)" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </svg>
+        <b>Shoulder</b><small>rotator cuff, bursitis, biceps</small>
+      </div>
+      <div class="tile soon" role="button" tabindex="0" data-go="hip">
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M24 30 A34 34 0 0 0 24 86" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <circle cx="58" cy="58" r="26" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
+          <path d="M28 34 A32 32 0 0 0 28 82" stroke="var(--tendon)" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M80 70 L104 96" stroke="var(--ink)" stroke-width="12" stroke-linecap="round"/>
+        </svg>
+        <b>Hip</b><small>next module</small>
+      </div>
+      <div class="tile soon" role="button" tabindex="0" data-go="knee">
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <rect x="40" y="4" width="40" height="40" rx="14" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
+          <rect x="38" y="58" width="44" height="40" rx="10" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
+          <path d="M52 44 L66 58 M68 44 L54 58" stroke="var(--tendon)" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <b>Knee</b><small>next module</small>
+      </div>
+    </div>
+    <p style="font-size:14px; margin-top:8px;">Prototype v0.3 · shoulder, drawn the way Dr. Raynor draws it, plus the socket breakout · nothing you draw is saved</p>
+  </section>
+
+  <!-- ================= SHOULDER ================= -->
+  <section class="view" id="view-shoulder">
+    <div class="bar">
+      <button class="btn ghost" id="btn-home" aria-label="Back to joints">‹ Joints</button>
+      <h1>Shoulder</h1>
+      <span class="seg" role="group" aria-label="Which shoulder">
+        <button class="btn on" id="side-right" aria-pressed="true">Right</button>
+        <button class="btn" id="side-left" aria-pressed="false">Left</button>
+      </span>
+      <span class="spacer"></span>
+      <button class="btn" id="btn-draw" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        Draw
+      </button>
+      <button class="btn ghost" id="btn-undo">Undo</button>
+      <button class="btn ghost" id="btn-clear">Clear ink</button>
+      <button class="btn ghost" id="btn-cues" aria-pressed="true">Cues</button>
+      <button class="btn ghost" id="btn-reset">↺ Start over</button>
+    </div>
+
+    <div class="stage" id="stage">
+      <svg class="drawing" viewBox="0 30 1000 640" preserveAspectRatio="xMidYMid meet" aria-label="Napkin sketch of a shoulder, drawn the way Dr. Raynor draws it">
+        <defs>
+          <radialGradient id="glow"><stop offset="0" stop-color="var(--hot)" stop-opacity=".35"/><stop offset="1" stop-color="var(--hot)" stop-opacity="0"/></radialGradient>
+          <symbol id="anchor" viewBox="-6 -12 12 24">
+            <rect x="-4.5" y="-11" width="9" height="22" rx="3.5" fill="var(--anchor)" stroke="var(--suture)" stroke-width="1.2"/>
+            <path d="M-3 -5h6M-3 0h6M-3 5h6" stroke="var(--paper)" stroke-width="1.4"/>
+          </symbol>
+        </defs>
+
+        <!-- ======================= SCENE 1: the shoulder from the front ======================= -->
+        <g id="scene-profile" class="scene on">
+
+          <!-- BALL (humerus): head with the greater tuberosity at top-left, shaft running off the page -->
+          <g class="layer" id="ball">
+            <path class="ink draw" d="M322,226 C306,232 296,246 296,258 C292,285 289,310 291,335 C293,362 297,385 299,405 C306,470 310,600 312,780"/>
+            <path class="ink draw" d="M381,780 C379,700 380,620 381,568 C383,510 386,475 392,451 C402,428 438,410 477,397 C497,388 507,382 508,374 C520,355 526,335 524,312 C522,285 512,255 495,240 C478,229 452,222 428,222 C400,222 378,230 360,240 C350,244 340,238 336,232 C331,228 326,226 322,226"/>
+            <text class="lbl" x="440" y="372" text-anchor="middle">ball</text>
+          </g>
+
+          <!-- SOCKET (glenoid): the curl at the top, the face, the tail at the bottom -->
+          <g class="layer" id="socket">
+            <path class="ink draw" d="M538,206 C548,196 556,204 552,214 C556,250 562,292 563,335 C563,350 561,362 570,368 C600,372 650,368 700,360"/>
+            <text class="lbl" x="588" y="262" text-anchor="start">socket</text>
+          </g>
+
+          <!-- COLLARBONE + BLADE: acromion box, tapered collarbone, the blade's top edge -->
+          <g class="layer" id="blade">
+            <path class="ink draw" d="M552,214 C600,200 700,188 834,180"/>
+            <path class="ink draw" d="M292,118 L462,98 C468,97 472,100 472,106 L474,146 C474,152 470,156 464,156 L296,164 C288,164 284,160 284,154 L284,126 C284,120 288,118 292,118 Z"/>
+            <path class="ink draw" d="M500,101 C620,86 760,70 910,58"/>
+            <path class="ink draw" d="M504,139 C640,124 770,104 900,96"/>
+            <path class="ink draw" d="M504,139 C496,132 496,110 500,101"/>
+            <text class="lbl" x="700" y="58" text-anchor="middle">collarbone</text>
+            <text class="lbl small" x="378" y="88" text-anchor="middle">acromion</text>
+            <text class="lbl" x="720" y="394" text-anchor="start">shoulder blade</text>
+          </g>
+
+          <!-- CUFF: the two around the back (dashed, hugging the back of the ball) -->
+          <g class="layer" id="cuff-back">
+            <path d="M338,246 C380,232 440,232 490,250 C515,262 530,285 536,312" fill="none" stroke="var(--tendon)" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 11" opacity=".42"/>
+            <path d="M324,272 C372,254 432,254 482,272 C505,284 520,302 526,332" fill="none" stroke="var(--tendon)" stroke-width="10" stroke-linecap="round" stroke-dasharray="12 10" opacity=".36"/>
+            <text class="lbl" x="700" y="488" text-anchor="middle">2 around the back (hard to draw)</text>
+          </g>
+
+          <!-- CUFF: the one in front (Brett draws it as a box on the front of the ball, running into the blade) -->
+          <g class="layer" id="cuff-front">
+            <path class="band" d="M720,268 L401,268 C394,268 392,272 392,278 L392,322 C392,328 394,332 401,332 L720,332 Z" stroke="none"/>
+            <path class="ink draw" d="M720,268 L401,268 C394,268 392,272 392,278 L392,322 C392,328 394,332 401,332 L720,332"/>
+            <text class="lbl" x="690" y="318" text-anchor="middle">front</text>
+          </g>
+
+          <!-- CUFF: the one on top -->
+          <g class="layer" id="cuff-top">
+            <path class="intact ink draw band" d="M1000,116 C850,121 700,134 586,150 C520,162 468,182 425,200 C390,214 350,226 312,232 L352,240 C376,232 396,222 420,218 C450,212 480,208 520,204 C600,194 760,178 1000,166 Z"/>
+            <g class="retracted-only">
+              <path class="ink band" d="M1000,116 C850,121 700,134 620,148 C560,158 500,180 445,200 C428,206 410,211 392,216 L418,223 C450,214 490,208 530,204 C620,192 760,176 1000,166 Z"/>
+              <path d="M384,208 l8,8 l7,-9 l8,8 l7,-8 l8,9" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M308,232 C322,229 338,233 352,241" fill="none" stroke="var(--hot)" stroke-width="9" stroke-linecap="butt" stroke-dasharray="6 6" opacity=".7"/>
+              <path d="M394,200 C372,184 342,192 332,222" fill="none" stroke="var(--hot)" stroke-width="3" stroke-dasharray="6 5"/>
+              <path d="M324,210 L331,226 L345,218" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <text class="lbl hot" x="212" y="300" text-anchor="end">full-thickness tear</text>
+              <text class="lbl small hot" x="212" y="328" text-anchor="end">pulled away from the bone</text>
+            </g>
+            <text class="lbl" x="905" y="208" text-anchor="middle">top</text>
+            <text class="lbl small" x="700" y="452" text-anchor="middle">rotator cuff = 4 tendons</text>
+          </g>
+
+          <!-- TENDONITIS: the red zigzag at the insertion, irritated but not torn through -->
+          <g class="layer" id="tear-worn">
+            <circle cx="332" cy="238" r="40" fill="url(#glow)"/>
+            <path class="draw" d="M304,236 L314,249 L324,232 L334,247 L344,232 L354,246 L362,236" fill="none" stroke="var(--hot)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl hot" x="212" y="300" text-anchor="end">tendonitis</text>
+            <text class="lbl small hot" x="212" y="328" text-anchor="end">irritated, not torn through</text>
+          </g>
+
+          <!-- BICEPS: a tube up the front of the arm, the sheath just lateral to the front tendon's insertion, then the ninety-degree turn onto the labrum -->
+          <g class="layer" id="biceps">
+            <path class="tube" d="M336,600 L338,560 L355,560 L354,600 Z" stroke="none"/>
+            <path class="draw" d="M336,600 L338,560" fill="none" stroke="var(--biceps-ink)" stroke-width="3.2" stroke-linecap="round"/>
+            <path class="draw" d="M354,600 L355,560" fill="none" stroke="var(--biceps-ink)" stroke-width="3.2" stroke-linecap="round"/>
+            <g class="upper-part">
+              <path class="tube" d="M338,560 L340,345 L356,345 L355,560 Z" stroke="none"/>
+              <path class="draw" d="M338,560 L340,345" fill="none" stroke="var(--biceps-ink)" stroke-width="3.2" stroke-linecap="round"/>
+              <path class="draw" d="M355,560 L356,345" fill="none" stroke="var(--biceps-ink)" stroke-width="3.2" stroke-linecap="round"/>
+            </g>
+            <g class="joint-part">
+              <path class="tube" d="M340,345 C340,290 385,250 462,236 C500,224 528,218 548,214 L548,230 C528,234 504,240 470,250 C400,262 356,300 356,345 Z" stroke="none"/>
+              <path class="draw" d="M340,345 C340,290 385,250 462,236 C500,224 528,218 548,214" fill="none" stroke="var(--biceps-ink)" stroke-width="3.2" stroke-linecap="round"/>
+              <path class="draw" d="M356,345 C356,300 400,262 470,250 C504,240 528,234 548,230" fill="none" stroke="var(--biceps-ink)" stroke-width="3.2" stroke-linecap="round"/>
+            </g>
+            <path class="draw" d="M332,306 L362,302 M332,320 L362,316 M332,334 L362,330 M333,348 L363,344" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>
+            <g class="pain-part">
+              <circle class="pulse" cx="347" cy="290" r="8" fill="var(--hot)"/>
+              <path d="M262,452 L336,350" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+              <text class="lbl small" x="256" y="459" text-anchor="end">tight little sheath</text>
+              <text class="lbl small" x="256" y="487" text-anchor="end">(hurts right here)</text>
+            </g>
+            <path class="pop" d="M546,203 C556,200 562,208 558,216 C556,222 550,226 546,222 Z" fill="var(--tendon)" opacity=".8"/>
+            <text class="lbl" x="256" y="528" text-anchor="end">biceps</text>
+            <text class="lbl small" x="588" y="236" text-anchor="start">starts on the labrum</text>
+          </g>
+
+          <!-- LABRUM in profile: the bumper all the way around the socket face -->
+          <g class="layer" id="labrum">
+            <path class="draw" d="M546,214 C554,250 560,292 560,335 C560,348 558,358 556,366" fill="none" stroke="var(--tendon)" stroke-width="7" stroke-linecap="round" opacity=".85"/>
+            <text class="lbl small" x="760" y="338" text-anchor="start">labrum, all the way around</text>
+          </g>
+
+          <!-- BURSA: the big balloon under the acromion, draped down the side of the ball -->
+          <g class="layer" id="bursa">
+            <g transform="rotate(30 282 250)"><ellipse id="bursa-shape" class="pop" cx="282" cy="250" rx="34" ry="96" fill="color-mix(in srgb, var(--bursa) 40%, transparent)" stroke="var(--bursa)" stroke-width="2.6"/></g>
+            <text class="lbl" x="228" y="186" text-anchor="end">bursa</text>
+          </g>
+          <g class="layer" id="bursitis">
+                        <text class="lbl hot" x="272" y="96" text-anchor="end">rubs on that bone</text>
+            <text class="lbl small hot" x="272" y="124" text-anchor="end">bad design</text>
+          </g>
+
+          <!-- REPAIR: anchors in the bone, sutures over the tendon -->
+          <g class="layer" id="repair">
+            <use href="#anchor" x="341" y="250" width="14" height="28" transform="rotate(-22 348 264)"/>
+            <use href="#anchor" x="299" y="284" width="14" height="28" transform="rotate(18 306 298)"/>
+            <path class="draw" d="M352,258 C346,222 316,218 306,286" fill="none" stroke="var(--suture)" stroke-width="3.2" stroke-linecap="round"/>
+            <path class="draw" d="M344,260 C332,236 316,236 312,284" fill="none" stroke="var(--suture)" stroke-width="3.2" stroke-linecap="round"/>
+            <text class="lbl" x="212" y="362" text-anchor="end">anchors</text>
+            <text class="lbl small" x="212" y="390" text-anchor="end">crisscross and dunk</text>
+          </g>
+
+          <!-- TENODESIS: cut the biceps at the top of the sheath, move it down the arm -->
+          <g class="layer" id="tenodesis">
+            <path d="M340,284 l16,16 M356,284 l-16,16" fill="none" stroke="var(--hot)" stroke-width="3.6" stroke-linecap="round"/>
+            <path class="draw" d="M348,356 C366,420 364,500 352,546" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-dasharray="7 6"/>
+            <use href="#anchor" x="339" y="548" width="14" height="28"/>
+            <text class="lbl" x="256" y="556" text-anchor="end">cut it, move it down here</text>
+            <text class="lbl small" x="256" y="584" text-anchor="end">no more pistoning in the groove</text>
+          </g>
+        </g>
+
+        <!-- ======================= SCENE 2: the socket, looking straight at it ======================= -->
+        <g id="scene-labrum" class="scene">
+          <g class="layer" id="lab-base">
+            <path id="lab-inner" class="ink draw" d="M500,200 C560,200 608,290 608,380 C608,460 560,516 500,516 C440,516 392,460 392,380 C392,290 440,200 500,200 Z"/>
+            <path id="lab-outer" class="ink draw" d="M500,168 C572,168 640,282 640,380 C640,470 578,548 500,548 C422,548 360,470 360,380 C360,282 428,168 500,168 Z"/>
+            <path id="lab-mid" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="none"/>
+            <text class="lbl" x="316" y="372" text-anchor="end">P</text>
+            <text class="lbl small" x="316" y="400" text-anchor="end">posterior (back)</text>
+            <text class="lbl" x="684" y="372" text-anchor="start">A</text>
+            <text class="lbl small" x="684" y="400" text-anchor="start">anterior (front)</text>
+            <text class="lbl small" x="500" y="330" text-anchor="middle">the socket,</text>
+            <text class="lbl small" x="500" y="358" text-anchor="middle">looking straight at it</text>
+            <text class="lbl" x="348" y="236" text-anchor="end">labrum</text>
+          </g>
+          <g class="layer" id="lab-biceps">
+            <path class="pop" d="M486,176 C492,166 508,166 514,176 C520,186 516,198 500,200 C484,198 480,186 486,176 Z" fill="var(--tendon)" opacity=".85"/>
+            <path class="draw" d="M500,166 L500,110" fill="none" stroke="var(--biceps-ink)" stroke-width="7" stroke-linecap="round"/>
+            <text class="lbl" x="522" y="152" text-anchor="start">biceps, right at 12 o'clock</text>
+          </g>
+          <g class="layer" id="lab-disloc">
+            <path class="seg" data-from="0.30" data-to="0.46" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="var(--hot)" stroke-width="30" opacity=".9"/>
+            <text class="lbl hot" x="646" y="536" text-anchor="start">antero-inferior labral tear</text>
+            <text class="lbl small hot" x="646" y="564" text-anchor="start">Bankart lesion: what happens when it dislocates</text>
+          </g>
+          <g class="layer" id="lab-slap">
+            <path class="ink draw" d="M346,376 L654,376" style="stroke-width:2.6"/>
+            <text class="lbl small" x="500" y="404" text-anchor="middle">equator</text>
+            <path id="lab-slap-hatch" d="" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round"/>
+            <text class="lbl hot" x="500" y="74" text-anchor="middle">SLAP (superior). Biceps tugs on it. Just hurts.</text>
+          </g>
+          <g class="layer" id="lab-post">
+            <path class="seg" data-from="0.50" data-to="0.94" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="var(--hot)" stroke-width="30" opacity=".9"/>
+            <text class="lbl hot" x="336" y="532" text-anchor="end">posterior tear</text>
+            <text class="lbl small hot" x="336" y="560" text-anchor="end">all the way down the back</text>
+          </g>
+        </g>
+      </svg>
+
+      <canvas id="ink" aria-label="Your drawing on top of the sketch"></canvas>
+      <div class="cue" id="cue"></div>
+
+      <!-- ===== CARDS ===== -->
+      <div class="overlay" id="overlay">
+        <div class="card" role="dialog" aria-modal="true" id="card">
+
+          <section data-card="people">
+            <h2>100 people crossing the street</h2>
+            <p class="sub">All of them over 60. None of them have shoulder pain.</p>
+            <div class="people-wrap">
+              <div class="people" id="people"></div>
+              <div class="people-text">
+                <p><span class="people-count" id="people-count">0</span> <span>of them have a rotator cuff tear on MRI.</span></p>
+                <p class="quote">"They just got voluntold to get into an MRI scanner."</p>
+                <p class="kicker">A tear is not harming anything by being there.</p>
+              </div>
+            </div>
+          </section>
+
+          <section data-card="options">
+            <h2>What do we do about you?</h2>
+            <p class="sub">And we have options. Bottom rung first.</p>
+            <div class="ladder">
+              <div class="rung top"><b>5</b><div><div class="t">Surgery</div><div class="q">We have the ability to go fix this. Four poke holes, anchors, back into the bone.</div></div></div>
+              <div class="rung"><b>4</b><div><div class="t">Injection</div><div class="q">One or two: I won't lose any sleep. A gajillion: not good for your cuff.</div></div></div>
+              <div class="rung"><b>3</b><div><div class="t">Medicine</div><div class="q">Anti-inflammatories to calm it down.</div></div></div>
+              <div class="rung"><b>2</b><div><div class="t">Physical therapy</div><div class="q">Never the wrong answer.</div></div></div>
+              <div class="rung"><b>1</b><div><div class="t">Do nothing and live with it</div><div class="q">Keep on keeping on. Always an option.</div></div></div>
+            </div>
+          </section>
+
+          <section data-card="study">
+            <h2>Physical therapy vs. surgery</h2>
+            <p class="sub">Big multicenter study, full-thickness rotator cuff tears.</p>
+            <div class="flow">
+              <div class="box">Full-thickness tear. Start physical therapy.</div>
+              <div class="arrow">↓ six weeks ↓</div>
+              <div class="fork">
+                <div><div class="lab">Getting better?</div><div class="box good">Fine at three months. No surgery needed.</div></div>
+                <div><div class="lab">Not helping?</div><div class="box hot">Surgery then. Did just as well as the people who had surgery on day one.</div></div>
+              </div>
+            </div>
+            <p class="kicker">Biggest predictor of PT working: believing it would.</p>
+          </section>
+
+          <section data-card="calendar">
+            <h2>The recovery calendar</h2>
+            <p class="sub">Day surgery. It's biology, not caution: soft tissue takes this long to heal to bone.</p>
+            <div class="timeline">
+              <div class="mile hot"><b>Day 0</b><span>In and out the same day. Nerve block. Netflix on your own TV.</span></div>
+              <div class="mile"><b>6 weeks</b><span>In a sling. Asking other people for help.</span></div>
+              <div class="mile"><b>3 months</b><span>Tendon is good enough to load. Strengthening starts. Curling twos.</span></div>
+              <div class="mile"><b>4 months</b><span>Totally healed. I'll let you do anything you want to do.</span></div>
+              <div class="mile"><b>6 months</b><span>Full recovery.</span></div>
+            </div>
+          </section>
+
+          <section data-card="home">
+            <h2>Take this home</h2>
+            <p class="sub">Point your phone camera at the code. The drawing and the words are on the website.</p>
+            <div class="qr-wrap">
+              <div class="qr" id="qr"></div>
+              <div>
+                <p class="url" id="qr-url">www.brettraynormd.com/rotator-cuff-repair-faq</p>
+                <p>Questions after you leave: call Jodie at <strong>(214) 265-3210</strong>. That's the bat phone.</p>
+                <p class="quote">"If in a month you're feeling awesome, don't come in and brag about it. Just call."</p>
+              </div>
+            </div>
+          </section>
+
+          <button class="btn on close" id="card-close">Back to the drawing</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chips" id="chips" data-scene="profile">
+      <div class="row scene-profile" id="row-layers">
+        <span class="k">Draw it</span>
+        <button class="chip" data-toggle="skeleton">Ball &amp; socket</button>
+        <button class="chip" data-toggle="blade">Collarbone &amp; blade</button>
+        <button class="chip" data-toggle="cuff">Cuff <span class="dots"><i></i><i></i><i></i></span></button>
+        <button class="chip" data-toggle="biceps">Biceps</button>
+        <button class="chip" data-toggle="labrum">Labrum</button>
+        <button class="chip" data-toggle="bursa">Bursa</button>
+        <button class="chip" data-toggle="bursitis">Bursitis</button>
+        <button class="chip" data-toggle="worn">Tendonitis</button>
+        <button class="chip" data-toggle="off">Full-thickness tear</button>
+        <button class="chip" data-toggle="repair">Repair</button>
+        <button class="chip" data-toggle="tenodesis">Biceps fix</button>
+        <button class="chip scene-chip" data-scene-go="labrum">Look at the socket ▸</button>
+      </div>
+      <div class="row scene-labrum" id="row-labrum">
+        <span class="k">Socket</span>
+        <button class="chip scene-chip" data-scene-go="profile">◂ Back to the shoulder</button>
+        <button class="chip" data-toggle="labBiceps">Biceps at 12</button>
+        <button class="chip" data-toggle="labDisloc">Antero-inferior tear / Bankart</button>
+        <button class="chip" data-toggle="labSlap">SLAP tear</button>
+        <button class="chip" data-toggle="labPost">Posterior tear</button>
+      </div>
+      <div class="row" id="row-cards">
+        <span class="k">Show them</span>
+        <button class="chip card-chip" data-card="people">100 people</button>
+        <button class="chip card-chip" data-card="options">Options</button>
+        <button class="chip card-chip" data-card="study">PT vs surgery</button>
+        <button class="chip card-chip" data-card="calendar">Calendar</button>
+        <button class="chip card-chip" data-card="home">Take home</button>
+        <span class="nav">
+          <button class="chip" id="btn-back">◀ Back</button>
+          <button class="chip primary" id="btn-next">Next ▶</button>
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+
+  /* ---------- views ---------- */
+  const views = { home: $('#view-home'), shoulder: $('#view-shoulder') };
+  function show(name) {
+    Object.values(views).forEach(v => v.classList.remove('active'));
+    views[name].classList.add('active');
+    if (name === 'shoulder') { requestAnimationFrame(sizeCanvas); keepAwake(); }
+  }
+  $$('.tile').forEach(t => {
+    const go = () => {
+      const j = t.dataset.go;
+      if (j === 'shoulder') show('shoulder');
+      else toast(j === 'hip' ? 'Hip is the next module: labrum, cam/pincer, abductors, IT band.' : 'Knee is after hip: meniscus zones, ACL, patella tracking.');
+    };
+    t.addEventListener('click', go);
+    t.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+  $('#btn-home').addEventListener('click', () => show('home'));
+
+  let toastTimer;
+  function toast(msg) {
+    const el = $('#toast'); el.textContent = msg; el.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+  }
+
+  /* ---------- draw-on lengths ---------- */
+  $$('.drawing .draw').forEach(p => {
+    try {
+      const L = Math.ceil(p.getTotalLength());
+      p.style.strokeDasharray = L;
+      p.style.setProperty('--len', L);
+    } catch (e) { /* not a path */ }
+  });
+
+  /* ---------- state ---------- */
+  const SKELETON = () => ({ scene: 'profile', ball: true, socket: true, blade: true, cuff: 0, biceps: false, labrum: false, bursa: false, bursitis: false, tear: 'none', repair: false, tenodesis: false,
+                            labBiceps: false, labDisloc: false, labSlap: false, labPost: false, card: null });
+  let state = SKELETON();
+
+  /* Cue lines: Brett's words, from the 9/28 recording and the rotator cuff canonical script. */
+  const CUES = {
+    skeleton: 'So the shoulder is a ball and socket joint.',
+    blade: 'You’ve got your shoulder blade and collarbone up here.',
+    cuff1: 'Your rotator cuff is four tendons deep inside there. There’s one up top like that…',
+    cuff2: '…there’s one in the front…',
+    cuff3: '…and there’s two around the back that are harder to draw.',
+    biceps: 'The biceps splits in two, and the long head comes up and makes a ninety-degree turn through a tight little sheath right here, and starts onto your labrum right there.',
+    labrum: 'And the labrum goes all the way around like this.',
+    people: 'If I took an MRI of the next hundred people walking across the street over sixty…',
+    worn: 'It can hurt without being torn. The tendon gets irritated where it rubs and works: tendonitis.',
+    off: 'A full-thickness tear goes all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both full thickness.',
+    bursa: 'It can also hurt without being torn. This bone rubs on this bone up here, so in between there’s a little balloon sac called a bursa that helps it glide instead of rub.',
+    bursitis: 'Sometimes it gets angry about doing its job too much, and you get bursitis and tendinitis. The biceps is prone to getting inflamed too.',
+    options: 'The question is, what do we do about you? And we have options.',
+    study: 'If I had an MRI in front of me right now that said tear, I would inject that before I would ever do an operation.',
+    repair: 'We roughen up the bone, stick the tendon back down, and hold it there so it can heal back in.',
+    tenodesis: 'I cut your biceps and move it over here so it doesn’t have to piston in and out of that groove. Extra three minutes.',
+    calendar: 'Sling for six weeks. Load it at three months. Six-month full recovery.',
+    home: 'You have a phone. If this doesn’t work or wears off, you just call Jodie. That’s the bat phone.',
+    labScene: 'If we take the socket and look directly at it: this is posterior, this is anterior. The labrum goes all the way around.',
+    labBiceps: 'And the biceps inserts right at 12 o’clock. Three types of labral tears, in our simple orthopedic minds.',
+    labDisloc: 'Antero-inferior labral tears down here, a Bankart lesion: that’s what happens when the shoulder dislocates.',
+    labSlap: 'Above the equator is a superior labral tear, a SLAP tear, because it’s more fun to say. The biceps tugs on it. No instability, it just hurts. Kind of a vague pain.',
+    labPost: 'The third type: it extends from the superior labrum all the way down the back, below the equator. A posterior labral tear, posterior instability. Doesn’t feel like it’s coming out, just pain in the back with bench press and push-ups.'
+  };
+
+  const layers = {};
+  $$('.drawing .layer').forEach(g => layers[g.id] = g);
+  const on = (id, v) => layers[id].classList.toggle('on', !!v);
+  const chip = k => $(`.chip[data-toggle="${k}"]`);
+
+  let labReady = false;
+  function initLabrum() {
+    if (labReady) return; labReady = true;
+    $$('#scene-labrum .draw').forEach(p => { try { const L = Math.ceil(p.getTotalLength()); p.style.strokeDasharray = L; p.style.setProperty('--len', L); } catch (e) {} });
+    $$('#scene-labrum .seg').forEach(p => {
+      const L = p.getTotalLength(), f1 = +p.dataset.from, f2 = +p.dataset.to;
+      p.style.strokeDasharray = `${(f2 - f1) * L} ${L}`; p.style.strokeDashoffset = `${-f1 * L}`;
+    });
+    const inner = $('#lab-inner'), outer = $('#lab-outer'), Li = inner.getTotalLength(), Lo = outer.getTotalLength();
+    const d = [-0.05, -0.025, 0, 0.025, 0.05].map(f => { const fi = (f + 1) % 1; const a = inner.getPointAtLength(fi * Li), b = outer.getPointAtLength(fi * Lo); return `M${a.x.toFixed(1)},${a.y.toFixed(1)} L${b.x.toFixed(1)},${b.y.toFixed(1)}`; }).join(' ');
+    $('#lab-slap-hatch').setAttribute('d', d);
+  }
+
+  function render(cueKey) {
+    // scenes
+    $('#scene-profile').classList.toggle('on', state.scene === 'profile');
+    $('#scene-labrum').classList.toggle('on', state.scene === 'labrum');
+    if (state.scene === 'labrum') initLabrum();
+    $('#chips').dataset.scene = state.scene;
+
+    // profile layers
+    on('ball', state.ball); on('socket', state.socket); on('blade', state.blade);
+    on('cuff-top', state.cuff >= 1); on('cuff-front', state.cuff >= 2); on('cuff-back', state.cuff >= 3);
+    on('biceps', state.biceps); on('labrum', state.labrum);
+    on('bursa', state.bursa || state.bursitis); layers['bursa'].classList.toggle('angry', state.bursitis); on('bursitis', state.bursitis);
+    on('tear-worn', state.tear === 'worn');
+    layers['cuff-top'].classList.toggle('retracted', state.tear === 'off');
+    on('repair', state.repair);
+    on('tenodesis', state.tenodesis); layers['biceps'].classList.toggle('tenodesed', state.tenodesis);
+
+    // labrum scene layers
+    on('lab-base', state.scene === 'labrum');
+    on('lab-biceps', state.labBiceps); on('lab-disloc', state.labDisloc); on('lab-slap', state.labSlap); on('lab-post', state.labPost);
+
+    // chips
+    chip('skeleton').classList.toggle('on', state.ball && state.socket);
+    chip('blade').classList.toggle('on', state.blade);
+    chip('cuff').classList.toggle('on', state.cuff > 0);
+    $$('.chip[data-toggle="cuff"] .dots i').forEach((d, i) => d.classList.toggle('f', i < state.cuff));
+    chip('biceps').classList.toggle('on', state.biceps);
+    chip('labrum').classList.toggle('on', state.labrum);
+    chip('bursa').classList.toggle('on', state.bursa || state.bursitis);
+    chip('bursitis').classList.toggle('on', state.bursitis);
+    chip('worn').classList.toggle('on', state.tear === 'worn');
+    chip('off').classList.toggle('on', state.tear === 'off');
+    chip('repair').classList.toggle('on', state.repair);
+    chip('tenodesis').classList.toggle('on', state.tenodesis);
+    ['labBiceps', 'labDisloc', 'labSlap', 'labPost'].forEach(k => chip(k).classList.toggle('on', state[k]));
+
+    // card
+    $$('.card section').forEach(s => s.classList.toggle('show', s.dataset.card === state.card));
+    $$('.chip[data-card]').forEach(c => c.classList.toggle('on', c.dataset.card === state.card));
+    $('#overlay').classList.toggle('open', !!state.card);
+    if (state.card === 'people') animatePeople();
+    if (state.card === 'home') makeQR();
+
+    if (cueKey && CUES[cueKey]) $('#cue').textContent = CUES[cueKey];
+  }
+
+  /* ---------- chip toggles ---------- */
+  function toggle(k) {
+    let cue = k;
+    switch (k) {
+      case 'skeleton': { const v = !(state.ball && state.socket); state.ball = v; state.socket = v; if (!v) { state.cuff = 0; state.biceps = false; state.labrum = false; state.bursa = false; state.bursitis = false; state.tear = 'none'; state.repair = false; state.tenodesis = false; } break; }
+      case 'blade': state.blade = !state.blade; break;
+      case 'cuff': state.cuff = (state.cuff + 1) % 4; if (state.cuff === 0) { state.tear = 'none'; state.repair = false; } cue = state.cuff ? 'cuff' + state.cuff : null; break;
+      case 'biceps': state.biceps = !state.biceps; if (!state.biceps) state.tenodesis = false; break;
+      case 'labrum': state.labrum = !state.labrum; break;
+      case 'bursa': { const v = !(state.bursa || state.bursitis); state.bursa = v; if (!v) state.bursitis = false; break; }
+      case 'bursitis': state.bursitis = !state.bursitis; if (state.bursitis) state.bursa = true; break;
+      case 'worn': state.tear = state.tear === 'worn' ? 'none' : 'worn'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; } break;
+      case 'off': state.tear = state.tear === 'off' ? 'none' : 'off'; if (state.tear !== 'none') { state.cuff = Math.max(state.cuff, 1); state.repair = false; } break;
+      case 'repair': state.repair = !state.repair; if (state.repair) { state.cuff = Math.max(state.cuff, 1); state.tear = 'none'; state.bursitis = false; } break;
+      case 'tenodesis': state.tenodesis = !state.tenodesis; if (state.tenodesis) state.biceps = true; break;
+      case 'labBiceps': case 'labDisloc': state[k] = !state[k]; if (!state[k]) cue = null; break;
+      case 'labSlap': state.labSlap = !state.labSlap; if (!state.labSlap) { state.labPost = false; cue = null; } break;
+      case 'labPost': state.labPost = !state.labPost; if (state.labPost) state.labSlap = true; else cue = null; break;
+    }
+    state.card = null;
+    render(cue);
+  }
+  $$('.chip[data-toggle]').forEach(c => c.addEventListener('click', () => toggle(c.dataset.toggle)));
+  $$('.chip[data-scene-go]').forEach(c => c.addEventListener('click', () => {
+    state.scene = c.dataset.sceneGo; state.card = null;
+    if (state.scene === 'labrum') { clearInk(); render('labScene'); } else { clearInk(); render('labrum'); }
+  }));
+  $$('.chip[data-card]').forEach(c => c.addEventListener('click', () => { state.card = state.card === c.dataset.card ? null : c.dataset.card; render(state.card); }));
+  $('#card-close').addEventListener('click', () => { state.card = null; render(); });
+  $('#overlay').addEventListener('click', e => { if (e.target === e.currentTarget) { state.card = null; render(); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.card) { state.card = null; render(); } });
+
+  /* ---------- walkthrough (the order of the talk) ---------- */
+  const STEPS = [
+    ['skeleton', s => { Object.assign(s, SKELETON()); }],
+    ['cuff1',    s => { s.cuff = 1; }],
+    ['cuff2',    s => { s.cuff = 2; }],
+    ['cuff3',    s => { s.cuff = 3; }],
+    ['biceps',   s => { s.biceps = true; }],
+    ['labrum',   s => { s.labrum = true; }],
+    ['people',   s => { s.card = 'people'; }],
+    ['worn',     s => { s.card = null; s.tear = 'worn'; }],
+    ['off',      s => { s.tear = 'off'; }],
+    ['bursa',    s => { s.tear = 'none'; s.bursa = true; }],
+    ['bursitis', s => { s.bursitis = true; }],
+    ['options',  s => { s.card = 'options'; }],
+    ['study',    s => { s.card = 'study'; }],
+    ['repair',   s => { s.card = null; s.bursitis = false; s.tear = 'none'; s.repair = true; }],
+    ['tenodesis',s => { s.tenodesis = true; }],
+    ['calendar', s => { s.card = 'calendar'; }],
+    ['home',     s => { s.card = 'home'; }]
+  ];
+  const CARD_STEPS = new Set(['people', 'options', 'study', 'calendar', 'home']);
+  let step = 0;
+  function goStep(i) {
+    i = Math.max(0, Math.min(STEPS.length - 1, i));
+    state = SKELETON();
+    for (let k = 0; k <= i; k++) STEPS[k][1](state);
+    if (!CARD_STEPS.has(STEPS[i][0])) state.card = null;
+    step = i;
+    render(STEPS[i][0]);
+    $('#btn-next').textContent = i === STEPS.length - 1 ? 'Done ✓' : 'Next ▶';
+  }
+  $('#btn-next').addEventListener('click', () => { if (state.scene !== 'profile') { state.scene = 'profile'; } if (step >= STEPS.length - 1) { goStep(0); clearInk(); } else goStep(step + 1); });
+  $('#btn-back').addEventListener('click', () => { if (state.scene !== 'profile') { state.scene = 'profile'; } goStep(step - 1); });
+  $('#btn-reset').addEventListener('click', () => { goStep(0); clearInk(); });
+
+  /* ---------- cues ---------- */
+  $('#btn-cues').addEventListener('click', e => {
+    const b = e.currentTarget; const now = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', now); b.classList.toggle('on', now); $('#cue').classList.toggle('hidden', !now);
+  });
+  $('#btn-cues').classList.add('on');
+
+  /* ---------- 100 people ---------- */
+  const PEOPLE_HITS = 37;
+  (function buildPeople() {
+    const wrap = $('#people');
+    let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    const idx = Array.from({ length: 100 }, (_, i) => i).sort(() => rnd() - .5).slice(0, PEOPLE_HITS);
+    const hit = new Set(idx);
+    for (let i = 0; i < 100; i++) {
+      const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      s.setAttribute('viewBox', '0 0 20 32'); s.dataset.hit = hit.has(i) ? '1' : '0';
+      s.innerHTML = '<circle cx="10" cy="6" r="5"/><path d="M4 13h12a2 2 0 0 1 2 2v9h-3v8h-4v-8h-2v8H5v-8H2v-9a2 2 0 0 1 2-2z"/>';
+      wrap.appendChild(s);
+    }
+  })();
+  let peopleTimer;
+  function animatePeople() {
+    const all = $$('#people svg'); all.forEach(s => s.classList.remove('hit'));
+    const hits = all.filter(s => s.dataset.hit === '1'); const counter = $('#people-count');
+    counter.textContent = '0'; clearTimeout(peopleTimer);
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { hits.forEach(s => s.classList.add('hit')); counter.textContent = hits.length; return; }
+    let n = 0;
+    const tick = () => { if (n >= hits.length) return; hits[n].classList.add('hit'); n++; counter.textContent = n; peopleTimer = setTimeout(tick, 45); };
+    peopleTimer = setTimeout(tick, 250);
+  }
+
+  /* ---------- QR ---------- */
+  let qrDone = false;
+  function makeQR() {
+    if (qrDone) return;
+    const el = $('#qr'); const url = 'https://www.brettraynormd.com/rotator-cuff-repair-faq';
+    if (window.QRCode) {
+      try { new QRCode(el, { text: url, width: 180, height: 180, colorDark: '#14325c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); qrDone = true; return; } catch (e) { /* fall through */ }
+    }
+    el.innerHTML = '<div style="font-size:13px;color:#14325c;text-align:center;padding:8px">QR needs a connection. Type the address instead.</div>';
+  }
+
+  /* ---------- ink canvas ---------- */
+  const stage = $('#stage'), canvas = $('#ink'), ctx = canvas.getContext('2d');
+  let strokes = [], current = null, drawing = false, activePen = null;
+  function sizeCanvas() {
+    const r = stage.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); redraw();
+  }
+  function inkColor() { return getComputedStyle(document.documentElement).getPropertyValue('--hot').trim() || '#d63a2f'; }
+  function drawStroke(s) {
+    const r = stage.getBoundingClientRect();
+    ctx.strokeStyle = inkColor(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (let i = 1; i < s.pts.length; i++) {
+      const a = s.pts[i - 1], b = s.pts[i];
+      ctx.lineWidth = 3 + 4 * (b.p || .5);
+      ctx.beginPath(); ctx.moveTo(a.x * r.width, a.y * r.height); ctx.lineTo(b.x * r.width, b.y * r.height); ctx.stroke();
+    }
+  }
+  function redraw() { ctx.clearRect(0, 0, canvas.width, canvas.height); strokes.forEach(drawStroke); }
+  function clearInk() { strokes = []; redraw(); }
+  function pos(e) { const r = stage.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, p: e.pointerType === 'pen' ? Math.max(.2, e.pressure || .5) : .5 }; }
+  canvas.addEventListener('pointerdown', e => {
+    if (!drawing) return;
+    if (activePen !== null && e.pointerType !== 'pen') return;
+    if (e.pointerType === 'pen') activePen = e.pointerId;
+    canvas.setPointerCapture(e.pointerId);
+    current = { id: e.pointerId, pts: [pos(e)] }; strokes.push(current);
+    e.preventDefault();
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!current || e.pointerId !== current.id) return;
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+    evs.forEach(ev => current.pts.push(pos(ev)));
+    const last = current.pts.slice(-Math.max(2, evs.length + 1));
+    drawStroke({ pts: last });
+    e.preventDefault();
+  });
+  const end = e => { if (current && e.pointerId === current.id) { if (current.pts.length === 1) current.pts.push(current.pts[0]); redraw(); current = null; } if (e.pointerId === activePen) activePen = null; };
+  canvas.addEventListener('pointerup', end); canvas.addEventListener('pointercancel', end); canvas.addEventListener('pointerleave', end);
+  $('#btn-draw').addEventListener('click', e => {
+    drawing = !drawing; e.currentTarget.classList.toggle('on', drawing); e.currentTarget.setAttribute('aria-pressed', drawing);
+    stage.classList.toggle('drawing-mode', drawing);
+  });
+  $('#btn-undo').addEventListener('click', () => { strokes.pop(); redraw(); });
+  function setSide(side) {
+    const left = side === 'left';
+    $('.drawing').classList.toggle('mirror', left);
+    $('#side-left').classList.toggle('on', left); $('#side-left').setAttribute('aria-pressed', left);
+    $('#side-right').classList.toggle('on', !left); $('#side-right').setAttribute('aria-pressed', !left);
+    clearInk();
+  }
+  $('#side-right').addEventListener('click', () => setSide('right'));
+  $('#side-left').addEventListener('click', () => setSide('left'));
+  $('#btn-clear').addEventListener('click', clearInk);
+  window.addEventListener('resize', sizeCanvas);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', redraw);
+
+  /* ---------- keep the screen awake during a visit ---------- */
+  let lock = null;
+  async function keepAwake() {
+    try { if ('wakeLock' in navigator && !lock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) { lock = null; }
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && views.shoulder.classList.contains('active')) keepAwake(); });
+
+  /* ---------- boot ---------- */
+  goStep(0);
+  sizeCanvas();
+  const boot = () => {};
+  if (window.claude?.hot?.ready) window.claude.hot.ready(boot); else boot();
+})();
+</script>
+
+<script>if ('serviceWorker' in navigator && location.protocol === 'https:') { navigator.serviceWorker.register('/sw.js').catch(() => {}); }</script>
+</body>
+</html>
