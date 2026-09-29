@@ -3,7 +3,7 @@
 Tap-to-reveal anatomy sketches for patient talks, drawn the way Dr. Raynor draws them on paper. Built for an iPad on the exam room counter: the finished sketch appears instantly and the provider reveals, points, and scribbles on it while talking, in any order.
 
 **Repo:** [github.com/raynor621/exam-room-napkin](https://github.com/raynor621/exam-room-napkin)
-**Live:** deployed on Vercel from this repo; every push to `main` auto-deploys (URL in the vault note and in the Vercel project).
+**Live:** [exam-room-napkin.vercel.app](https://exam-room-napkin.vercel.app) (Vercel project `exam-room-napkin`; every push to `main` auto-deploys). The production address is public; preview and deployment-specific URLs stay behind Vercel login.
 
 ## Modules
 
