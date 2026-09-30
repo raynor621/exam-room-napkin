@@ -636,135 +636,139 @@
           </symbol>
         </defs>
 
-        <!-- Right hip seen from the front: the outside of the hip is on the LEFT, the pelvis runs up and to the right. Head centre (470,330), radius 110. -->
+        <!-- Right hip seen from the front: the outside of the hip is on the LEFT, the pelvis runs up and to the right. Head centre (510,330), radius 110. -->
         <g id="h-scene" class="scene on">
 
-          <!-- BALL AND SOCKET: femur (head, neck, greater trochanter, shaft) and the socket arching over the ball -->
+          <!-- BALL AND SOCKET: femur (head, long neck, greater trochanter, shaft) and the socket arching over the ball.
+               Head centre (510,330), radius 110. The neck runs down and to the LEFT from the head, the way Brett draws it:
+               the shaft sits about 170 units lateral to the head, the trochanter's top is below the head's centre. -->
           <g class="layer" id="h-skeleton">
             <g id="h-femur">
-              <path class="ink draw" d="M300,690 L298,470 C296,400 284,330 300,296 C308,276 330,266 352,268 L375,275 A110,110 0 1 1 541,414 C528,440 520,460 516,478 C532,492 534,512 520,520 C512,560 508,620 506,690"/>
+              <path class="ink draw" d="M301,690 C264,625 224,545 221,470 L226,435 C232,410 258,385 281,385 C304,385 328,394 336,410 C370,400 398,372 400,334 A110,110 0 1 1 571,421 C538,443 482,452 436,485 C424,512 418,560 424,600 C428,630 445,660 461,690"/>
+              <text class="lbl small" x="328" y="560" text-anchor="middle">thigh bone</text>
             </g>
-            <text class="lbl" x="470" y="340" text-anchor="middle">ball</text>
-            <text class="lbl small" x="524" y="640" text-anchor="start">thigh bone</text>
-            <path class="ink draw" d="M402,196 A150,150 0 0 1 600,405"/>
-            <path class="ink draw" d="M414,220 A124,124 0 0 1 577,392"/>
-            <path class="ink draw" d="M402,196 L414,220"/>
-            <path class="ink draw" d="M577,392 C590,396 604,404 598,420 C594,430 584,428 580,420"/>
-            <path class="ink draw" d="M398,200 C378,150 388,100 428,62"/>
-            <text class="lbl" x="612" y="192" text-anchor="start">socket</text>
-            <text class="lbl small" x="444" y="76" text-anchor="start">pelvis</text>
+            <text class="lbl" x="510" y="340" text-anchor="middle">ball</text>
+            <path class="ink draw" d="M442,196 A150,150 0 0 1 640,405"/>
+            <path class="ink draw" d="M454,220 A124,124 0 0 1 617,392"/>
+            <path class="ink draw" d="M442,196 L454,220"/>
+            <path class="ink draw" d="M617,392 C630,396 644,404 638,420 C634,430 624,428 620,420"/>
+            <path class="ink draw" d="M438,200 C418,150 428,100 468,62"/>
+            <text class="lbl" x="652" y="192" text-anchor="start">socket</text>
+            <text class="lbl small" x="484" y="76" text-anchor="start">pelvis</text>
           </g>
 
           <!-- CARTILAGE: the smooth lining between ball and socket; arthritis wears it away -->
           <g class="layer" id="h-cartilage">
-            <path class="cart draw" d="M420,232 A117,117 0 0 1 574,383"/>
-            <text class="lbl small" x="612" y="222" text-anchor="start">cartilage</text>
+            <path class="cart draw" d="M460,232 A117,117 0 0 1 614,383"/>
+            <text class="lbl small" x="652" y="222" text-anchor="start">cartilage</text>
           </g>
           <g class="layer" id="h-arthritis">
-            <path d="M448,214 l8,-7 M466,211 l8,-7 M484,212 l8,-6 M502,216 l8,-6" stroke="var(--hot)" stroke-width="3" stroke-linecap="round"/>
-            <text class="lbl hot" x="612" y="252" text-anchor="start">arthritis</text>
-            <text class="lbl small hot" x="612" y="280" text-anchor="start">worn away, bone on bone</text>
+            <path d="M488,214 l8,-7 M506,211 l8,-7 M524,212 l8,-6 M542,216 l8,-6" stroke="var(--hot)" stroke-width="3" stroke-linecap="round"/>
+            <text class="lbl hot" x="652" y="252" text-anchor="start">arthritis</text>
+            <text class="lbl small hot" x="652" y="280" text-anchor="start">worn away, bone on bone</text>
           </g>
 
           <!-- LABRUM: the little bumper on the edge of the socket -->
           <g class="layer" id="h-labrum">
-            <path class="pop" d="M400,194 L416,222 L396,248 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
-            <text class="lbl" x="372" y="150" text-anchor="end">labrum</text>
-            <text class="lbl small" x="372" y="178" text-anchor="end">the bumper on the edge of the socket</text>
+            <path class="pop" d="M440,194 L456,222 L436,248 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
+            <text class="lbl" x="412" y="150" text-anchor="end">labrum</text>
+            <text class="lbl small" x="412" y="178" text-anchor="end">the bumper on the edge of the socket</text>
           </g>
           <g class="layer" id="h-tear">
-            <circle cx="406" cy="212" r="34" fill="url(#h-glow)"/>
-            <path class="draw" d="M398,190 L418,226" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
-            <path d="M392,184 l5,8 l5,-8 l5,8" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <text class="lbl hot" x="372" y="214" text-anchor="end">labral tear</text>
-            <text class="lbl small hot" x="372" y="242" text-anchor="end">torn off the socket edge</text>
+            <circle cx="446" cy="212" r="34" fill="url(#h-glow)"/>
+            <path class="draw" d="M438,190 L458,226" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M432,184 l5,8 l5,-8 l5,8" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl hot" x="412" y="214" text-anchor="end">labral tear</text>
+            <text class="lbl small hot" x="412" y="242" text-anchor="end">torn off the socket edge</text>
           </g>
 
           <!-- THE SHAPES THAT PREDISPOSE: deep socket, shallow socket, cam bump -->
           <g class="layer" id="h-pincer">
-            <path class="band" d="M402,196 A150,150 0 0 0 340,255 L363,268 A124,124 0 0 1 414,220 Z" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="6 5"/>
-            <path class="pop" d="M340,255 L363,268 L342,290 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round" opacity=".9"/>
-            <text class="lbl" x="330" y="96" text-anchor="end">deep socket</text>
-            <text class="lbl small" x="330" y="124" text-anchor="end">the labrum gets bumped into sooner</text>
+            <path class="band" d="M442,196 A150,150 0 0 0 380,255 L403,268 A124,124 0 0 1 454,220 Z" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="6 5"/>
+            <path class="pop" d="M380,255 L403,268 L382,290 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round" opacity=".9"/>
+            <text class="lbl" x="370" y="96" text-anchor="end">deep socket</text>
+            <text class="lbl small" x="370" y="124" text-anchor="end">the labrum gets bumped into sooner</text>
           </g>
           <g class="layer" id="h-dysplasia">
-            <path class="draw" d="M400,198 L476,160" stroke="var(--ink)" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round"/>
-            <path class="pop" d="M400,194 L416,222 L366,266 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".8"/>
-            <path d="M366,300 l10,-22 M378,306 l10,-22 M390,312 l10,-22" stroke="var(--hot)" stroke-width="2.4" stroke-linecap="round"/>
-            <text class="lbl" x="330" y="96" text-anchor="end">shallow socket, big labrum</text>
-            <text class="lbl small" x="330" y="124" text-anchor="end">forces go across it the wrong way: dysplasia</text>
+            <path class="draw" d="M440,198 L516,160" stroke="var(--ink)" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round"/>
+            <path class="pop" d="M440,194 L456,222 L406,266 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".8"/>
+            <path d="M406,300 l10,-22 M418,306 l10,-22 M430,312 l10,-22" stroke="var(--hot)" stroke-width="2.4" stroke-linecap="round"/>
+            <text class="lbl" x="370" y="96" text-anchor="end">shallow socket, big labrum</text>
+            <text class="lbl small" x="370" y="124" text-anchor="end">forces go across it the wrong way: dysplasia</text>
           </g>
+          <!-- CAM: extra bone along the outside of the head-neck junction, the way Brett draws it (a second contour bulging off the neck) -->
           <g class="layer" id="h-cam">
-            <path class="bump pop" d="M348,268 C352,246 366,232 382,238 C392,242 392,252 386,259 L375,275 C368,272 358,270 348,268 Z" fill="color-mix(in srgb, var(--tendon) 30%, transparent)" stroke="var(--ink)" stroke-width="2.6" stroke-linejoin="round"/>
-            <path class="bump-hatch" d="M356,258 l10,-12 M366,262 l12,-14 M376,266 l8,-10" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
-            <path class="shave-line" d="M344,272 C356,262 372,262 390,264" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="5 5"/>
-            <text class="lbl bump-lbl" x="330" y="96" text-anchor="end">cam bump</text>
-            <text class="lbl small bump-lbl" x="330" y="124" text-anchor="end">a big old bump of bone</text>
+            <path class="bump pop" d="M423,262 C398,270 378,292 370,318 C364,344 370,364 386,374 C393,362 399,350 400,334 A110,110 0 0 1 423,262 Z" fill="color-mix(in srgb, var(--tendon) 30%, transparent)" stroke="var(--ink)" stroke-width="2.6" stroke-linejoin="round"/>
+            <path class="bump-hatch" d="M390,300 l10,-10 M380,328 l14,-12 M384,356 l12,-10" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+            <path class="shave-line" d="M419,259 A115,115 0 0 0 395,334 C393,356 387,368 381,378" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="5 5"/>
+            <text class="lbl bump-lbl" x="370" y="96" text-anchor="end">cam bump</text>
+            <text class="lbl small bump-lbl" x="370" y="124" text-anchor="end">a big old bump of bone</text>
           </g>
 
           <!-- FLEX: the femur swings up (animated from script); the flash marks the bump hitting the labrum -->
           <g id="h-impact" opacity="0">
-            <circle cx="398" cy="236" r="30" fill="url(#h-glow)"/>
-            <path d="M370,214 l-12,-10 M384,204 l-6,-14 M360,236 l-16,-2 M412,196 l4,-14" stroke="var(--hot)" stroke-width="3.4" stroke-linecap="round"/>
+            <circle cx="438" cy="236" r="30" fill="url(#h-glow)"/>
+            <path d="M410,214 l-12,-10 M424,204 l-6,-14 M400,236 l-16,-2 M452,196 l4,-14" stroke="var(--hot)" stroke-width="3.4" stroke-linecap="round"/>
           </g>
           <g class="layer" id="h-flex-hint">
-            <path d="M420,620 C470,600 520,600 570,622" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-dasharray="6 5"/>
-            <path d="M560,612 l12,10 l-14,6" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-            <text class="lbl small" x="470" y="598" text-anchor="middle">flex the hip up</text>
+            <path d="M566,553 A230,230 0 0 1 462,555" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-dasharray="6 5"/>
+            <path d="M476,545 l-14,10 l16,6" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl small" x="514" y="532" text-anchor="middle">flex the hip up</text>
           </g>
 
           <!-- SURGERY: shave the socket edge, anchors made of suture, shave the bump, close the capsule -->
           <g class="layer" id="h-repair">
-            <path d="M398,182 l-8,-6 M404,172 l-9,-5 M412,164 l-9,-4" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
-            <use href="#h-anchor" x="406" y="196" width="12" height="24" transform="rotate(-62 412 208)"/>
-            <use href="#h-anchor" x="432" y="183" width="12" height="24" transform="rotate(-45 438 195)"/>
-            <use href="#h-anchor" x="460" y="175" width="12" height="24" transform="rotate(-25 466 187)"/>
-            <path class="draw" d="M412,216 C404,228 400,238 398,248" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
-            <path class="draw" d="M438,204 C426,222 412,236 400,250" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
-            <path class="draw" d="M466,196 C450,216 428,236 404,252" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
-            <text class="lbl" x="540" y="84" text-anchor="start">anchors</text>
-            <text class="lbl small" x="540" y="112" text-anchor="start">made all out of suture</text>
+            <path d="M438,182 l-8,-6 M444,172 l-9,-5 M452,164 l-9,-4" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
+            <use href="#h-anchor" x="446" y="196" width="12" height="24" transform="rotate(-62 452 208)"/>
+            <use href="#h-anchor" x="472" y="183" width="12" height="24" transform="rotate(-45 478 195)"/>
+            <use href="#h-anchor" x="500" y="175" width="12" height="24" transform="rotate(-25 506 187)"/>
+            <path class="draw" d="M452,216 C444,228 440,238 438,248" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="draw" d="M478,204 C466,222 452,236 440,250" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="draw" d="M506,196 C490,216 468,236 444,252" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            <text class="lbl" x="560" y="84" text-anchor="start">anchors</text>
+            <text class="lbl small" x="560" y="112" text-anchor="start">made all out of suture</text>
           </g>
           <g class="layer" id="h-shave">
-            <path d="M336,262 l6,-6 M350,238 l6,-6 M372,226 l4,-8" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
-            <text class="lbl" x="330" y="96" text-anchor="end">bump shaved down</text>
-            <text class="lbl small" x="330" y="124" text-anchor="end">extra room; crutches for a month</text>
+            <path d="M386,352 l8,-5 M390,318 l8,-5 M398,284 l8,-6" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
+            <text class="lbl" x="370" y="96" text-anchor="end">bump shaved down</text>
+            <text class="lbl small" x="370" y="124" text-anchor="end">extra room; crutches for a month</text>
           </g>
           <g class="layer" id="h-capsule">
-            <ellipse class="pop" cx="452" cy="345" rx="152" ry="134" transform="rotate(-18 452 345)" fill="none" stroke="var(--navy)" stroke-width="2.6" stroke-dasharray="9 6"/>
-            <path d="M318,262 L344,246" stroke="var(--hot)" stroke-width="3" stroke-linecap="round"/>
-            <path d="M322,250 l10,12 M332,246 l-10,12 M334,244 l10,12 M344,240 l-10,12" stroke="var(--suture)" stroke-width="2.4" stroke-linecap="round"/>
-            <text class="lbl" x="612" y="470" text-anchor="start">capsule</text>
-            <text class="lbl small" x="612" y="498" text-anchor="start">the lining that holds the hip; closed with sutures</text>
-            <text class="lbl small" x="612" y="526" text-anchor="start">no turning the leg out for three weeks</text>
+            <ellipse class="pop" cx="480" cy="356" rx="165" ry="128" transform="rotate(-41 480 356)" fill="none" stroke="var(--navy)" stroke-width="2.6" stroke-dasharray="9 6"/>
+            <path d="M364,294 L388,268" stroke="var(--hot)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M366,282 l10,12 M376,280 l-10,12 M378,270 l10,12 M388,268 l-10,12" stroke="var(--suture)" stroke-width="2.4" stroke-linecap="round"/>
+            <text class="lbl" x="652" y="470" text-anchor="start">capsule</text>
+            <text class="lbl small" x="652" y="498" text-anchor="start">the lining that holds the hip</text>
+            <text class="lbl small" x="652" y="526" text-anchor="start">closed with sutures</text>
+            <text class="lbl small" x="652" y="554" text-anchor="start">no turning the leg out for three weeks</text>
           </g>
 
           <!-- OUTSIDE THE HIP: abductors, IT band and bursa, the back -->
           <g class="layer" id="h-abductors">
-            <path class="band" d="M338,112 L378,96 C356,160 328,230 312,290 L288,300 C298,236 318,168 338,112 Z" stroke="none"/>
-            <path class="draw" d="M338,112 C318,170 300,240 288,300" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
-            <path class="draw" d="M358,104 C336,166 320,232 300,296" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
-            <path class="draw" d="M378,96 C356,160 330,232 312,290" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
-            <text class="lbl" x="214" y="256" text-anchor="end">abductors</text>
-            <text class="lbl small" x="214" y="282" text-anchor="end">glute med and min</text>
+            <path class="band" d="M378,112 L418,96 C380,190 330,300 298,385 L262,388 C290,300 340,200 378,112 Z" stroke="none"/>
+            <path class="draw" d="M378,112 C340,200 290,300 262,388" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="draw" d="M398,104 C360,200 312,300 280,386" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="draw" d="M418,96 C380,190 330,300 298,385" fill="none" stroke="var(--muscle)" stroke-width="2.6" stroke-linecap="round"/>
+            <text class="lbl" x="160" y="256" text-anchor="end">abductors</text>
+            <text class="lbl small" x="160" y="282" text-anchor="end">glute med and min</text>
           </g>
           <g class="layer" id="h-abtear">
-            <path d="M284,304 l8,-9 l6,9 l7,-9 l6,9 l7,-9" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <text class="lbl hot" x="214" y="318" text-anchor="end">abductor tear</text>
-            <text class="lbl small hot" x="214" y="344" text-anchor="end">common; surgery is not</text>
+            <path d="M258,392 l8,-9 l6,9 l7,-9 l6,9 l7,-9" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl hot" x="160" y="318" text-anchor="end">abductor tear</text>
+            <text class="lbl small hot" x="160" y="344" text-anchor="end">usually no surgery</text>
           </g>
           <g class="layer" id="h-itband">
-            <path class="band" d="M228,60 L252,60 L256,690 L236,690 Z" stroke="none"/>
-            <path class="draw" d="M230,60 L236,690" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
-            <path class="draw" d="M252,60 L256,690" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
-            <ellipse id="h-bursa-shape" class="pop" cx="272" cy="300" rx="13" ry="40" fill="color-mix(in srgb, var(--bursa) 40%, transparent)" stroke="var(--bursa)" stroke-width="2.4"/>
-            <text class="lbl" x="214" y="480" text-anchor="end">IT band</text>
-            <text class="lbl small" x="214" y="506" text-anchor="end">runs from pelvis to knee</text>
-            <text class="lbl small" x="214" y="380" text-anchor="end">bursa: the balloon in between</text>
+            <path class="band" d="M182,60 L206,60 L212,690 L192,690 Z" stroke="none"/>
+            <path class="draw" d="M184,60 L190,690" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+            <path class="draw" d="M206,60 L212,690" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+            <ellipse id="h-bursa-shape" class="pop" cx="222" cy="418" rx="11" ry="32" fill="color-mix(in srgb, var(--bursa) 40%, transparent)" stroke="var(--bursa)" stroke-width="2.4"/>
+            <text class="lbl" x="160" y="480" text-anchor="end">IT band</text>
+            <text class="lbl small" x="160" y="506" text-anchor="end">pelvis to knee</text>
+            <text class="lbl small" x="160" y="380" text-anchor="end">a balloon in between</text>
           </g>
           <g class="layer" id="h-bursitis">
-            <text class="lbl hot" x="214" y="412" text-anchor="end">bursitis</text>
-            <text class="lbl small hot" x="214" y="438" text-anchor="end">angry about its job</text>
+            <text class="lbl hot" x="160" y="412" text-anchor="end">bursitis</text>
+            <text class="lbl small hot" x="160" y="438" text-anchor="end">angry about its job</text>
           </g>
           <g class="layer" id="h-back">
             <rect x="900" y="60" width="52" height="30" rx="6" fill="var(--bone)" stroke="var(--ink)" stroke-width="2.4"/>
@@ -772,8 +776,8 @@
             <rect x="900" y="148" width="52" height="30" rx="6" fill="var(--bone)" stroke="var(--ink)" stroke-width="2.4"/>
             <path d="M900,94 L952,94 M900,138 L952,138" stroke="var(--ink-soft)" stroke-width="3"/>
             <circle cx="893" cy="138" r="7" fill="var(--hot)"/>
-            <path class="draw" d="M926,190 C934,290 880,384 650,392" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round"/>
-            <path d="M664,382 l-14,10 l16,6" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="draw" d="M926,190 C934,290 890,384 690,392" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round"/>
+            <path d="M704,382 l-14,10 l16,6" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
             <text class="lbl" x="880" y="100" text-anchor="end">the back</text>
             <text class="lbl small" x="880" y="126" text-anchor="end">a pinch up here</text>
             <text class="lbl small" x="880" y="152" text-anchor="end">can feel like hip pain</text>
@@ -1260,7 +1264,7 @@
   /* ======================================================================
      HIP: the young hip talk (labrum, bumps, scope) and the outside of the hip
      ====================================================================== */
-  const FLEX_KEYS = '0 470 330; 22 470 330; 22 470 330; 0 470 330';
+  const FLEX_KEYS = '0 510 330; 22 510 330; 22 510 330; 0 510 330';
   modules.hip = makeModule({
     view: views.hip,
     SKELETON: () => ({ ball: true, cartilage: false, arthritis: false, labrum: false, tear: false, pincer: false, dysplasia: false, cam: false, flex: false,
