@@ -154,6 +154,7 @@
   #h-scene.socket-deep .sk-deep { display: inline; }
   #h-scene.socket-shallow .sk-shallow { display: inline; }
   #h-scene.socket-shallow .pelvis-base { display: none; }
+  #h-scene.socket-shallow .sk-notshallow { display: none; }
   #h-scene:not(.socket-deep) .deep-bone { display: none; }
   #h-bursa-shape { transform-box: fill-box; transform-origin: center; transition: transform .4s, fill .4s, stroke .4s; }
   #h-itband.angry #h-bursa-shape { transform: scale(1.35, 1.12); fill: color-mix(in srgb, var(--hot) 55%, transparent); stroke: var(--hot); stroke-width: 3.2; }
@@ -672,7 +673,7 @@
             </g>
             <text class="lbl" x="510" y="340" text-anchor="middle">ball</text>
             <!-- The socket is ONE line until the Cartilage chip adds the inner line, the way Brett draws it (recording 0:09 vs 0:15) -->
-            <g class="sk-base">
+            <g class="sk-notshallow">
               <path class="ink draw" d="M442,196 A150,150 0 0 1 640,405 C653,409 667,417 661,433 C657,443 647,441 643,433"/>
             </g>
             <path class="ink draw pelvis-base" d="M438,200 C418,150 428,100 468,62"/>
@@ -682,13 +683,14 @@
 
           <!-- CARTILAGE: the inner line of the socket plus the smooth lining between ball and socket; arthritis wears it away -->
           <g class="layer" id="h-cartilage">
-            <g class="sk-base">
+            <g class="sk-notshallow">
               <path class="ink draw" d="M442,196 L454,220 A124,124 0 0 1 617,392"/>
               <path class="cart draw" d="M460,232 A117,117 0 0 1 614,383"/>
             </g>
             <g class="sk-deep">
-              <path class="ink draw" d="M374,267 L398,278 A124,124 0 1 1 617,392"/>
-              <path class="cart draw" d="M407,275 A117,117 0 0 1 614,383"/>
+              <!-- the cartilage runs on out under the bony overhang to its tip -->
+              <path class="ink draw" d="M368,261 L399,276 A124,124 0 0 1 454,220"/>
+              <path class="cart draw" d="M409,272 A117,117 0 0 1 460,232"/>
             </g>
             <g class="sk-shallow">
               <path class="ink draw" d="M479,183 L484,209 A124,124 0 0 1 617,392"/>
@@ -704,11 +706,11 @@
 
           <!-- LABRUM: the little bumper on the edge of the socket (it moves to wherever the rim edge is) -->
           <g class="layer" id="h-labrum">
-            <path class="pop sk-base" d="M442,196 L454,220 L413,246 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
-            <path class="pop sk-deep" d="M374,267 L398,278 L382,323 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
-            <path class="pop sk-shallow" d="M479,183 L484,209 L423,233 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
-            <text class="lbl" x="412" y="150" text-anchor="end">labrum</text>
-            <text class="lbl small" x="412" y="178" text-anchor="end">the bumper on the edge of the socket</text>
+            <path class="pop sk-base" d="M442,196 L454,220 L401,242 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
+            <path class="pop sk-deep" d="M368,261 L399,276 L370,325 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
+            <path class="pop sk-shallow" d="M479,183 L484,209 L411,228 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
+            <text class="lbl" x="352" y="150" text-anchor="end">labrum</text>
+            <text class="lbl small" x="352" y="178" text-anchor="end">the bumper on the edge of the socket</text>
           </g>
           <g class="layer" id="h-tear">
             <g class="sk-base">
@@ -717,23 +719,25 @@
               <path d="M432,184 l5,8 l5,-8 l5,8" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
             </g>
             <g class="sk-deep">
-              <circle cx="386" cy="272" r="34" fill="url(#h-glow)"/>
-              <path class="draw" d="M370,265 L401,279" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
-              <path d="M356,258 l7,5 l0,-9 l7,5" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="383" cy="268" r="34" fill="url(#h-glow)"/>
+              <path class="draw" d="M364,259 L402,277" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
+              <path d="M354,252 l7,5 l0,-9 l7,5" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
             </g>
             <g class="sk-shallow">
               <circle cx="482" cy="196" r="34" fill="url(#h-glow)"/>
               <path class="draw" d="M478,179 L485,213" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
               <path d="M470,170 l5,8 l5,-8 l5,8" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
             </g>
-            <text class="lbl hot" x="412" y="214" text-anchor="end">labral tear</text>
-            <text class="lbl small hot" x="412" y="242" text-anchor="end">torn off the socket edge</text>
+            <text class="lbl hot" x="352" y="214" text-anchor="end">labral tear</text>
+            <text class="lbl small hot" x="352" y="242" text-anchor="end">torn off the socket edge</text>
           </g>
 
           <!-- THE SHAPES THAT PREDISPOSE: deep socket and shallow socket redraw the whole rim; cam is the bump on the bone -->
           <g class="layer" id="h-pincer">
             <g class="deep-bone">
-              <path class="ink draw" d="M374,267 A150,150 0 1 1 640,405 C653,409 667,417 661,433 C657,443 647,441 643,433"/>
+              <path class="pop" d="M442,196 C416,208 386,232 368,261 C376,222 398,182 427,163 Z" fill="color-mix(in srgb, var(--ink) 12%, transparent)" stroke="none"/>
+              <path d="M418,192 l-10,-6 M404,208 l-12,-7 M390,228 l-11,-7" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
+              <path class="ink draw" d="M427,163 C398,182 376,222 368,261 C386,232 416,208 442,196"/>
             </g>
             <text class="lbl" x="370" y="96" text-anchor="end">deep socket</text>
             <text class="lbl small" x="370" y="124" text-anchor="end">the labrum gets bumped into sooner</text>
