@@ -140,11 +140,21 @@
   /* ---------- Hip ---------- */
   .drawing .cart { stroke: var(--bursa); stroke-width: 11; fill: none; stroke-linecap: round; opacity: .5; transition: opacity .4s; }
   #h-cartilage.worn .cart { opacity: .25; stroke-dasharray: 3 9 !important; }
+  /* nested layers (the cam and the shave marks ride inside the rotating femur): let them pop/draw on their own toggle */
+  .drawing .layer:not(.on) .pop { transform: scale(.6); }
+  .drawing .layer:not(.on) .draw { stroke-dashoffset: var(--len); }
   #h-cam .shave-line { opacity: 0; transition: opacity .3s; }
-  #h-cam .bump, #h-cam .bump-hatch, #h-cam .bump-lbl { transition: opacity .3s, fill .3s; }
+  #h-cam .bump, #h-cam .bump-hatch, #h-cam-lbl .bump-lbl { transition: opacity .3s, fill .3s; }
   #h-cam.shaved .bump { fill: transparent; stroke-dasharray: 5 5; opacity: .4; }
-  #h-cam.shaved .bump-hatch, #h-cam.shaved .bump-lbl { opacity: 0; }
+  #h-cam.shaved .bump-hatch, #h-cam-lbl.shaved .bump-lbl { opacity: 0; }
   #h-cam.shaved .shave-line { opacity: 1; }
+  /* socket variants: deep and shallow redraw the whole rim; everything that hangs on the rim follows */
+  .drawing .sk-deep, .drawing .sk-shallow { display: none; }
+  #h-scene.socket-deep .sk-base, #h-scene.socket-shallow .sk-base { display: none; }
+  #h-scene.socket-deep .sk-deep { display: inline; }
+  #h-scene.socket-shallow .sk-shallow { display: inline; }
+  #h-scene.socket-shallow .pelvis-base { display: none; }
+  #h-scene:not(.socket-deep) .deep-bone { display: none; }
   #h-bursa-shape { transform-box: fill-box; transform-origin: center; transition: transform .4s, fill .4s, stroke .4s; }
   #h-itband.angry #h-bursa-shape { transform: scale(1.35, 1.12); fill: color-mix(in srgb, var(--hot) 55%, transparent); stroke: var(--hot); stroke-width: 3.2; }
 
@@ -641,25 +651,49 @@
 
           <!-- BALL AND SOCKET: femur (head, long neck, greater trochanter, shaft) and the socket arching over the ball.
                Head centre (510,330), radius 110. The neck runs down and to the LEFT from the head, the way Brett draws it:
-               the shaft sits about 170 units lateral to the head, the trochanter's top is below the head's centre. -->
+               the shaft sits about 170 units lateral to the head, the trochanter's top is below the head's centre.
+               Socket variants: the base socket lives here (.sk-base); Deep socket and Shallow socket redraw the whole rim from
+               their own layers and hide the base one through the socket-deep / socket-shallow classes on #h-scene.
+               Things that hang on the rim (cartilage line, labrum, tear, anchors) carry .sk-base / .sk-deep / .sk-shallow variants. -->
           <g class="layer" id="h-skeleton">
             <g id="h-femur">
               <path class="ink draw" d="M301,690 C264,625 224,545 221,470 L226,435 C232,410 258,385 281,385 C304,385 328,394 336,410 C370,400 398,372 400,334 A110,110 0 1 1 571,421 C538,443 482,452 436,485 C424,512 418,560 424,600 C428,630 445,660 461,690"/>
               <text class="lbl small" x="328" y="560" text-anchor="middle">thigh bone</text>
+              <!-- CAM: extra bone along the outside of the head-neck junction, drawn as a second contour bulging off the neck.
+                   It lives inside the femur group so it swings with the bone during Flex; its labels are in #h-cam-lbl. -->
+              <g class="layer" id="h-cam">
+                <path class="bump pop" d="M423,262 C398,270 378,292 370,318 C364,344 370,364 386,374 C393,362 399,350 400,334 A110,110 0 0 1 423,262 Z" fill="color-mix(in srgb, var(--tendon) 30%, transparent)" stroke="var(--ink)" stroke-width="2.6" stroke-linejoin="round"/>
+                <path class="bump-hatch" d="M390,300 l10,-10 M380,328 l14,-12 M384,356 l12,-10" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
+                <path class="shave-line" d="M419,259 A115,115 0 0 0 395,334 C393,356 387,368 381,378" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="5 5"/>
+              </g>
+              <g class="layer" id="h-shave-marks">
+                <path d="M386,352 l8,-5 M390,318 l8,-5 M398,284 l8,-6" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
+              </g>
             </g>
             <text class="lbl" x="510" y="340" text-anchor="middle">ball</text>
-            <path class="ink draw" d="M442,196 A150,150 0 0 1 640,405"/>
-            <path class="ink draw" d="M454,220 A124,124 0 0 1 617,392"/>
-            <path class="ink draw" d="M442,196 L454,220"/>
-            <path class="ink draw" d="M617,392 C630,396 644,404 638,420 C634,430 624,428 620,420"/>
-            <path class="ink draw" d="M438,200 C418,150 428,100 468,62"/>
+            <!-- The socket is ONE line until the Cartilage chip adds the inner line, the way Brett draws it (recording 0:09 vs 0:15) -->
+            <g class="sk-base">
+              <path class="ink draw" d="M442,196 A150,150 0 0 1 640,405 C653,409 667,417 661,433 C657,443 647,441 643,433"/>
+            </g>
+            <path class="ink draw pelvis-base" d="M438,200 C418,150 428,100 468,62"/>
             <text class="lbl" x="652" y="192" text-anchor="start">socket</text>
-            <text class="lbl small" x="484" y="76" text-anchor="start">pelvis</text>
+            <text class="lbl small" x="512" y="76" text-anchor="start">pelvis</text>
           </g>
 
-          <!-- CARTILAGE: the smooth lining between ball and socket; arthritis wears it away -->
+          <!-- CARTILAGE: the inner line of the socket plus the smooth lining between ball and socket; arthritis wears it away -->
           <g class="layer" id="h-cartilage">
-            <path class="cart draw" d="M460,232 A117,117 0 0 1 614,383"/>
+            <g class="sk-base">
+              <path class="ink draw" d="M442,196 L454,220 A124,124 0 0 1 617,392"/>
+              <path class="cart draw" d="M460,232 A117,117 0 0 1 614,383"/>
+            </g>
+            <g class="sk-deep">
+              <path class="ink draw" d="M374,267 L398,278 A124,124 0 1 1 617,392"/>
+              <path class="cart draw" d="M407,275 A117,117 0 0 1 614,383"/>
+            </g>
+            <g class="sk-shallow">
+              <path class="ink draw" d="M479,183 L484,209 A124,124 0 0 1 617,392"/>
+              <path class="cart draw" d="M494,214 A117,117 0 0 1 614,383"/>
+            </g>
             <text class="lbl small" x="652" y="222" text-anchor="start">cartilage</text>
           </g>
           <g class="layer" id="h-arthritis">
@@ -668,39 +702,50 @@
             <text class="lbl small hot" x="652" y="280" text-anchor="start">worn away, bone on bone</text>
           </g>
 
-          <!-- LABRUM: the little bumper on the edge of the socket -->
+          <!-- LABRUM: the little bumper on the edge of the socket (it moves to wherever the rim edge is) -->
           <g class="layer" id="h-labrum">
-            <path class="pop" d="M440,194 L456,222 L436,248 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
+            <path class="pop sk-base" d="M440,194 L456,222 L436,248 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
+            <path class="pop sk-deep" d="M370,264 L400,279 L402,311 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
+            <path class="pop sk-shallow" d="M478,178 L485,212 L442,243 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".9"/>
             <text class="lbl" x="412" y="150" text-anchor="end">labrum</text>
             <text class="lbl small" x="412" y="178" text-anchor="end">the bumper on the edge of the socket</text>
           </g>
           <g class="layer" id="h-tear">
-            <circle cx="446" cy="212" r="34" fill="url(#h-glow)"/>
-            <path class="draw" d="M438,190 L458,226" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
-            <path d="M432,184 l5,8 l5,-8 l5,8" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <g class="sk-base">
+              <circle cx="446" cy="212" r="34" fill="url(#h-glow)"/>
+              <path class="draw" d="M438,190 L458,226" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
+              <path d="M432,184 l5,8 l5,-8 l5,8" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <g class="sk-deep">
+              <circle cx="388" cy="284" r="34" fill="url(#h-glow)"/>
+              <path class="draw" d="M366,262 L404,281" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
+              <path d="M356,258 l7,5 l0,-9 l7,5" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <g class="sk-shallow">
+              <circle cx="470" cy="205" r="34" fill="url(#h-glow)"/>
+              <path class="draw" d="M477,176 L486,214" stroke="var(--hot)" stroke-width="5" stroke-linecap="round"/>
+              <path d="M470,170 l5,8 l5,-8 l5,8" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
             <text class="lbl hot" x="412" y="214" text-anchor="end">labral tear</text>
             <text class="lbl small hot" x="412" y="242" text-anchor="end">torn off the socket edge</text>
           </g>
 
-          <!-- THE SHAPES THAT PREDISPOSE: deep socket, shallow socket, cam bump -->
+          <!-- THE SHAPES THAT PREDISPOSE: deep socket and shallow socket redraw the whole rim; cam is the bump on the bone -->
           <g class="layer" id="h-pincer">
-            <path class="band" d="M442,196 A150,150 0 0 0 380,255 L403,268 A124,124 0 0 1 454,220 Z" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="6 5"/>
-            <path class="pop" d="M380,255 L403,268 L382,290 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round" opacity=".9"/>
+            <g class="deep-bone">
+              <path class="ink draw" d="M374,267 A150,150 0 1 1 640,405 C653,409 667,417 661,433 C657,443 647,441 643,433"/>
+            </g>
             <text class="lbl" x="370" y="96" text-anchor="end">deep socket</text>
             <text class="lbl small" x="370" y="124" text-anchor="end">the labrum gets bumped into sooner</text>
           </g>
           <g class="layer" id="h-dysplasia">
-            <path class="draw" d="M440,198 L516,160" stroke="var(--ink)" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round"/>
-            <path class="pop" d="M440,194 L456,222 L406,266 Z" fill="var(--tendon)" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" opacity=".8"/>
-            <path d="M406,300 l10,-22 M418,306 l10,-22 M430,312 l10,-22" stroke="var(--hot)" stroke-width="2.4" stroke-linecap="round"/>
+            <path class="ink draw" d="M479,183 A150,150 0 0 1 640,405 C653,409 667,417 661,433 C657,443 647,441 643,433"/>
+            <path class="ink draw" d="M480,186 C466,150 470,100 500,62"/>
+            <path d="M414,296 l10,-22 M426,302 l10,-22 M438,308 l10,-22" stroke="var(--hot)" stroke-width="2.4" stroke-linecap="round"/>
             <text class="lbl" x="370" y="96" text-anchor="end">shallow socket, big labrum</text>
             <text class="lbl small" x="370" y="124" text-anchor="end">forces go across it the wrong way: dysplasia</text>
           </g>
-          <!-- CAM: extra bone along the outside of the head-neck junction, the way Brett draws it (a second contour bulging off the neck) -->
-          <g class="layer" id="h-cam">
-            <path class="bump pop" d="M423,262 C398,270 378,292 370,318 C364,344 370,364 386,374 C393,362 399,350 400,334 A110,110 0 0 1 423,262 Z" fill="color-mix(in srgb, var(--tendon) 30%, transparent)" stroke="var(--ink)" stroke-width="2.6" stroke-linejoin="round"/>
-            <path class="bump-hatch" d="M390,300 l10,-10 M380,328 l14,-12 M384,356 l12,-10" stroke="var(--ink)" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>
-            <path class="shave-line" d="M419,259 A115,115 0 0 0 395,334 C393,356 387,368 381,378" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="5 5"/>
+          <g class="layer" id="h-cam-lbl">
             <text class="lbl bump-lbl" x="370" y="96" text-anchor="end">cam bump</text>
             <text class="lbl small bump-lbl" x="370" y="124" text-anchor="end">a big old bump of bone</text>
           </g>
@@ -718,18 +763,28 @@
 
           <!-- SURGERY: shave the socket edge, anchors made of suture, shave the bump, close the capsule -->
           <g class="layer" id="h-repair">
-            <path d="M438,182 l-8,-6 M444,172 l-9,-5 M452,164 l-9,-4" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
-            <use href="#h-anchor" x="446" y="196" width="12" height="24" transform="rotate(-62 452 208)"/>
-            <use href="#h-anchor" x="472" y="183" width="12" height="24" transform="rotate(-45 478 195)"/>
-            <use href="#h-anchor" x="500" y="175" width="12" height="24" transform="rotate(-25 506 187)"/>
-            <path class="draw" d="M452,216 C444,228 440,238 438,248" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
-            <path class="draw" d="M478,204 C466,222 452,236 440,250" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
-            <path class="draw" d="M506,196 C490,216 468,236 444,252" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            <g class="sk-base">
+              <path d="M438,182 l-8,-6 M444,172 l-9,-5 M452,164 l-9,-4" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
+              <use href="#h-anchor" x="446" y="196" width="12" height="24" transform="rotate(-62 452 208)"/>
+              <use href="#h-anchor" x="472" y="183" width="12" height="24" transform="rotate(-45 478 195)"/>
+              <use href="#h-anchor" x="500" y="175" width="12" height="24" transform="rotate(-25 506 187)"/>
+              <path class="draw" d="M452,216 C444,228 440,238 438,248" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+              <path class="draw" d="M478,204 C466,222 452,236 440,250" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+              <path class="draw" d="M506,196 C490,216 468,236 444,252" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            </g>
+            <g class="sk-shallow">
+              <path d="M480,178 l-6,-8 M490,170 l-5,-9 M500,164 l-4,-9" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
+              <use href="#h-anchor" x="485" y="181" width="12" height="24" transform="rotate(-40 491 193)"/>
+              <use href="#h-anchor" x="514" y="178" width="12" height="24" transform="rotate(-25 520 190)"/>
+              <use href="#h-anchor" x="543" y="181" width="12" height="24" transform="rotate(-8 549 193)"/>
+              <path class="draw" d="M491,205 C478,220 462,232 448,244" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+              <path class="draw" d="M520,202 C500,222 476,238 452,248" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+              <path class="draw" d="M549,204 C524,226 490,244 458,252" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            </g>
             <text class="lbl" x="560" y="84" text-anchor="start">anchors</text>
             <text class="lbl small" x="560" y="112" text-anchor="start">made all out of suture</text>
           </g>
           <g class="layer" id="h-shave">
-            <path d="M386,352 l8,-5 M390,318 l8,-5 M398,284 l8,-6" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
             <text class="lbl" x="370" y="96" text-anchor="end">bump shaved down</text>
             <text class="lbl small" x="370" y="124" text-anchor="end">extra room; crutches for a month</text>
           </g>
@@ -1310,12 +1365,18 @@
         a.setAttribute('attributeName', 'transform'); a.setAttribute('type', 'rotate');
         a.setAttribute('values', FLEX_KEYS); a.setAttribute('keyTimes', '0;0.42;0.6;1'); a.setAttribute('calcMode', 'spline');
         a.setAttribute('keySplines', '0.4 0 0.6 1; 0 0 1 1; 0.4 0 0.6 1'); a.setAttribute('dur', '3s'); a.setAttribute('repeatCount', 'indefinite');
+        /* begin="indefinite" + beginElement(): the swing starts from rest the moment Flex is pressed (a plain begin="0s" is
+           measured from page load, so the phase would be random) and the impact flash starts on the same tick, in sync. */
+        a.setAttribute('begin', 'indefinite');
         femur.appendChild(a);
+        let o = null;
         if (contact) {
-          const o = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+          o = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
           o.setAttribute('attributeName', 'opacity'); o.setAttribute('values', '0;0;1;1;0;0'); o.setAttribute('keyTimes', '0;0.36;0.44;0.62;0.7;1'); o.setAttribute('dur', '3s'); o.setAttribute('repeatCount', 'indefinite');
+          o.setAttribute('begin', 'indefinite');
           im.appendChild(o);
         }
+        try { a.beginElement(); if (o) o.beginElement(); } catch (e) { /* SMIL unavailable: the chip still toggles state */ }
       };
     },
     render(state, api) {
@@ -1325,7 +1386,12 @@
       on('h-labrum', state.labrum || state.tear || state.repair); on('h-tear', state.tear);
       on('h-pincer', state.pincer); on('h-dysplasia', state.dysplasia);
       on('h-cam', state.cam || state.shave); layers['h-cam'].classList.toggle('shaved', state.shave);
-      on('h-repair', state.repair); on('h-shave', state.shave); on('h-capsule', state.capsule);
+      on('h-cam-lbl', state.cam || state.shave); layers['h-cam-lbl'].classList.toggle('shaved', state.shave);
+      on('h-repair', state.repair); on('h-shave', state.shave); on('h-shave-marks', state.shave); on('h-capsule', state.capsule);
+      /* Deep socket redraws the rim until the repair trims it back; shallow socket stays shallow (that is a different operation). */
+      const deep = state.pincer && !state.repair, scene = $('#h-scene');
+      scene.classList.toggle('socket-deep', deep); scene.classList.toggle('socket-shallow', state.dysplasia);
+      const im = $('#h-impact'); if (deep) im.setAttribute('transform', 'translate(-43 54)'); else im.removeAttribute('transform');
       on('h-abductors', state.abductors || state.abtear); on('h-abtear', state.abtear);
       on('h-itband', state.itband || state.bursitis); layers['h-itband'].classList.toggle('angry', state.bursitis); on('h-bursitis', state.bursitis);
       on('h-back', state.back);
