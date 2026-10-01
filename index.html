@@ -524,29 +524,31 @@
           </g>
         </g>
 
-        <!-- ======================= SCENE 2: the socket, looking straight at it ======================= -->
+        <!-- ======================= SCENE 2: the socket, looking straight at it =======================
+             Right shoulder: A (anterior) on the LEFT and P (posterior) on the right, the way Brett draws it (10/1/2026);
+             the Left button mirrors it, so the A always sits on the anterior side. -->
         <g id="scene-labrum" class="scene">
           <g class="layer" id="lab-base">
             <path id="lab-inner" class="ink draw" d="M500,200 C560,200 608,290 608,380 C608,460 560,516 500,516 C440,516 392,460 392,380 C392,290 440,200 500,200 Z"/>
             <path id="lab-outer" class="ink draw" d="M500,168 C572,168 640,282 640,380 C640,470 578,548 500,548 C422,548 360,470 360,380 C360,282 428,168 500,168 Z"/>
             <path id="lab-mid" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="none"/>
-            <text class="lbl" x="316" y="372" text-anchor="end">P</text>
-            <text class="lbl small" x="316" y="400" text-anchor="end">posterior (back)</text>
-            <text class="lbl" x="684" y="372" text-anchor="start">A</text>
-            <text class="lbl small" x="684" y="400" text-anchor="start">anterior (front)</text>
+            <text class="lbl" x="316" y="372" text-anchor="end">A</text>
+            <text class="lbl small" x="316" y="400" text-anchor="end">anterior (front)</text>
+            <text class="lbl" x="684" y="372" text-anchor="start">P</text>
+            <text class="lbl small" x="684" y="400" text-anchor="start">posterior (back)</text>
             <text class="lbl small" x="500" y="330" text-anchor="middle">the socket,</text>
             <text class="lbl small" x="500" y="358" text-anchor="middle">looking straight at it</text>
-            <text class="lbl" x="348" y="236" text-anchor="end">labrum</text>
+            <text class="lbl" x="652" y="236" text-anchor="start">labrum</text>
           </g>
           <g class="layer" id="lab-biceps">
             <path class="pop" d="M486,176 C492,166 508,166 514,176 C520,186 516,198 500,200 C484,198 480,186 486,176 Z" fill="var(--tendon)" opacity=".85"/>
             <path class="draw" d="M500,166 L500,110" fill="none" stroke="var(--biceps-ink)" stroke-width="7" stroke-linecap="round"/>
-            <text class="lbl" x="522" y="152" text-anchor="start">biceps, right at 12 o'clock</text>
+            <text class="lbl" x="478" y="152" text-anchor="end">biceps, right at 12 o'clock</text>
           </g>
           <g class="layer" id="lab-disloc">
-            <path class="seg" data-from="0.30" data-to="0.46" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="var(--hot)" stroke-width="30" opacity=".9"/>
-            <text class="lbl hot" x="646" y="536" text-anchor="start">antero-inferior labral tear</text>
-            <text class="lbl small hot" x="646" y="564" text-anchor="start">Bankart lesion: what happens when it dislocates</text>
+            <path class="seg" data-from="0.54" data-to="0.70" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="var(--hot)" stroke-width="30" opacity=".9"/>
+            <text class="lbl hot" x="354" y="536" text-anchor="end">antero-inferior labral tear</text>
+            <text class="lbl small hot" x="354" y="564" text-anchor="end">Bankart lesion: what happens when it dislocates</text>
           </g>
           <g class="layer" id="lab-slap">
             <path class="ink draw" d="M346,376 L654,376" style="stroke-width:2.6"/>
@@ -555,9 +557,9 @@
             <text class="lbl hot" x="500" y="74" text-anchor="middle">SLAP (superior). Biceps tugs on it. Just hurts.</text>
           </g>
           <g class="layer" id="lab-post">
-            <path class="seg" data-from="0.50" data-to="0.94" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="var(--hot)" stroke-width="30" opacity=".9"/>
-            <text class="lbl hot" x="336" y="532" text-anchor="end">posterior tear</text>
-            <text class="lbl small hot" x="336" y="560" text-anchor="end">all the way down the back</text>
+            <path class="seg" data-from="0.06" data-to="0.50" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="var(--hot)" stroke-width="30" opacity=".9"/>
+            <text class="lbl hot" x="664" y="532" text-anchor="start">posterior tear</text>
+            <text class="lbl small hot" x="664" y="560" text-anchor="start">all the way down the back</text>
           </g>
         </g>
       </svg>
@@ -1305,7 +1307,7 @@
         </g>
 
         <!-- ======================= SCENE 2: the socket, looking straight at it =======================
-             Same pear as the Shoulder module's socket, but with A on the LEFT so it matches the drawing above it
+             Same pear and the same orientation as the Shoulder module's socket (A on the LEFT since v0.7.1), so it matches the drawing above it
              (Brett's 10/1/2026 sketch has A on the left in both). Anchor positions are fractions along the ring (tools/gen_instab.py). -->
         <g id="i-face" class="scene">
          <g transform="translate(0 -40)">
@@ -1433,7 +1435,7 @@
             <p class="sub">Arthroscopic repair. Day surgery. The labrum has to heal back to the bone.</p>
             <div class="timeline">
               <div class="mile hot"><b>Day 0</b><span>In and out the same day. Nerve block.</span></div>
-              <div class="mile"><b>4 to 6 weeks</b><span>In a sling. Motion comes back in steps.</span></div>
+              <div class="mile"><b>6 weeks</b><span>In a sling. Motion comes back in steps.</span></div>
               <div class="mile"><b>2 months</b><span>Strengthening starts.</span></div>
               <div class="mile"><b>5 months</b><span>Throwing program. Skiing.</span></div>
               <div class="mile"><b>6 months</b><span>Contact sports.</span></div>
