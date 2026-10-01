@@ -31,6 +31,7 @@
     --suture: #244a9a;
     --navy: #14325c;           /* practice navy (UI) */
     --navy-soft: #cfe1f5;      /* practice light blue */
+    --capsule: #dde7f1;        /* hip capsule: pale ligament */
     --chip-bg: #ffffff;
     --chip-fg: #14325c;
     --chip-on-bg: #14325c;
@@ -44,7 +45,7 @@
     :root:not([data-theme="light"]) {
       --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --bone: #2b3548;
       --tendon: #e2705f; --muscle: #c9584c; --biceps: #e7b04d; --biceps-ink: #e7b04d; --bursa: #72b3f0; --hot: #ff6b5e;
-      --anchor: #b7bfcc; --suture: #8fb2ff; --navy: #9cc4ee; --navy-soft: #2a4466;
+      --anchor: #b7bfcc; --suture: #8fb2ff; --navy: #9cc4ee; --navy-soft: #2a4466; --capsule: #34445f; --cuff-back: .12;
       --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b;
       --shadow: 0 10px 30px rgba(0,0,0,.5);
       color-scheme: dark;
@@ -53,7 +54,7 @@
   :root[data-theme="dark"] {
     --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --bone: #2b3548;
     --tendon: #e2705f; --muscle: #c9584c; --biceps: #e7b04d; --biceps-ink: #e7b04d; --bursa: #72b3f0; --hot: #ff6b5e;
-    --anchor: #b7bfcc; --suture: #8fb2ff; --navy: #9cc4ee; --navy-soft: #2a4466;
+    --anchor: #b7bfcc; --suture: #8fb2ff; --navy: #9cc4ee; --navy-soft: #2a4466; --capsule: #34445f; --cuff-back: .12;
     --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b;
     --shadow: 0 10px 30px rgba(0,0,0,.5);
     color-scheme: dark;
@@ -105,6 +106,8 @@
   .drawing { font-family: var(--font-hand); }
   .drawing .ink { stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
   .drawing .band { fill: color-mix(in srgb, var(--tendon) 22%, transparent); }
+  /* the two around the back: one see-through cuff of tissue behind the ball */
+  #cuff-back .sheet { opacity: var(--cuff-back, .15); }
   .drawing .lbl { fill: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: -.2px; }
   .drawing .lbl.small { font-size: 17px; font-weight: 500; }
   .drawing .lbl.hot { fill: var(--hot); }
@@ -156,6 +159,22 @@
   #h-scene.socket-shallow .pelvis-base { display: none; }
   #h-scene.socket-shallow .sk-notshallow { display: none; }
   #h-scene:not(.socket-deep) .deep-bone { display: none; }
+  /* capsule: a solid sleeve; the capsulotomy is a window (the patch fades out), closure brings the stitches in */
+  #h-capsule .cap-body { opacity: .96; }
+  #h-scene .ball-lbl { transition: opacity .3s; }
+  #h-scene.capsule-on .ball-lbl { opacity: 0; }
+  #h-capsule .cap-fill { fill: var(--capsule); stroke: none; }
+  #h-capsule .cap-patch-fill { stroke: var(--capsule); stroke-width: 1.5; }
+  #h-capsule .cap-fibers { fill: none; stroke: var(--navy); stroke-width: 1.5; stroke-linecap: round; opacity: .3; }
+  #h-capsule .cap-line { fill: none; stroke: var(--navy); stroke-width: 2.6; stroke-linejoin: round; }
+  #h-capsule .cap-lip { fill: none; stroke: var(--hot); stroke-width: 3; stroke-linecap: round; }
+  #h-capsule .cap-cut { fill: none; stroke: var(--navy); stroke-width: 2.2; stroke-linecap: round; }
+  #h-capsule .cap-stitch { fill: none; stroke: var(--suture); stroke-width: 3; stroke-linecap: round; }
+  #h-capsule .cap-patch, #h-capsule .cap-line, #h-capsule .cap-open-only, #h-capsule .cap-closed-only { transition: opacity .35s ease; }
+  #h-capsule .cap-line-open, #h-capsule .cap-open-only, #h-capsule .cap-closed-only { opacity: 0; }
+  #h-capsule.cut-open .cap-patch, #h-capsule.cut-open .cap-line-closed { opacity: 0; }
+  #h-capsule.cut-open .cap-line-open, #h-capsule.cut-open .cap-open-only { opacity: 1; }
+  #h-capsule.cut-closed .cap-closed-only { opacity: 1; }
   #h-bursa-shape { transform-box: fill-box; transform-origin: center; transition: transform .4s, fill .4s, stroke .4s; }
   #h-itband.angry #h-bursa-shape { transform: scale(1.35, 1.12); fill: color-mix(in srgb, var(--hot) 55%, transparent); stroke: var(--hot); stroke-width: 3.2; }
 
@@ -254,7 +273,7 @@
   .toast.show { opacity: 1; }
 
   @media (prefers-reduced-motion: reduce) {
-    .drawing .layer, .drawing .draw, .drawing .pop, #cuff-top .intact, #cuff-top .retracted-only, #bursa-shape, .chip, .people svg { transition: none !important; }
+    .drawing .layer, .drawing .draw, .drawing .pop, #cuff-top .intact, #cuff-top .retracted-only, #bursa-shape, .chip, .people svg, #h-capsule .cap-patch, #h-capsule .cap-line, #h-capsule .cap-open-only, #h-capsule .cap-closed-only { transition: none !important; }
     .drawing .pulse { animation: none; }
   }
   @media (max-width: 700px) {
@@ -302,7 +321,7 @@
         <b>Knee</b><small>next module</small>
       </div>
     </div>
-    <p style="font-size:14px; margin-top:8px;">Prototype v0.5 · shoulder and hip, drawn the way Dr. Raynor draws them · nothing you draw is saved</p>
+    <p style="font-size:14px; margin-top:8px;">Prototype v0.6 · shoulder and hip, drawn the way Dr. Raynor draws them · nothing you draw is saved</p>
   </section>
 
   <!-- ================= SHOULDER ================= -->
@@ -363,11 +382,19 @@
             <text class="lbl" x="720" y="394" text-anchor="start">shoulder blade</text>
           </g>
 
-          <!-- CUFF: the two around the back (dashed, hugging the back of the ball) -->
+          <!-- CUFF: the two around the back. One broad, see-through cuff of tissue behind the ball (two bands with a seam),
+               running from the back of the blade to the back of the tuberosity. No outlines: it sits behind everything. -->
           <g class="layer" id="cuff-back">
-            <path d="M338,246 C380,232 440,232 490,250 C515,262 530,285 536,312" fill="none" stroke="var(--tendon)" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 11" opacity=".42"/>
-            <path d="M324,272 C372,254 432,254 482,272 C505,284 520,302 526,332" fill="none" stroke="var(--tendon)" stroke-width="10" stroke-linecap="round" stroke-dasharray="12 10" opacity=".36"/>
-            <text class="lbl" x="700" y="488" text-anchor="middle">2 around the back (hard to draw)</text>
+            <defs>
+              <linearGradient id="cuff-back-fade" gradientUnits="userSpaceOnUse" x1="610" y1="0" x2="745" y2="0">
+                <stop offset="0" stop-color="var(--tendon)" stop-opacity="1"/><stop offset="1" stop-color="var(--tendon)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <g class="sheet">
+              <path d="M745,198 C690,202 620,210 566,220 C540,226 512,232 486,232 C450,226 410,226 372,238 C352,244 334,242 322,238 C310,246 302,262 299,280 L298,297 C360,292 470,292 560,290 C620,288 690,284 745,280 Z" fill="url(#cuff-back-fade)"/>
+              <path d="M298,303 C360,298 470,298 560,296 C620,294 690,290 745,286 L745,356 C690,360 620,366 572,366 C540,374 500,384 452,384 C400,384 344,370 297,348 Z" fill="url(#cuff-back-fade)"/>
+            </g>
+            <text class="lbl" x="700" y="488" text-anchor="middle">2 around the back</text>
           </g>
 
           <!-- CUFF: the one in front (Brett draws it as a box on the front of the ball, running into the blade) -->
@@ -671,7 +698,7 @@
                 <path d="M386,352 l8,-5 M390,318 l8,-5 M398,284 l8,-6" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
               </g>
             </g>
-            <text class="lbl" x="510" y="340" text-anchor="middle">ball</text>
+            <text class="lbl ball-lbl" x="510" y="340" text-anchor="middle">ball</text>
             <!-- The socket is ONE line until the Cartilage chip adds the inner line, the way Brett draws it (recording 0:09 vs 0:15) -->
             <g class="sk-notshallow">
               <path class="ink draw" d="M442,196 A150,150 0 0 1 640,405 C653,409 667,417 661,433 C657,443 647,441 643,433"/>
@@ -791,21 +818,57 @@
               <path class="draw" d="M569,220 C557,228 547,228 544,218" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
               <path class="draw" d="M600,243 C586,248 577,244 577,234" fill="none" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
             </g>
-            <text class="lbl" x="560" y="84" text-anchor="start">anchors</text>
-            <text class="lbl small" x="560" y="112" text-anchor="start">made all out of suture</text>
+            <text class="lbl" x="584" y="84" text-anchor="start">anchors</text>
+            <text class="lbl small" x="584" y="112" text-anchor="start">made all out of suture</text>
           </g>
           <g class="layer" id="h-shave">
             <text class="lbl" x="370" y="96" text-anchor="end">bump shaved down</text>
             <text class="lbl small" x="370" y="124" text-anchor="end">extra room; crutches for a month</text>
           </g>
+          <!-- CAPSULE: the sleeve of ligament from the socket rim to the base of the neck, drawn solid like the textbook pictures.
+               Capsulotomy = Brett's interportal cut, parallel to the rim from 12 o'clock toward 3 o'clock (no T limb); it opens as a
+               window onto the labrum. Closure = the same line brought back together with three stitches.
+               Paths are generated (a Coons patch between the rim, the neck base and the two borders): regenerate, do not hand-edit. -->
           <g class="layer" id="h-capsule">
-            <ellipse class="pop" cx="480" cy="356" rx="165" ry="128" transform="rotate(-41 480 356)" fill="none" stroke="var(--navy)" stroke-width="2.6" stroke-dasharray="9 6"/>
-            <path d="M364,294 L388,268" stroke="var(--hot)" stroke-width="3" stroke-linecap="round"/>
-            <path d="M366,282 l10,12 M376,280 l-10,12 M378,270 l10,12 M388,268 l-10,12" stroke="var(--suture)" stroke-width="2.4" stroke-linecap="round"/>
+            <defs>
+              <path id="h-cap-open" d="M422.3,197.5 L426.6,195.4 L431.0,193.4 L435.5,191.6 L440.0,190.0 L443.5,197.9 L447.7,205.5 L452.6,212.7 L458.2,219.2 L464.6,225.1 L471.5,230.3 L479.0,234.6 L486.9,238.2 L495.1,241.0 L503.3,243.8 L511.3,247.1 L519.1,250.8 L526.8,254.9 L534.3,259.2 L541.6,263.9 L548.6,268.9 L555.5,274.2 L562.2,279.7 L568.7,285.4 L574.9,291.4 L581.0,297.7 L586.8,304.1 L592.4,310.7 L597.7,317.5 L602.9,324.5 L607.8,331.6 L612.4,338.9 L616.8,346.4 L621.0,354.0 L625.0,361.7 L628.7,369.5 L632.2,377.4 L635.5,385.4 L638.6,393.6 L641.4,401.7 L644.0,410.0 L636.2,411.1 L628.5,412.6 L620.8,414.5 L613.2,416.8 L605.8,419.5 L598.6,422.6 L591.6,426.2 L584.7,430.1 L577.7,433.6 L570.5,436.9 L563.2,440.0 L555.9,442.8 L548.5,445.5 L541.0,448.0 L533.5,450.4 L525.9,452.7 L518.3,454.8 L510.7,456.7 L503.1,458.8 L495.6,461.3 L488.3,464.4 L481.2,467.7 L474.2,471.4 L467.4,475.4 L460.7,479.6 L454.3,484.1 L448.0,488.9 L442.0,494.0 L433.1,489.1 L424.5,484.0 L415.9,478.5 L407.5,472.9 L399.3,467.0 L391.2,460.9 L383.3,454.7 L375.5,448.2 L367.8,441.6 L360.3,434.9 L353.0,427.9 L345.8,420.8 L338.8,413.5 L332.0,406.0 L335.6,399.4 L338.3,392.3 L340.4,385.0 L342.1,377.6 L343.4,370.2 L344.6,362.7 L345.5,355.2 L346.4,347.6 L347.2,340.1 L347.9,332.6 L348.7,325.0 L349.4,317.5 L350.2,310.0 L351.3,302.5 L352.7,295.0 L354.4,287.7 L356.5,280.4 L359.0,273.2 L361.8,266.2 L365.0,259.3 L368.5,252.6 L372.3,246.1 L374.6,249.9 L377.0,253.6 L379.7,257.2 L382.6,260.5 L385.8,263.7 L389.2,266.6 L392.9,269.2 L396.9,271.5 L401.2,273.6 L405.7,275.3 L410.6,276.6 L415.7,277.7 L421.2,278.4 L426.9,278.7 L433.0,278.7 L439.4,278.3 L446.0,277.9 L452.8,277.4 L460.0,276.9 L467.6,276.3 L475.5,275.6 L483.8,274.9 L492.6,274.2 L502.0,273.5 L512.2,272.8 L523.8,271.7 L518.9,268.5 L513.9,265.3 L508.8,262.3 L503.7,259.5 L498.4,256.8 L493.1,254.2 L487.7,251.9 L482.3,249.7 L476.7,247.7 L471.2,245.7 L465.8,243.4 L460.5,240.8 L455.5,237.8 L450.6,234.5 L446.0,230.8 L441.7,226.8 L437.7,222.5 L434.0,217.9 L430.6,213.1 L427.6,208.0 L424.8,202.9 Z"/>
+              <path id="h-cap-win" d="M422.3,197.5 L416.2,201.1 L410.4,205.0 L404.7,209.2 L399.3,213.7 L394.2,218.5 L389.3,223.6 L384.6,228.9 L380.2,234.4 L376.1,240.1 L372.3,246.1 L374.6,249.9 L377.0,253.6 L379.7,257.2 L382.6,260.5 L385.8,263.7 L389.2,266.6 L392.9,269.2 L396.9,271.5 L401.2,273.6 L405.7,275.3 L410.6,276.6 L415.7,277.7 L421.2,278.4 L426.9,278.7 L433.0,278.7 L439.4,278.3 L446.0,277.9 L452.8,277.4 L460.0,276.9 L467.6,276.3 L475.5,275.6 L483.8,274.9 L492.6,274.2 L502.0,273.5 L512.2,272.8 L523.8,271.7 L518.9,268.5 L513.9,265.3 L508.8,262.3 L503.7,259.5 L498.4,256.8 L493.1,254.2 L487.7,251.9 L482.3,249.7 L476.7,247.7 L471.2,245.7 L465.8,243.4 L460.5,240.8 L455.5,237.8 L450.6,234.5 L446.0,230.8 L441.7,226.8 L437.7,222.5 L434.0,217.9 L430.6,213.1 L427.6,208.0 L424.8,202.9 L422.3,197.5 Z"/>
+              <g id="h-cap-fib">
+              <path d="M459.4,229.0 L440.0,235.8 L422.3,245.3 L406.6,257.1 L392.9,270.5 L381.2,285.1 L371.8,300.8 L364.9,317.3 L360.2,334.3 L356.2,351.8 L352.3,369.5 L347.6,387.4 L340.7,405.0"/>
+              <path d="M492.8,245.1 L472.4,252.8 L453.5,263.0 L436.5,275.5 L421.2,289.3 L407.8,303.8 L396.4,319.0 L387.1,334.7 L379.9,350.6 L373.6,367.0 L367.4,383.8 L360.9,400.7 L352.7,417.5"/>
+              <path d="M526.2,261.5 L505.3,269.0 L485.8,278.9 L467.9,291.2 L451.6,304.7 L436.6,318.7 L423.3,333.3 L411.7,348.2 L402.0,363.4 L393.0,379.1 L384.4,395.5 L375.6,412.3 L365.5,429.1"/>
+              <path d="M556.2,283.6 L535.2,290.5 L515.3,299.8 L497.0,311.4 L479.8,324.1 L463.7,337.1 L448.8,350.4 L435.4,364.1 L423.3,377.8 L412.1,392.3 L401.2,407.8 L390.4,424.0 L378.6,440.4"/>
+              <path d="M582.4,310.1 L561.6,316.0 L541.8,324.3 L523.3,335.0 L505.7,346.5 L488.7,358.1 L472.6,369.8 L457.6,381.7 L443.7,393.6 L430.5,406.5 L417.7,420.7 L405.2,435.7 L392.1,451.4"/>
+              <path d="M604.5,340.1 L584.3,344.8 L564.9,351.8 L546.6,361.1 L528.9,371.2 L511.5,381.1 L494.6,390.9 L478.4,400.8 L462.9,410.5 L448.1,421.5 L433.8,433.9 L419.9,447.5 L405.8,462.0"/>
+              <path d="M622.4,372.6 L603.2,375.9 L584.5,381.4 L566.9,389.3 L549.5,397.7 L531.9,405.6 L514.6,413.2 L497.6,420.8 L480.9,428.1 L464.8,436.8 L449.4,447.3 L434.5,459.1 L419.8,472.1"/>
+              <path d="M634.2,401.2 L616.0,403.2 L598.3,407.3 L581.4,413.8 L564.5,420.6 L547.2,426.8 L529.8,432.5 L512.3,437.9 L495.0,443.1 L478.1,449.8 L462.0,458.4 L446.6,468.6 L431.6,480.2"/>
+              </g>
+              <clipPath id="h-cap-clip-body"><use href="#h-cap-open"/></clipPath>
+              <clipPath id="h-cap-clip-win"><use href="#h-cap-win"/></clipPath>
+            </defs>
+            <g class="cap-body">
+              <use class="cap-fill" href="#h-cap-open"/>
+              <g class="cap-fibers" clip-path="url(#h-cap-clip-body)"><use href="#h-cap-fib"/></g>
+              <g class="cap-patch">
+                <use class="cap-fill cap-patch-fill" href="#h-cap-win"/>
+                <g class="cap-fibers" clip-path="url(#h-cap-clip-win)"><use href="#h-cap-fib"/></g>
+              </g>
+            </g>
+            <path class="cap-line cap-line-closed" d="M440.0,190.0 L443.5,197.9 L447.7,205.5 L452.6,212.7 L458.2,219.2 L464.6,225.1 L471.5,230.3 L479.0,234.6 L486.9,238.2 L495.1,241.0 L503.3,243.8 L511.3,247.1 L519.1,250.8 L526.8,254.9 L534.3,259.2 L541.6,263.9 L548.6,268.9 L555.5,274.2 L562.2,279.7 L568.7,285.4 L574.9,291.4 L581.0,297.7 L586.8,304.1 L592.4,310.7 L597.7,317.5 L602.9,324.5 L607.8,331.6 L612.4,338.9 L616.8,346.4 L621.0,354.0 L625.0,361.7 L628.7,369.5 L632.2,377.4 L635.5,385.4 L638.6,393.6 L641.4,401.7 L644.0,410.0 L636.2,411.1 L628.5,412.6 L620.8,414.5 L613.2,416.8 L605.8,419.5 L598.6,422.6 L591.6,426.2 L584.7,430.1 L577.7,433.6 L570.5,436.9 L563.2,440.0 L555.9,442.8 L548.5,445.5 L541.0,448.0 L533.5,450.4 L525.9,452.7 L518.3,454.8 L510.7,456.7 L503.1,458.8 L495.6,461.3 L488.3,464.4 L481.2,467.7 L474.2,471.4 L467.4,475.4 L460.7,479.6 L454.3,484.1 L448.0,488.9 L442.0,494.0 L433.1,489.1 L424.5,484.0 L415.9,478.5 L407.5,472.9 L399.3,467.0 L391.2,460.9 L383.3,454.7 L375.5,448.2 L367.8,441.6 L360.3,434.9 L353.0,427.9 L345.8,420.8 L338.8,413.5 L332.0,406.0 L336.0,398.5 L338.9,390.4 L341.1,382.2 L342.8,373.8 L344.2,365.4 L345.3,356.9 L346.3,348.4 L347.2,339.9 L348.1,331.4 L348.9,322.9 L349.7,314.4 L350.7,305.9 L352.1,297.5 L354.0,289.2 L356.4,280.9 L359.1,272.9 L362.4,265.0 L366.0,257.2 L370.1,249.7 L374.6,242.4 L379.5,235.4 L384.8,228.7 L390.4,222.4 L396.5,216.3 L402.9,210.7 L409.7,205.5 L416.8,200.7 L424.2,196.6 L432.0,192.9 Z"/>
+            <use class="cap-line cap-line-open" href="#h-cap-open"/>
+            <g class="cap-open-only">
+              <path class="cap-lip" d="M422.3,197.5 L424.8,202.9 L427.6,208.0 L430.6,213.1 L434.0,217.9 L437.7,222.5 L441.7,226.8 L446.0,230.8 L450.6,234.5 L455.5,237.8 L460.5,240.8 L465.8,243.4 L471.2,245.7 L476.7,247.7 L482.3,249.7 L487.7,251.9 L493.1,254.2 L498.4,256.8 L503.7,259.5 L508.8,262.3 L513.9,265.3 L518.9,268.5 L523.8,271.7"/>
+              <path class="cap-lip" d="M372.3,246.1 L374.6,249.9 L377.0,253.6 L379.7,257.2 L382.6,260.5 L385.8,263.7 L389.2,266.6 L392.9,269.2 L396.9,271.5 L401.2,273.6 L405.7,275.3 L410.6,276.6 L415.7,277.7 L421.2,278.4 L426.9,278.7 L433.0,278.7 L439.4,278.3 L446.0,277.9 L452.8,277.4 L460.0,276.9 L467.6,276.3 L475.5,275.6 L483.8,274.9 L492.6,274.2 L502.0,273.5 L512.2,272.8 L523.8,271.7"/>
+            </g>
+            <g class="cap-closed-only">
+              <path class="cap-cut" d="M402.2,211.2 L405.9,218.2 L410.0,224.9 L414.6,231.3 L419.8,237.2 L425.5,242.7 L431.8,247.6 L438.4,252.0 L445.4,255.7 L452.6,258.9 L460.0,261.7 L467.3,264.8 L474.4,268.2 L481.5,271.8 L488.4,275.8 L495.1,279.9 L501.8,284.3"/>
+              <path class="cap-stitch" d="M414.1,220.3 L411.9,238.1 M404.1,228.0 L421.9,230.3 M444.8,248.6 L451.4,265.4 M439.8,260.3 L456.5,253.7 M486.9,267.4 L491.2,284.9 M480.3,278.3 L497.8,274.0"/>
+            </g>
             <text class="lbl" x="652" y="470" text-anchor="start">capsule</text>
             <text class="lbl small" x="652" y="498" text-anchor="start">the lining that holds the hip</text>
-            <text class="lbl small" x="652" y="526" text-anchor="start">closed with sutures</text>
-            <text class="lbl small" x="652" y="554" text-anchor="start">no turning the leg out for three weeks</text>
+            <text class="lbl small cap-open-only" x="652" y="526" text-anchor="start">an incision, so we can work in there</text>
+            <text class="lbl small cap-closed-only" x="652" y="526" text-anchor="start">closed back up with sutures</text>
+            <text class="lbl small cap-closed-only" x="652" y="554" text-anchor="start">no turning the leg out for three weeks</text>
           </g>
 
           <!-- OUTSIDE THE HIP: abductors, IT band and bursa, the back -->
@@ -953,6 +1016,8 @@
         <button class="chip" data-toggle="repair">Repair</button>
         <button class="chip" data-toggle="shave">Shave the bump</button>
         <button class="chip" data-toggle="capsule">Capsule</button>
+        <button class="chip" data-toggle="capsulotomy">Capsulotomy</button>
+        <button class="chip" data-toggle="closure">Capsule closure</button>
       </div>
       <div class="row">
         <span class="k">Outside</span>
@@ -1333,7 +1398,7 @@
   modules.hip = makeModule({
     view: views.hip,
     SKELETON: () => ({ ball: true, cartilage: false, arthritis: false, labrum: false, tear: false, pincer: false, dysplasia: false, cam: false, flex: false,
-                       repair: false, shave: false, capsule: false, abductors: false, abtear: false, itband: false, bursitis: false, back: false, card: null }),
+                       repair: false, shave: false, capsule: false, cut: 'none', abductors: false, abtear: false, itband: false, bursitis: false, back: false, card: null }),
     /* Cue lines: Brett's words from the 9/29 hip recording, plus the young-hip canonical script. */
     CUES: {
       skeleton: 'So the hip is like a ball and socket, kind of like that.',
@@ -1351,7 +1416,9 @@
       pt: 'Somewhere between seventy-two and eighty-three percent of the time we can get people better with PT alone. It’s just the ones that don’t that we go do surgery on.',
       repair: 'We go in with a camera and an instrument, shave the socket back ever so slightly, and put little anchors in the bone, usually made all out of suture. One, two, three, sometimes four, to repair that labrum up to the edge of the socket.',
       shave: 'Then we shave down that little bone spur to give it extra room, to keep it from bumping back up into there. That’s the surgery for it.',
-      capsule: 'There’s a lining, the ligaments that hold the hip, called the capsule. We make an incision in it to work in there, and at the end we close it back together with sutures. So no externally rotating your hip for three weeks.',
+      capsule: 'There’s a lining, the ligaments that hold the hip, called the capsule.',
+      capsulotomy: 'We have to go make an incision in that capsule to be able to work around in there.',
+      closure: 'At the end we close that back together with some sutures to prevent instability afterwards. To protect that, no externally rotating your hip for three weeks.',
       calendar: 'It’s a nice surgery because the incisions are small, but it’s a big recovery. Crutches for a month. Okay at six weeks, pretty good at three months, full recovery is six months.',
       abductors: 'Your hip abductor tendons, the gluteus medius and minimus, sit over here on the outside of your hip and insert right there.',
       abtear: 'You can get tears of those too. Really common. Not common that we have to do surgery on it.',
@@ -1398,9 +1465,10 @@
       on('h-cam', state.cam || state.shave); layers['h-cam'].classList.toggle('shaved', state.shave);
       on('h-cam-lbl', state.cam || state.shave); layers['h-cam-lbl'].classList.toggle('shaved', state.shave);
       on('h-repair', state.repair); on('h-shave', state.shave); on('h-shave-marks', state.shave); on('h-capsule', state.capsule);
+      layers['h-capsule'].classList.toggle('cut-open', state.cut === 'open'); layers['h-capsule'].classList.toggle('cut-closed', state.cut === 'closed');
       /* Deep socket redraws the rim until the repair trims it back; shallow socket stays shallow (that is a different operation). */
       const deep = state.pincer && !state.repair, scene = $('#h-scene');
-      scene.classList.toggle('socket-deep', deep); scene.classList.toggle('socket-shallow', state.dysplasia);
+      scene.classList.toggle('socket-deep', deep); scene.classList.toggle('socket-shallow', state.dysplasia); scene.classList.toggle('capsule-on', state.capsule);
       const im = $('#h-impact'); if (deep) im.setAttribute('transform', 'translate(-43 54)'); else im.removeAttribute('transform');
       on('h-abductors', state.abductors || state.abtear); on('h-abtear', state.abtear);
       on('h-itband', state.itband || state.bursitis); layers['h-itband'].classList.toggle('angry', state.bursitis); on('h-bursitis', state.bursitis);
@@ -1409,11 +1477,12 @@
       if (state.flex !== api.flex.running || (state.flex && contact !== api.flex.contact)) api.setFlex(state.flex, contact);
       chip('skeleton').classList.toggle('on', state.ball);
       ['cartilage', 'arthritis', 'labrum', 'tear', 'pincer', 'dysplasia', 'cam', 'flex', 'repair', 'shave', 'capsule', 'abductors', 'abtear', 'itband', 'bursitis', 'back'].forEach(k => { const c = chip(k); if (c) c.classList.toggle('on', !!state[k]); });
+      chip('capsulotomy').classList.toggle('on', state.cut === 'open'); chip('closure').classList.toggle('on', state.cut === 'closed');
     },
     toggle(state, k) {
       let cue = k;
       switch (k) {
-        case 'skeleton': state.ball = !state.ball; if (!state.ball) { Object.assign(state, { cartilage: false, arthritis: false, labrum: false, tear: false, pincer: false, dysplasia: false, cam: false, flex: false, repair: false, shave: false, capsule: false }); } break;
+        case 'skeleton': state.ball = !state.ball; if (!state.ball) { Object.assign(state, { cartilage: false, arthritis: false, labrum: false, tear: false, pincer: false, dysplasia: false, cam: false, flex: false, repair: false, shave: false, capsule: false, cut: 'none' }); } break;
         case 'cartilage': state.cartilage = !state.cartilage; if (!state.cartilage) state.arthritis = false; break;
         case 'arthritis': state.arthritis = !state.arthritis; if (state.arthritis) state.cartilage = true; break;
         case 'labrum': state.labrum = !state.labrum; if (!state.labrum) { state.tear = false; state.repair = false; cue = null; } break;
@@ -1421,10 +1490,14 @@
         case 'pincer': state.pincer = !state.pincer; if (state.pincer) { state.labrum = true; state.dysplasia = false; state.cam = false; state.shave = false; } else cue = null; break;
         case 'dysplasia': state.dysplasia = !state.dysplasia; if (state.dysplasia) { state.labrum = true; state.pincer = false; state.cam = false; state.shave = false; } else cue = null; break;
         case 'cam': state.cam = !state.cam; if (state.cam) { state.labrum = true; state.shave = false; state.pincer = false; state.dysplasia = false; } else { state.shave = false; cue = null; } break;
-        case 'flex': state.flex = !state.flex; if (state.flex) { cue = ((state.cam && !state.shave) || (state.pincer && !state.repair)) ? 'flex' : 'flexclear'; } else cue = null; break;
+        case 'flex': state.flex = !state.flex; if (state.flex) { state.capsule = false; state.cut = 'none'; cue = ((state.cam && !state.shave) || (state.pincer && !state.repair)) ? 'flex' : 'flexclear'; } else cue = null; break;
         case 'repair': state.repair = !state.repair; if (state.repair) { state.labrum = true; state.tear = false; } else cue = null; break;
         case 'shave': state.shave = !state.shave; if (state.shave) { state.cam = true; } else cue = null; break;
-        case 'capsule': state.capsule = !state.capsule; if (!state.capsule) cue = null; break;
+        /* The capsule is solid, so it hides what is under it and it cannot swing with Flex: turning it on stops Flex, and Flex takes it off.
+           Capsulotomy opens the window, closure stitches it; each takes the other's place, the way Repair replaces Labral tear. */
+        case 'capsule': state.capsule = !state.capsule; if (state.capsule) state.flex = false; else { state.cut = 'none'; cue = null; } break;
+        case 'capsulotomy': if (state.cut === 'open') { state.cut = 'none'; cue = null; } else { state.cut = 'open'; state.capsule = true; state.flex = false; } break;
+        case 'closure': if (state.cut === 'closed') { state.cut = 'none'; cue = null; } else { state.cut = 'closed'; state.capsule = true; state.flex = false; } break;
         case 'abductors': state.abductors = !state.abductors; if (!state.abductors) { state.abtear = false; cue = null; } break;
         case 'abtear': state.abtear = !state.abtear; if (state.abtear) state.abductors = true; else cue = null; break;
         case 'itband': state.itband = !state.itband; if (!state.itband) { state.bursitis = false; cue = null; } break;
@@ -1449,8 +1522,10 @@
       ['shave',     s => { s.shave = true; }],
       ['flexclear', s => { s.flex = true; }],
       ['capsule',   s => { s.flex = false; s.capsule = true; }],
+      ['capsulotomy', s => { s.cut = 'open'; }],
+      ['closure',   s => { s.cut = 'closed'; }],
       ['calendar',  s => { s.card = 'calendar'; }],
-      ['abductors', s => { s.card = null; s.capsule = false; s.abductors = true; }],
+      ['abductors', s => { s.card = null; s.capsule = false; s.cut = 'none'; s.abductors = true; }],
       ['itband',    s => { s.itband = true; }],
       ['bursitis',  s => { s.bursitis = true; }],
       ['back',      s => { s.bursitis = false; s.back = true; }],
