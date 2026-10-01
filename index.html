@@ -175,6 +175,31 @@
   #h-bursa-shape { transform-box: fill-box; transform-origin: center; transition: transform .4s, fill .4s, stroke .4s; }
   #h-itband.angry #h-bursa-shape { transform: scale(1.35, 1.12); fill: color-mix(in srgb, var(--hot) 55%, transparent); stroke: var(--hot); stroke-width: 3.2; }
 
+  /* ---------- Shoulder instability ---------- */
+  .chips[data-scene="cut"] .scene-face, .chips[data-scene="face"] .scene-cut { display: none; }
+  .chip.action { border-style: double; border-width: 4px; }
+  #i-cut .capo { fill: none; stroke: var(--navy); stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+  #i-cut .capi { fill: none; stroke: var(--capsule); stroke-width: 6.5; stroke-linecap: round; stroke-linejoin: round; }
+  .drawing .icart { fill: none; stroke: var(--bursa); stroke-width: 5; stroke-linecap: round; opacity: .6; transition: opacity .4s; }
+  #i-cut.worn .icart { opacity: .3; stroke-dasharray: 3 8; }
+  /* while the dislocation plays: results wait for their moment, front-side labels step out of the ball's way */
+  .drawing .after, .drawing .after-tear, .drawing .la, .drawing .dim { transition: opacity .35s ease; }
+  #i-cut.playing .after, #i-cut.playing .la { opacity: 0; transition: none; }
+  #i-cut.playing .dim { opacity: .25; }
+  #i-cut.playing:not(.torn-now) .after-tear { opacity: 0; transition: none; }
+  #i-golf .tee-chip { opacity: 0; transition: opacity .3s; }
+  #i-golf .tee-ok { transition: opacity .3s; }
+  #i-golf.chipped .tee-ok { opacity: 0; }
+  #i-golf.chipped .tee-chip { opacity: 1; }
+  /* this view has the longest title and the most chips: tighten it on the smaller iPads so the drawing keeps its room */
+  @media (max-width: 1100px) {
+    #view-instab .bar h1 { font-size: 22px; }
+    #view-instab .bar { gap: 6px; }
+    #view-instab .bar .btn { padding: 6px 11px; }
+    #view-instab .row .k { display: none; }
+    #view-instab .chip { min-height: 48px; padding: 6px 14px; font-size: 16px; }
+  }
+
   /* ---------- Chips ---------- */
   .chips { display: flex; flex-direction: column; gap: 8px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
   .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -257,12 +282,12 @@
   .home { justify-content: center; align-items: center; text-align: center; gap: 12px; padding-block: 20px; }
   .home h1 { font-family: var(--font-hand); font-size: clamp(36px, 6vw, 60px); font-weight: 800; margin: 0; line-height: 1; letter-spacing: -.5px; }
   .home p { margin: 0 0 8px; color: var(--ink-soft); font-size: 18px; }
-  .tiles { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 900px; }
-  .tile { flex: 1 1 220px; max-width: 280px; aspect-ratio: 1 / 1; border: 2px solid var(--ink); border-radius: 22px; background: var(--paper-2);
+  .tiles { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1040px; }
+  .tile { flex: 1 1 190px; max-width: 250px; aspect-ratio: 1 / 1; border: 2px solid var(--ink); border-radius: 22px; background: var(--paper-2);
           display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; padding: 10px; box-sizing: border-box; }
   .tile:active { transform: scale(.98); }
   .tile svg { width: 60%; height: auto; }
-  .tile b { font-family: var(--font-hand); font-size: 28px; font-weight: 700; line-height: 1; }
+  .tile b { font-family: var(--font-hand); font-size: 28px; font-weight: 700; line-height: 1.05; text-wrap: balance; }
   .tile small { color: var(--ink-soft); font-size: 14px; }
   .tile.soon { opacity: .6; border-style: dashed; }
   .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper);
@@ -300,6 +325,17 @@
         </svg>
         <b>Shoulder</b><small>rotator cuff, bursitis, biceps</small>
       </div>
+      <div class="tile" role="button" tabindex="0" data-go="instab">
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M42 68 Q62 75 82 68 M42 68 L55 86 L57 100 M82 68 L69 86 L67 100" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M82 68 L76 70 L87 60 Z" fill="var(--tendon)" stroke="var(--tendon)" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M40 72 L46 80 L33 76 Z" fill="var(--hot)" stroke="var(--hot)" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="50" cy="40" r="25" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
+          <path d="M22 16 C12 22 8 32 10 42" stroke="var(--hot)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M4 34 L10 43 L18 36" stroke="var(--hot)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <b>Shoulder instability</b><small>dislocations, labrum, bone loss</small>
+      </div>
       <div class="tile" role="button" tabindex="0" data-go="hip">
         <svg viewBox="0 0 120 100" aria-hidden="true">
           <path d="M24 30 A34 34 0 0 0 24 86" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/>
@@ -318,7 +354,7 @@
         <b>Knee</b><small>next module</small>
       </div>
     </div>
-    <p style="font-size:14px; margin-top:8px;">Prototype v0.6 · shoulder and hip, drawn the way Dr. Raynor draws them · nothing you draw is saved</p>
+    <p style="font-size:14px; margin-top:8px;">Prototype v0.7 · shoulder, shoulder instability and hip, drawn the way Dr. Raynor draws them · nothing you draw is saved</p>
   </section>
 
   <!-- ================= SHOULDER ================= -->
@@ -1041,6 +1077,442 @@
       </div>
     </div>
   </section>
+
+  <!-- ================= SHOULDER INSTABILITY ================= -->
+  <section class="view" id="view-instab">
+    <div class="bar">
+      <button class="btn ghost js-home" aria-label="Back to joints">&#8249; Joints</button>
+      <h1>Shoulder instability</h1>
+      <span class="seg" role="group" aria-label="Which shoulder">
+        <button class="btn on js-side-right" aria-pressed="true">Right</button>
+        <button class="btn js-side-left" aria-pressed="false">Left</button>
+      </span>
+      <span class="spacer"></span>
+      <button class="btn js-draw" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        Draw
+      </button>
+      <button class="btn ghost js-undo">Undo</button>
+      <button class="btn ghost js-clear">Clear ink</button>
+      <button class="btn ghost js-cues" aria-pressed="true">Cues</button>
+      <button class="btn ghost js-reset">&#8634; Start over</button>
+    </div>
+
+    <div class="stage js-stage">
+      <svg class="drawing" viewBox="0 56 1000 540" preserveAspectRatio="xMidYMid meet" aria-label="Napkin sketch of a shoulder dislocation: a golf ball on a tee, drawn the way Dr. Raynor draws it">
+        <defs>
+          <radialGradient id="i-glow"><stop offset="0" stop-color="var(--hot)" stop-opacity=".4"/><stop offset="1" stop-color="var(--hot)" stop-opacity="0"/></radialGradient>
+          <symbol id="i-anchor" viewBox="-6 -12 12 24">
+            <rect x="-4.5" y="-11" width="9" height="22" rx="3.5" fill="var(--anchor)" stroke="var(--suture)" stroke-width="1.2"/>
+            <path d="M-3 -5h6M-3 0h6M-3 5h6" stroke="var(--paper)" stroke-width="1.4"/>
+          </symbol>
+        </defs>
+
+        <!-- ======================= SCENE 1: the shoulder cut across, seen from above =======================
+             Brett's sketch (10/1/2026 recording): the ball sits on the socket like a golf ball on a tee. Ball centre (440,262),
+             radius 116; socket rim at (355, 372) (front) and (525, 372) (back). Right shoulder: A on the left, P on the right; Left mirrors it.
+             Generated by tools/gen_instab.py. The ball, the front labrum, both ligament bands and the dent are posed by the script. -->
+        <g id="i-cut" class="scene on">
+
+          <!-- CUFF MUSCLES: one in the front, the ones around the back. Behind everything, see-through. -->
+          <g class="layer" id="i-cuff">
+            <g class="dim"><path d="M416,150 C395,128 350,120 322.6,144.6 A166,166 0 0 0 284,318.8 C290,350 294,380 296,410 C300,480 306,560 312,650" fill="none" stroke="var(--ink)" stroke-width="26.5" stroke-linecap="butt" opacity=".55"/><path d="M416,150 C395,128 350,120 322.6,144.6 A166,166 0 0 0 284,318.8 C290,350 294,380 296,410 C300,480 306,560 312,650" fill="none" stroke="var(--paper)" stroke-width="22.5" stroke-linecap="butt"/><path d="M416,150 C395,128 350,120 322.6,144.6 A166,166 0 0 0 284,318.8 C290,350 294,380 296,410 C300,480 306,560 312,650" fill="none" stroke="var(--tendon)" stroke-width="22.5" stroke-linecap="butt" opacity=".24"/><path d="M464,150 C485,128 530,120 557.4,144.6 A166,166 0 0 1 596,318.8 C590,350 586,380 584,410 C580,480 574,560 568,650" fill="none" stroke="var(--ink)" stroke-width="26.5" stroke-linecap="butt" opacity=".55"/><path d="M464,150 C485,128 530,120 557.4,144.6 A166,166 0 0 1 596,318.8 C590,350 586,380 584,410 C580,480 574,560 568,650" fill="none" stroke="var(--paper)" stroke-width="22.5" stroke-linecap="butt"/><path d="M464,150 C485,128 530,120 557.4,144.6 A166,166 0 0 1 596,318.8 C590,350 586,380 584,410 C580,480 574,560 568,650" fill="none" stroke="var(--tendon)" stroke-width="22.5" stroke-linecap="butt" opacity=".24"/></g>
+            <text class="lbl" x="644" y="280" text-anchor="start">rotator cuff muscles</text>
+          </g>
+
+          <!-- LIGAMENTS (capsule): from the labrum, round the ball, to the humerus. Both bands are drawn by the script. -->
+          <g class="layer" id="i-capsule">
+            <path class="capo" id="i-capP-o" d=""/><path class="capi" id="i-capP-i" d=""/>
+            <path class="capo" id="i-capA-o" d=""/><path class="capi" id="i-capA-i" d=""/>
+            <g class="la">
+              <path d="M244,170 L310,198" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+              <text class="lbl" x="236" y="176" text-anchor="end">ligaments</text>
+              <text class="lbl small" x="236" y="200" text-anchor="end">from the ball to the labrum</text>
+            </g>
+          </g>
+
+          <!-- SOCKET: the tee. A shallow cup on a neck that narrows down toward the shoulder blade. -->
+          <g class="layer" id="i-skeleton">
+            <path class="ink draw" d="M355,372 C364,398 396,440 402,474 C405,520 408,580 410,650"/>
+            <path class="ink draw" d="M355,372 Q440,396 525,372"/>
+            <path class="ink draw" d="M525,372 C516,398 484,440 478,474 C475,520 472,580 470,650"/>
+            <text class="lbl" x="440" y="436" text-anchor="middle">socket</text>
+            <text class="lbl small" x="976" y="84" text-anchor="end" style="fill:var(--ink-soft)">looking down from above</text>
+            <g class="la">
+              <text class="lbl" x="236" y="300" text-anchor="end">A</text>
+              <text class="lbl small" x="236" y="324" text-anchor="end">front</text>
+            </g>
+            <text class="lbl" x="644" y="322" text-anchor="start">P</text>
+            <text class="lbl small" x="644" y="346" text-anchor="start">back</text>
+          </g>
+
+          <!-- CARTILAGE on the socket (the ball's cartilage rides with the ball, in #i-cart-ball) -->
+          <g class="layer" id="i-cart">
+            <path class="icart" d="M361,371 Q440,392.5 519,371"/>
+          </g>
+
+          <!-- BONE LOSS: the front corner of the socket chipped away. #i-chip is shown by the script (its opacity follows the pose). -->
+          <g id="i-chip" opacity="0">
+            <path d="M346,363 L400,374 L400,387 L381,415 L365,412 Z" fill="var(--paper)" stroke="none"/>
+            <path d="M355,372 L396,381 L374,409 Z" fill="color-mix(in srgb, var(--hot) 16%, transparent)" stroke="var(--hot)" stroke-width="2" stroke-dasharray="4 4" stroke-linejoin="round"/>
+            <path d="M396,381 L389,387 L392,392 L383,397 L385,403 L378,404 L374,409" fill="none" stroke="var(--ink)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <g class="layer" id="i-boneloss">
+            <g class="la after">
+              <text class="lbl hot" x="236" y="496" text-anchor="end">bone loss</text>
+              <text class="lbl small hot" x="236" y="520" text-anchor="end">a tee with a chip in it</text>
+            </g>
+          </g>
+
+          <!-- LATARJET: the coracoid (with its little tendon) cut and screwed onto the front of the socket to fill the chip. -->
+          <g class="layer" id="i-latarjet">
+            <path d="M404,486 C380,478 340,474 318,480 C308,484 308,500 318,504 C345,508 380,512 406,516" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-dasharray="6 5" stroke-linecap="round"/>
+            <path d="M384,472 L380,520" fill="none" stroke="var(--hot)" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+            <text class="lbl small" x="440" y="508" text-anchor="middle" style="fill:var(--ink-soft)">cut here</text>
+            <path d="M352,426 C332,444 312,466 302,500 C296,524 292,548 290,580" fill="none" stroke="var(--tendon)" stroke-width="12" stroke-linecap="round" opacity=".3"/>
+            <path class="draw" d="M350,470 C340,458 342,446 352,438" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M342,440 L353,437 L353,448" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="pop" d="M396,381 L334,364 L352,426 L380,421 L374,409 Z" fill="var(--bone)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M346,376 l16,4 M349,390 l18,4 M353,404 l16,3" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" opacity=".45" fill="none"/>
+            <g stroke="var(--anchor)" stroke-linecap="round" fill="none">
+              <path class="draw" d="M338,382 L400,406" stroke-width="5.5"/><path d="M335,390 L341,374" stroke-width="5.5"/>
+              <path class="draw" d="M346,407 L406,430" stroke-width="5.5"/><path d="M343,415 L349,399" stroke-width="5.5"/>
+            </g>
+            <g class="la">
+              <text class="lbl" x="236" y="496" text-anchor="end">Latarjet</text>
+              <text class="lbl small" x="236" y="520" text-anchor="end">bone moved here, two screws</text>
+            </g>
+          </g>
+
+          <!-- LABRUM: the bumper on each edge of the socket. The front one moves (points set by the script). -->
+          <g class="layer" id="i-labrum">
+            <polygon points="525,372 501,378 542,344" fill="var(--tendon)" fill-opacity=".85" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+            <polygon id="i-labA" points="355,372 379,378 338,344" fill="var(--tendon)" fill-opacity=".85" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+            <g class="la">
+              <path d="M244,382 L322,358" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+              <text class="lbl" x="236" y="388" text-anchor="end">labrum</text>
+              <text class="lbl small" x="236" y="412" text-anchor="end">the bumper on the edge</text>
+            </g>
+          </g>
+
+          <!-- LABRAL TEAR: pulled off the front edge of the socket -->
+          <g class="layer" id="i-tear">
+            <g class="after-tear">
+              <circle cx="352" cy="374" r="34" fill="url(#i-glow)"/>
+              <path d="M343,366 l8,5 l-6,5 l9,4 l-5,6" fill="none" stroke="var(--hot)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <g class="la after">
+              <text class="lbl hot" x="236" y="442" text-anchor="end">labral tear</text>
+              <text class="lbl small hot" x="236" y="466" text-anchor="end">torn off the edge of the socket</text>
+            </g>
+          </g>
+
+          <!-- REPAIR: an all-suture anchor in the bone, the suture round the labrum and the ligaments -->
+          <g class="layer" id="i-repair">
+            <use href="#i-anchor" x="365" y="378" width="16" height="32" transform="rotate(-26 373 394)"/>
+            <path class="draw" d="M366,381 C340,380 318,350 334,334 C352,322 376,352 373,379" fill="none" stroke="var(--suture)" stroke-width="3.6" stroke-linecap="round"/>
+            <g class="la">
+              <text class="lbl" x="236" y="442" text-anchor="end">anchor, made of suture</text>
+              <text class="lbl small" x="236" y="466" text-anchor="end">labrum and ligaments back up</text>
+            </g>
+          </g>
+
+          <!-- BALL: translated along the way out (#i-ballT) and rotated (#i-ballR) by the script -->
+          <g class="layer" id="i-ball">
+            <g id="i-ballT">
+              <g id="i-ballR">
+                <circle class="ink draw" cx="440" cy="262" r="116" style="fill:var(--paper)"/>
+                <g class="layer" id="i-cart-ball"><path class="icart" d="M353.4,334.6 A113,113 0 0 0 526.6,334.6"/></g>
+                <g id="i-bite" opacity="0">
+                  <path id="i-bite-fill" d="" fill="var(--paper)" stroke="none"/>
+                  <path id="i-bite-tint" d="" fill="color-mix(in srgb, var(--hot) 26%, transparent)" stroke="none"/>
+                  <path id="i-bite-erase" d="" fill="none" stroke="var(--paper)" stroke-width="7"/>
+                  <path id="i-bite-line" d="" fill="none" stroke="var(--hot)" stroke-width="3.2" stroke-linecap="round"/>
+                </g>
+                <g class="layer" id="i-hagl-mark">
+                  <circle cx="388" cy="146" r="26" fill="url(#i-glow)"/>
+                  <path d="M375,149 l6,-8 l5,8 l6,-9 l5,8" fill="none" stroke="var(--hot)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+              </g>
+              <text class="lbl" x="440" y="268" text-anchor="middle">ball</text>
+            </g>
+          </g>
+
+          <!-- HILL-SACHS: the dent in the back of the ball (the dent itself is #i-bite, inside the ball) -->
+          <g class="layer" id="i-hs">
+            <g class="after">
+              <path d="M598,148 L534,178" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+              <text class="lbl hot" x="604" y="118" text-anchor="start">Hill-Sachs dent</text>
+              <text class="lbl small hot" x="604" y="142" text-anchor="start">the back of the ball hits the rim</text>
+            </g>
+          </g>
+
+          <!-- REMPLISSAGE: anchors in the dent, the cuff and capsule pulled down into it -->
+          <g class="layer" id="i-remp">
+            <path class="pop" d="M602,172 C582,184 560,196 549,203 C539,209 539,221 549,226 C568,224 590,216 610,208 Z" fill="color-mix(in srgb, var(--tendon) 55%, var(--paper))" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
+            <use href="#i-anchor" x="519" y="196" width="11" height="22" transform="rotate(66 524.5 207)"/>
+            <use href="#i-anchor" x="524" y="214" width="11" height="22" transform="rotate(84 529.5 225)"/>
+            <path class="draw" d="M533,205 C548,200 560,200 566,206 M538,224 C552,224 562,220 568,214" fill="none" stroke="var(--suture)" stroke-width="3" stroke-linecap="round"/>
+            <text class="lbl" x="644" y="214" text-anchor="start">remplissage</text>
+            <text class="lbl small" x="644" y="238" text-anchor="start">the cuff sewn down into the dent</text>
+          </g>
+
+          <!-- the flash where the ball hits the front rim (opacity set by the script) -->
+          <g id="i-impact" opacity="0">
+            <circle cx="353" cy="368" r="52" fill="url(#i-glow)"/>
+            <path d="M353,330 l0,-16 M320,344 l-12,-11 M386,344 l12,-11 M312,372 l-16,0" stroke="var(--hot)" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+          </g>
+
+          <!-- labels for the ligament states -->
+          <g class="layer" id="i-stretch">
+            <g class="la after">
+              <text class="lbl hot" x="236" y="236" text-anchor="end">stretched out</text>
+              <text class="lbl small hot" x="236" y="260" text-anchor="end">easier for it to come out</text>
+            </g>
+          </g>
+          <g class="layer" id="i-lax">
+            <g class="la">
+              <text class="lbl" x="236" y="236" text-anchor="end">loose ligaments</text>
+              <text class="lbl small" x="236" y="260" text-anchor="end">the muscles make up for it</text>
+            </g>
+          </g>
+          <g class="layer" id="i-hagl">
+            <g class="la">
+              <text class="lbl hot" x="330" y="84" text-anchor="end">HAGL lesion</text>
+              <text class="lbl small hot" x="330" y="108" text-anchor="end">torn off the ball side. Rare.</text>
+            </g>
+          </g>
+
+          <!-- GOLF BALL ON A TEE: Brett's analogy, drawn beside the joint in the same orientation (ball on top, front on the left).
+               With bone loss the tee has a chip in it and the ball keeps falling off the front (the module script moves #i-gball). -->
+          <g class="layer" id="i-golf">
+            <rect x="728" y="316" width="246" height="208" rx="16" fill="var(--paper-2)" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="7 6"/>
+            <text class="lbl small tee-ok" x="851" y="342" text-anchor="middle">a golf ball on a tee</text>
+            <path d="M744,510 L958,510" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M760,510 l4,-9 M772,510 l-3,-8 M930,510 l4,-9 M942,510 l-3,-8 M915,510 l2,-7" stroke="var(--ink-soft)" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path class="tee-ok" d="M819,432 Q851,446 883,432 L861,456 L855,506 L851,516 L847,506 L841,456 Z" fill="var(--bone)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+            <g class="tee-chip">
+              <path d="M838,439 Q851,444 883,432 L861,456 L855,506 L851,516 L847,506 L841,456 L836,450 L841,445 Z" fill="var(--bone)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M838,439 L841,445 L836,450 L841,456" fill="none" stroke="var(--hot)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M819,432 Q828,437 838,439 L841,445 L836,450 L841,456 Z" fill="color-mix(in srgb, var(--hot) 18%, transparent)" stroke="var(--hot)" stroke-width="2" stroke-dasharray="4 4" stroke-linejoin="round"/>
+              <text class="lbl small hot" x="851" y="342" text-anchor="middle">a tee with a chip in it</text>
+            </g>
+            <g id="i-gball">
+              <circle cx="851" cy="398" r="40" fill="var(--bone)" stroke="var(--ink)" stroke-width="3"/>
+              <g fill="color-mix(in srgb, var(--ink) 22%, transparent)"><circle cx="835" cy="384" r="3.2"/><circle cx="853" cy="376" r="3.2"/><circle cx="869" cy="388" r="3.2"/><circle cx="829" cy="402" r="3.2"/><circle cx="847" cy="394" r="3.2"/><circle cx="865" cy="404" r="3.2"/><circle cx="839" cy="416" r="3.2"/><circle cx="857" cy="420" r="3.2"/><circle cx="875" cy="412" r="3.2"/></g>
+            </g>
+          </g>
+        </g>
+
+        <!-- ======================= SCENE 2: the socket, looking straight at it =======================
+             Same pear as the Shoulder module's socket, but with A on the LEFT so it matches the drawing above it
+             (Brett's 10/1/2026 sketch has A on the left in both). Anchor positions are fractions along the ring (tools/gen_instab.py). -->
+        <g id="i-face" class="scene">
+         <g transform="translate(0 -40)">
+          <g class="layer" id="if-base">
+            <path id="if-inner" class="ink draw" d="M500,200 C560,200 608,290 608,380 C608,460 560,516 500,516 C440,516 392,460 392,380 C392,290 440,200 500,200 Z"/>
+            <path id="if-outer" class="ink draw" d="M500,168 C572,168 640,282 640,380 C640,470 578,548 500,548 C422,548 360,470 360,380 C360,282 428,168 500,168 Z"/>
+            <text class="lbl" x="316" y="352" text-anchor="end">A</text>
+            <text class="lbl small" x="316" y="378" text-anchor="end">anterior (front)</text>
+            <text class="lbl" x="684" y="352" text-anchor="start">P</text>
+            <text class="lbl small" x="684" y="378" text-anchor="start">posterior (back)</text>
+            <text class="lbl small" x="500" y="330" text-anchor="middle">the socket,</text>
+            <text class="lbl small" x="500" y="358" text-anchor="middle">looking straight at it</text>
+            <text class="lbl" x="652" y="236" text-anchor="start">labrum</text>
+            <text class="lbl small" x="652" y="262" text-anchor="start">goes all the way around</text>
+          </g>
+          <g class="layer" id="if-boneloss">
+            <path d="M475.0,512.6 L471.0,511.4 L467.0,510.0 L463.1,508.4 L459.2,506.7 L455.5,504.8 L451.8,502.7 L448.2,500.5 L444.7,498.1 L441.4,495.6 L438.1,492.9 L434.9,490.1 L431.9,487.2 L428.9,484.2 L426.1,481.1 L423.4,477.8 L420.8,474.5 L418.3,471.1 L415.9,467.6 L413.7,464.0 L411.6,460.4 L409.6,456.7 L407.7,452.9 L405.9,449.1 L404.2,445.2 L402.7,441.3 L401.2,437.3 L399.9,433.3 L398.7,429.3 L397.6,425.2 L396.6,421.1 L395.7,417.0 L394.9,412.9 L394.2,408.7 L393.6,404.5 L393.1,400.3 L392.7,396.1 L392.4,391.9 L392.2,387.7 L392.0,383.5 L392.0,379.3 L392.0,375.1 L392.2,370.9 L392.3,366.6 Z" fill="color-mix(in srgb, var(--hot) 22%, var(--paper))" stroke="none"/>
+            <path d="M471.0,511.4 L467.0,510.0 L463.1,508.4 L459.2,506.7 L455.5,504.8 L451.8,502.7 L448.2,500.5 L444.7,498.1 L441.4,495.6 L438.1,492.9 L434.9,490.1 L431.9,487.2 L428.9,484.2 L426.1,481.1 L423.4,477.8 L420.8,474.5 L418.3,471.1 L415.9,467.6 L413.7,464.0 L411.6,460.4 L409.6,456.7 L407.7,452.9 L405.9,449.1 L404.2,445.2 L402.7,441.3 L401.2,437.3 L399.9,433.3 L398.7,429.3 L397.6,425.2 L396.6,421.1 L395.7,417.0 L394.9,412.9 L394.2,408.7 L393.6,404.5 L393.1,400.3 L392.7,396.1 L392.4,391.9 L392.2,387.7 L392.0,383.5 L392.0,379.3 L392.0,375.1 L392.2,370.9" fill="none" stroke="var(--paper)" stroke-width="6"/>
+            <path d="M471.0,511.4 L467.0,510.0 L463.1,508.4 L459.2,506.7 L455.5,504.8 L451.8,502.7 L448.2,500.5 L444.7,498.1 L441.4,495.6 L438.1,492.9 L434.9,490.1 L431.9,487.2 L428.9,484.2 L426.1,481.1 L423.4,477.8 L420.8,474.5 L418.3,471.1 L415.9,467.6 L413.7,464.0 L411.6,460.4 L409.6,456.7 L407.7,452.9 L405.9,449.1 L404.2,445.2 L402.7,441.3 L401.2,437.3 L399.9,433.3 L398.7,429.3 L397.6,425.2 L396.6,421.1 L395.7,417.0 L394.9,412.9 L394.2,408.7 L393.6,404.5 L393.1,400.3 L392.7,396.1 L392.4,391.9 L392.2,387.7 L392.0,383.5 L392.0,379.3 L392.0,375.1 L392.2,370.9" fill="none" stroke="var(--hot)" stroke-width="2" stroke-dasharray="5 5"/>
+            <path d="M475.0,512.6 L392.3,366.6" fill="none" stroke="var(--ink)" stroke-width="3.2" stroke-linecap="round"/>
+          </g>
+          <g class="layer" id="if-boneloss-lbl">
+            <text class="lbl hot" x="316" y="424" text-anchor="end">bone loss</text>
+            <text class="lbl small hot" x="316" y="450" text-anchor="end">the chip in the tee</text>
+          </g>
+          <g class="layer" id="if-tear">
+            <path class="tearseg" data-from="0.535" data-to="0.70" d="M500,184 C566,184 624,286 624,380 C624,465 569,532 500,532 C431,532 376,465 376,380 C376,286 434,184 500,184 Z" fill="none" stroke="var(--hot)" stroke-width="30" opacity=".9"/>
+            <text class="lbl hot" x="330" y="480" text-anchor="end">antero-inferior labral tear</text>
+            <text class="lbl small hot" x="330" y="506" text-anchor="end">a Bankart lesion</text>
+          </g>
+          <g class="layer" id="if-latarjet">
+            <path class="pop" d="M469.1,502.2 L398.2,377.0 L363.4,396.8 L434.3,521.9 Z" fill="var(--bone)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="431.8" cy="477.0" r="8.5" fill="var(--anchor)" stroke="var(--ink)" stroke-width="2"/><path d="M427.3,477.0 h9 M431.8,472.5 v9" stroke="var(--paper)" stroke-width="2" stroke-linecap="round"/><circle cx="400.7" cy="421.9" r="8.5" fill="var(--anchor)" stroke="var(--ink)" stroke-width="2"/><path d="M396.2,421.9 h9 M400.7,417.4 v9" stroke="var(--paper)" stroke-width="2" stroke-linecap="round"/>
+            <text class="lbl" x="316" y="424" text-anchor="end">Latarjet</text>
+            <text class="lbl small" x="316" y="450" text-anchor="end">bone block, two screws</text>
+          </g>
+          <g class="layer" id="if-repair">
+            <use href="#i-anchor" x="467.9" y="485.7" width="12" height="24" transform="rotate(-168.0 473.9 497.7)"/><path class="draw" d="M471.8,507.5 L462.7,550.2" fill="none" stroke="var(--suture)" stroke-width="4.2" stroke-linecap="round"/><text class="lbl" x="459" y="576" text-anchor="middle">1</text>
+            <use href="#i-anchor" x="428.1" y="457.6" width="12" height="24" transform="rotate(-145.0 434.1 469.6)"/><path class="draw" d="M428.4,477.8 L403.8,513.0" fill="none" stroke="var(--suture)" stroke-width="4.2" stroke-linecap="round"/><text class="lbl" x="393" y="536" text-anchor="middle">2</text>
+            <use href="#i-anchor" x="405.8" y="414.0" width="12" height="24" transform="rotate(-121.5 411.8 426.0)"/><path class="draw" d="M403.3,431.2 L366.2,454.0" fill="none" stroke="var(--suture)" stroke-width="4.2" stroke-linecap="round"/><text class="lbl" x="350" y="471" text-anchor="middle">3</text>
+            <text class="lbl" x="316" y="230" text-anchor="end">anchors</text>
+            <text class="lbl small" x="316" y="256" text-anchor="end">one, two, three</text>
+            <text class="lbl small" x="316" y="282" text-anchor="end">and it tightens the ligaments</text>
+          </g>
+          <g class="layer" id="if-four">
+            <use href="#i-anchor" x="399.8" y="365.2" width="12" height="24" transform="rotate(-98.7 405.8 377.2)"/><path class="draw" d="M396.0,378.7 L352.1,385.4" fill="none" stroke="var(--suture)" stroke-width="4.2" stroke-linecap="round"/><text class="lbl" x="333" y="395" text-anchor="middle">4</text>
+            <text class="lbl small" x="316" y="308" text-anchor="end">sometimes four</text>
+          </g>
+          <g class="layer" id="if-post">
+            <use href="#i-anchor" x="520.1" y="485.7" width="12" height="24" transform="rotate(-192.0 526.1 497.7)"/><path class="draw" d="M528.2,507.5 L537.3,550.2" fill="none" stroke="var(--suture)" stroke-width="4.2" stroke-linecap="round"/><text class="lbl" x="541" y="576" text-anchor="middle"></text>
+            <use href="#i-anchor" x="559.9" y="457.6" width="12" height="24" transform="rotate(-215.0 565.9 469.6)"/><path class="draw" d="M571.6,477.8 L596.2,513.0" fill="none" stroke="var(--suture)" stroke-width="4.2" stroke-linecap="round"/><text class="lbl" x="607" y="536" text-anchor="middle"></text>
+            <text class="lbl" x="668" y="470" text-anchor="start">some in the back</text>
+            <text class="lbl small" x="668" y="496" text-anchor="start">if the tear extends back there</text>
+          </g>
+         </g>
+        </g>
+      </svg>
+
+      <canvas class="js-ink" aria-label="Your drawing on top of the sketch"></canvas>
+      <div class="cue js-cue"></div>
+
+      <!-- ===== CARDS ===== -->
+      <div class="overlay js-overlay">
+        <div class="card js-card" role="dialog" aria-modal="true">
+
+          <section data-card="risk">
+            <h2>Who does it keep happening to?</h2>
+            <p class="sub">The main problem is recurrent instability: it keeps on coming out.</p>
+            <div class="flow">
+              <div class="box hot"><strong>Male contact athletes under 25:</strong> a really high rate of it coming out again.</div>
+              <div class="box"><strong>In season:</strong> put you in a brace, get you into rehab, finish the season. Then we talk.</div>
+              <div class="box good"><strong>Not a young contact athlete:</strong> the risk is way lower. If it stays in, we leave it alone.</div>
+            </div>
+            <p class="quote">"You dislocate your shoulder, it hurts. You pop it back in, it feels a lot better. It's sore for a few days. Then the problem is it dislocates again."</p>
+            <p class="kicker">We don't reflexively fix every shoulder dislocation. We fix the ones that keep coming out.</p>
+          </section>
+
+          <section data-card="options">
+            <h2>What do we do about you?</h2>
+            <p class="sub">And we have options. Bottom rung first.</p>
+            <div class="ladder">
+              <div class="rung top"><b>4</b><div><div class="t">Open surgery, if there is bone loss</div><div class="q">A Latarjet, or a cadaver bone, to fill in the chip. A bigger operation.</div></div></div>
+              <div class="rung"><b>3</b><div><div class="t">Arthroscopic repair</div><div class="q">Anchors made out of suture. Labrum and ligaments back up to the edge of the socket.</div></div></div>
+              <div class="rung"><b>2</b><div><div class="t">Brace and finish the season</div><div class="q">For the athlete in season. Then we have the conversation.</div></div></div>
+              <div class="rung"><b>1</b><div><div class="t">Rehab</div><div class="q">Physical therapy to strengthen the rotator cuff. Those muscles help hold the shoulder in.</div></div></div>
+            </div>
+            <p class="kicker">The surgery is the same now as it is six months from now. The risk of waiting is dislocating a bunch more times.</p>
+          </section>
+
+          <section data-card="when">
+            <h2>When do we fix it?</h2>
+            <p class="sub">It came out, and it went back in.</p>
+            <div class="flow">
+              <div class="box">Rehab first. Strengthen the rotator cuff muscles around there.</div>
+              <div class="arrow">&#8595;</div>
+              <div class="fork">
+                <div><div class="lab">Feels solid?</div><div class="box good">No surgery. Keep on keeping on.</div></div>
+                <div><div class="lab">Still feels unstable, or it comes out again?</div><div class="box hot">Then we do surgery.</div></div>
+              </div>
+            </div>
+            <p class="kicker">Each time it comes out it bumps the bone: more of a dent, more of a chip. Enough bone loss and it becomes the bigger, open surgery.</p>
+          </section>
+
+          <section data-card="position">
+            <h2>The position to stay out of</h2>
+            <p class="sub">Up and out. That is where it wants to come out.</p>
+            <div class="qr-wrap">
+              <svg viewBox="0 0 200 200" width="190" height="190" aria-hidden="true" style="flex:0 0 auto">
+                <circle cx="100" cy="46" r="20" fill="none" stroke="var(--ink)" stroke-width="5"/>
+                <path d="M100,66 L100,150 M100,150 L78,194 M100,150 L122,194 M100,84 L70,128" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M100,84 L146,84 L146,36" fill="none" stroke="var(--hot)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M158,46 C174,54 178,72 166,86" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-dasharray="5 5"/>
+                <path d="M176,80 L165,88 L162,75" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div>
+                <p><strong>Arm up, out to the side, hand going back.</strong> The throwing position. Sleeping on your stomach.</p>
+                <p class="quote">"If something falls underneath the bed, you don't want to reach under the bed."</p>
+                <p>Your body knows it is going to feel unstable there. Listen to it.</p>
+              </div>
+            </div>
+          </section>
+
+          <section data-card="calendar">
+            <h2>The recovery calendar</h2>
+            <p class="sub">Arthroscopic repair. Day surgery. The labrum has to heal back to the bone.</p>
+            <div class="timeline">
+              <div class="mile hot"><b>Day 0</b><span>In and out the same day. Nerve block.</span></div>
+              <div class="mile"><b>4 to 6 weeks</b><span>In a sling. Motion comes back in steps.</span></div>
+              <div class="mile"><b>2 months</b><span>Strengthening starts.</span></div>
+              <div class="mile"><b>5 months</b><span>Throwing program. Skiing.</span></div>
+              <div class="mile"><b>6 months</b><span>Contact sports.</span></div>
+            </div>
+          </section>
+
+          <section data-card="home">
+            <h2>Take this home</h2>
+            <p class="sub">Point your phone camera at the code. The words are on the website.</p>
+            <div class="qr-wrap">
+              <div class="qr js-qr"></div>
+              <div>
+                <p class="url">www.brettraynormd.com/shoulder-arthroscopy-faq</p>
+                <p>Questions after you leave: call Jodie at <strong>(214) 265-3210</strong>. That's the bat phone.</p>
+                <p class="quote">"The only reason we do surgery on a shoulder dislocation is: my shoulder keeps on popping out, and I'm sick of it."</p>
+              </div>
+            </div>
+          </section>
+
+          <button class="btn on close js-card-close">Back to the drawing</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chips js-chips" data-scene="cut">
+      <div class="row scene-cut">
+        <span class="k">Draw it</span>
+        <button class="chip" data-toggle="skeleton">Ball &amp; socket</button>
+        <button class="chip" data-toggle="golf">Golf tee</button>
+        <button class="chip" data-toggle="labrum">Labrum</button>
+        <button class="chip" data-toggle="capsule">Ligaments</button>
+        <button class="chip" data-toggle="cuff">Cuff muscles</button>
+        <button class="chip" data-toggle="cartilage">Cartilage</button>
+        <button class="chip" data-toggle="lax">Loose-jointed</button>
+      </div>
+      <div class="row scene-cut">
+        <span class="k">Comes out</span>
+        <button class="chip action" data-toggle="dislocate">Dislocate &#9654;</button>
+        <button class="chip" data-toggle="tear">Labral tear</button>
+        <button class="chip" data-toggle="hs">Hill-Sachs <span class="dots"><i></i><i></i></span></button>
+        <button class="chip" data-toggle="stretched">Stretched</button>
+        <button class="chip" data-toggle="hagl">HAGL</button>
+        <button class="chip action" data-toggle="again">Again and again &#9654;</button>
+        <button class="chip" data-toggle="boneloss">Bone loss</button>
+      </div>
+      <div class="row scene-cut">
+        <span class="k">Fix it</span>
+        <button class="chip" data-toggle="repair">Repair</button>
+        <button class="chip" data-toggle="remp">Remplissage</button>
+        <button class="chip" data-toggle="latarjet">Latarjet</button>
+        <button class="chip scene-chip" data-scene-go="face">Look at the socket &#9656;</button>
+      </div>
+      <div class="row scene-face">
+        <span class="k">Socket</span>
+        <button class="chip scene-chip" data-scene-go="cut">&#9666; Back to the shoulder</button>
+        <button class="chip" data-toggle="tear">Labral tear</button>
+        <button class="chip" data-toggle="repair">Repair: 1, 2, 3</button>
+        <button class="chip" data-toggle="four">Sometimes 4</button>
+        <button class="chip" data-toggle="post">Some in the back</button>
+        <button class="chip" data-toggle="boneloss">Bone loss</button>
+        <button class="chip" data-toggle="latarjet">Latarjet</button>
+      </div>
+      <div class="row">
+        <span class="k">Show them</span>
+        <button class="chip card-chip" data-card="risk">Who is at risk</button>
+        <button class="chip card-chip" data-card="options">Options</button>
+        <button class="chip card-chip" data-card="when">When</button>
+        <button class="chip card-chip" data-card="position">Position</button>
+        <button class="chip card-chip" data-card="calendar">Calendar</button>
+        <button class="chip card-chip" data-card="home">Take home</button>
+        <span class="nav">
+          <button class="chip js-back">&#9664; Back</button>
+          <button class="chip primary js-next">Next &#9654;</button>
+        </span>
+      </div>
+    </div>
+
+  </section>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -1052,7 +1524,7 @@
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 
   /* ---------- views ---------- */
-  const views = { home: $('#view-home'), shoulder: $('#view-shoulder'), hip: $('#view-hip') };
+  const views = { home: $('#view-home'), shoulder: $('#view-shoulder'), instab: $('#view-instab'), hip: $('#view-hip') };
   const modules = {};
   let activeModule = null;
   function show(name) {
@@ -1537,6 +2009,306 @@
     }
   });
   buildPeople($('.js-people', views.hip), 75, 11);
+
+  /* ======================================================================
+     SHOULDER INSTABILITY: the dislocation talk (a golf ball on a tee), from Brett's 10/1/2026 recording
+     ====================================================================== */
+  /* Geometry shared with tools/gen_instab.py. The ball leaves along PATH (a cubic, up over the front rim) and turns ROT degrees
+     on the way (the arm rotating out), so the spot at angle aH on the ball is what lands on the rim: that is the Hill-Sachs dent. */
+  const IG = { cx: 440, cy: 262, r: 116, R: 127, aA: 246, aP: 294, aH: -25, ROT: 60,
+               PATH: [[0, 0], [-70, -22], [-150, -6], [-180, 43.5]],
+               N: [[355, 372], [379, 378], [338, 344]],      /* front labrum on the rim: corner, inner end, tip */
+               T: [[358, 380], [371, 404], [329, 378]],      /* torn: slid down off the edge */
+               D: [[362, 388], [374, 414], [350, 412]],      /* squashed against the neck while the ball is out */
+               SP: [542, 344] };                             /* tip of the back labrum */
+  const POSE_KEYS = ['out', 'torn', 'dent', 'chip', 'slackA', 'slackP', 'broad', 'hagl', 'flash'];
+  const istep = (k, fn) => [k, s => { s.play = null; fn(s); }];
+  modules.instab = makeModule({
+    view: views.instab,
+    SKELETON: () => ({ scene: 'cut', ball: true, golf: false, labrum: false, capsule: false, cartilage: false, cuff: false,
+                       tear: false, hs: 0, stretched: false, lax: false, hagl: false, boneloss: false,
+                       repair: false, four: false, post: false, remp: false, latarjet: false, play: null, card: null }),
+    /* Cue lines: Brett's words from the 10/1/2026 instability recording, plus his clinic transcripts (laxity, the ping pong ball, the bed). */
+    CUES: {
+      skeleton: 'The shoulder is kind of like a golf ball sitting on a tee. This is anterior, the front, and this is posterior, the back.',
+      golf: 'The shoulder is kind of like a golf ball sitting on a tee.',
+      labrum: 'There are things that hold the shoulder. The labrum is a little bumper that sits on the edge of the socket.',
+      dislocate: 'When the shoulder dislocates, it usually comes out the front, and when it does, it usually tears that labrum. It goes out, and it goes back in.',
+      capsule: 'There are ligaments attached to the humerus and to the labrum.',
+      hs: 'Sometimes you get a little dent in the back of the ball, called a Hill-Sachs lesion. Like a divot in a ping pong ball. It is only bad if the shoulder keeps coming out.',
+      tear: 'The hope is that the labrum heals back in. If it doesn’t, the risk you run is recurrent instability: it keeps on happening.',
+      stretched: 'Sometimes those ligaments also get a little bit stretched out, and it’s easier for it to dislocate.',
+      hagl: 'Every once in a while the ligaments tear off of here instead, called a HAGL lesion. That’s pretty rare, but we always need to know about it ahead of time.',
+      lax: 'There’s laxity and then there’s instability. Instability is when it starts popping out. Laxity means your ligaments are just a little bit loose, and your muscles have to make up for it.',
+      risk: 'Normally it hurts, feels better, and then the shoulder keeps coming out. Male contact athletes under twenty-five have a really high rate of recurrence.',
+      cuff: 'Normally we’ll rehab it. Physical therapy strengthens the rotator cuff muscles that run through here, and there’s one in the front. They help hold the shoulder in, so they can make up for these being a little bit compromised.',
+      when: 'If it continues to feel unstable, or if it comes out again, then we do surgery.',
+      repair: 'We go in and put a little anchor in the bone that’s made out of suture, then we grab these ligaments and labrum and repair it back up.',
+      faceScene: 'Looking at the socket this way: the labrum goes all the way around, anterior, posterior. It’s the anterior inferior labrum that’s usually torn.',
+      faceRepair: 'It’s usually one, two, three anchors. That’s also how we tighten up the ligaments all around.',
+      four: 'One, two, three, sometimes four.',
+      post: 'And sometimes some in the back, if the tear extends back there.',
+      options: 'The question is, what do we do about you? And we have options.',
+      same: 'The surgery for this is the same now as it is six months from now. There’s no difference. The risk you run is dislocating a bunch more times.',
+      again: 'Each time this comes out and bumps into there, you can start to bump in the bone here, and you get more indentation of that Hill-Sachs lesion.',
+      boneloss: 'You essentially get a golf tee with a chip in it, and the ball wants to fall off more. It makes the arthroscopic surgery much less predictable.',
+      latarjet: 'With a lot of bone loss it’s an open surgery, a Latarjet. There’s a little piece of bone here, the coracoid, with a little tendon attached. We cut it here and screw it in here. Or we can use a cadaver bone to fill it in.',
+      cartilage: 'You can also damage the cartilage that’s on the bone and on the ball every time it comes out.',
+      remp: 'With a little bit of bone loss we can augment it: anchors in the back of this, and advance that rotator cuff down in. It kind of sucks the cuff in there and holds it back. That’s a remplissage, and we’re doing it more and more.',
+      position: 'Up and out this way is the position of danger. If something falls underneath the bed, you don’t want to reach under the bed.',
+      calendar: 'Sling first, then motion, then strength. Throwing around five months, contact sports around six.',
+      home: 'We don’t just reflexively fix every single shoulder dislocation. Sometimes we have the conversation.'
+    },
+    init(api) {
+      const G = IG, rad = d => d * Math.PI / 180, lerp = (a, b, t) => a + (b - a) * t, clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+      const smooth = (x, a, b) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+      const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const el = { cut: $('#i-cut'), ballT: $('#i-ballT'), ballR: $('#i-ballR'), labA: $('#i-labA'), chip: $('#i-chip'), impact: $('#i-impact'), bite: $('#i-bite'),
+                   capA: [$('#i-capA-o'), $('#i-capA-i')], capP: [$('#i-capP-o'), $('#i-capP-i')], gball: $('#i-gball') };
+      const P = api.P = { out: 0, torn: 0, dent: 0, chip: 0, slackA: 0, slackP: 0, broad: 0, hagl: 0, flash: 0 };
+
+      function ballOffset(s) {
+        const p = G.PATH, m = 1 - s, a = m * m * m, b = 3 * m * m * s, c = 3 * m * s * s, d = s * s * s;
+        return [a * p[0][0] + b * p[1][0] + c * p[2][0] + d * p[3][0], a * p[0][1] + b * p[1][1] + c * p[2][1] + d * p[3][1]];
+      }
+      /* front labrum: on the rim, torn off it, or squashed down the neck while the ball sits out front */
+      function wedge() {
+        const sq = smooth(P.out, .25, .7);
+        return G.N.map((n, i) => {
+          const tx = G.T[i][0] + 9 * P.chip, ty = G.T[i][1] + 22 * P.chip;
+          const ax = lerp(n[0], tx, P.torn), ay = lerp(n[1], ty, P.torn);
+          return [lerp(ax, G.D[i][0], sq), lerp(ay, G.D[i][1], sq)];
+        });
+      }
+      /* a ligament band: from the labrum tip S, wrapped round the ball wherever the ball is, to its attachment on the ball */
+      function band(front, C, rot, S, slack, broad, hagl) {
+        const aE = (front ? G.aA : G.aP) + rot;
+        const phiS = Math.atan2(S[1] - C[1], S[0] - C[0]) * 180 / Math.PI, dS = Math.hypot(S[0] - C[0], S[1] - C[1]);
+        let sweep = front ? aE - phiS : phiS - aE; sweep = ((sweep % 360) + 360) % 360;
+        const n = 30, pts = [];
+        for (let i = 0; i <= n; i++) {
+          const u = i / n, phi = front ? phiS + sweep * u : phiS - sweep * u;
+          const k = front ? smooth(u, 0, .38) : 1 - Math.pow(1 - u, 1.6);
+          let rho = lerp(dS, G.R, k);
+          const focal = Math.pow(Math.sin(Math.PI * clamp(u / .55, 0, 1)), 1.3), wide = Math.sin(Math.PI * u);
+          rho += slack * lerp(focal, wide, broad);
+          if (front && hagl > 0 && u > .76) rho += 24 * hagl * Math.pow((u - .76) / .24, 2);
+          if (i > 0) rho = Math.max(rho, G.r + 7);
+          pts.push([C[0] + rho * Math.cos(rad(phi)), C[1] + rho * Math.sin(rad(phi))]);
+        }
+        const tail = 30 * (1 - smooth(P.out, 0, .5));              /* the little stub up the humerus tucks in while the ball is out */
+        if (!(front && hagl > .5) && tail > 1) pts.push([C[0] + (G.R + tail) * Math.cos(rad(aE)), C[1] + (G.R + tail) * Math.sin(rad(aE))]);
+        return 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L');
+      }
+      /* the Hill-Sachs dent: a bite out of the ball's outline, d = 0 (none), 1 (a little dent), 2 (a big one) */
+      function bite(d) {
+        if (d < .02) { el.bite.setAttribute('opacity', '0'); return; }
+        const w = 9 + 5 * d, dep = 8 + 8.5 * d, a0 = rad(G.aH - w), a1 = rad(G.aH + w), am = rad(G.aH), r = G.r;
+        const p0 = (G.cx + r * Math.cos(a0)).toFixed(1) + ',' + (G.cy + r * Math.sin(a0)).toFixed(1);
+        const p1 = (G.cx + r * Math.cos(a1)).toFixed(1) + ',' + (G.cy + r * Math.sin(a1)).toFixed(1);
+        const c = (G.cx + (r - 2 * dep) * Math.cos(am)).toFixed(1) + ',' + (G.cy + (r - 2 * dep) * Math.sin(am)).toFixed(1);
+        const lens = 'M' + p0 + ' A' + r + ',' + r + ' 0 0 1 ' + p1 + ' Q' + c + ' ' + p0 + ' Z';
+        $('#i-bite-fill').setAttribute('d', lens); $('#i-bite-tint').setAttribute('d', lens);
+        $('#i-bite-erase').setAttribute('d', 'M' + p0 + ' A' + r + ',' + r + ' 0 0 1 ' + p1);
+        $('#i-bite-line').setAttribute('d', 'M' + p0 + ' Q' + c + ' ' + p1);
+        el.bite.setAttribute('opacity', clamp(d * 4, 0, 1).toFixed(2));
+      }
+      function draw() {
+        const off = ballOffset(P.out), C = [G.cx + off[0], G.cy + off[1]], rot = G.ROT * P.out;
+        el.ballT.setAttribute('transform', 'translate(' + off[0].toFixed(2) + ' ' + off[1].toFixed(2) + ')');
+        el.ballR.setAttribute('transform', 'rotate(' + rot.toFixed(2) + ' ' + G.cx + ' ' + G.cy + ')');
+        const W = wedge(); el.labA.setAttribute('points', W.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '));
+        const dA = band(true, C, rot, W[2], P.slackA, P.broad, P.hagl), dP = band(false, C, rot, G.SP, P.slackP, 1, 0);
+        el.capA.forEach(p => p.setAttribute('d', dA)); el.capP.forEach(p => p.setAttribute('d', dP));
+        bite(P.dent);
+        el.chip.setAttribute('opacity', clamp(P.chip, 0, 1).toFixed(3));
+        el.impact.setAttribute('opacity', clamp(P.flash, 0, 1).toFixed(3));
+      }
+
+      let raf = null;
+      api.stop = function () { if (raf) cancelAnimationFrame(raf); raf = null; el.cut.classList.remove('playing', 'torn-now'); };
+      /* ease from whatever is on screen to a resting pose */
+      api.tween = function (to, ms) {
+        api.stop();
+        const from = Object.assign({}, P);
+        if (reduced() || !ms || POSE_KEYS.every(k => Math.abs(from[k] - to[k]) < .001)) { Object.assign(P, to); draw(); return; }
+        const t0 = performance.now();
+        const tick = now => {
+          const t = clamp((now - t0) / ms, 0, 1), e = t * t * (3 - 2 * t);
+          POSE_KEYS.forEach(k => { P[k] = lerp(from[k], to[k], e); }); draw();
+          raf = t < 1 ? requestAnimationFrame(tick) : null;
+        };
+        raf = requestAnimationFrame(tick);
+      };
+      /* the dislocation: out the front over the rim (the labrum comes off), the back of the ball hits the rim (the dent), back in.
+         'again' runs it twice, quicker, and the damage (dent, chipped rim, stretched ligaments) builds with each hit. */
+      api.play = function (kind, to) {
+        api.stop();
+        const from = Object.assign({}, P, { out: 0, flash: 0 });
+        if (reduced()) { Object.assign(P, to); draw(); return; }
+        el.cut.classList.add('playing');
+        if (from.torn > .5) el.cut.classList.add('torn-now');
+        const cycles = kind === 'again' ? 2 : 1;
+        const T = kind === 'again' ? { wait: 300, out: 850, hold: 600, back: 750 } : { wait: 450, out: 1200, hold: 950, back: 1150 };
+        const cyc = T.wait + T.out + T.hold + T.back, total = cyc * cycles, t0 = performance.now();
+        const ease = t => t * t * (3 - 2 * t);
+        const finish = () => { Object.assign(P, to); draw(); raf = null; el.cut.classList.remove('playing', 'torn-now'); };
+        const tick = now => {
+          const ms = now - t0;
+          if (ms >= total) { finish(); return; }
+          const c = Math.min(cycles - 1, Math.floor(ms / cyc)), t = ms - c * cyc, th = t - T.wait - T.out;
+          let out = 0, hit = 0;
+          if (t < T.wait) out = 0;
+          else if (th < 0) out = ease((t - T.wait) / T.out);
+          else if (th < T.hold) { out = 1; hit = clamp(th / 280, 0, 1); }
+          else { out = 1 - ease((th - T.hold) / T.back); hit = 1; }
+          const dmg = lerp(c / cycles, (c + 1) / cycles, hit);
+          const tornNow = (c > 0 || th >= 0) ? 1 : smooth(out, .3, .62);
+          P.out = out;
+          P.torn = Math.max(from.torn, to.torn * tornNow);
+          ['dent', 'chip', 'slackA', 'slackP', 'broad', 'hagl'].forEach(k => { P[k] = lerp(from[k], to[k], dmg); });
+          P.flash = th >= 0 && th < T.hold ? (1 - th / T.hold) * (.8 + .2 * Math.sin(th / 45)) : 0;
+          if (P.torn > .5) el.cut.classList.add('torn-now');
+          draw();
+          raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      };
+
+      /* the golf ball falling off the chipped tee, over and over */
+      let graf = null;
+      const GK = [[0, 0, 0, 0], [.24, 0, 0, 0], [.44, -20, 4, -30], [.66, -60, 72, -150], [.8, -78, 72, -205], [1, -78, 72, -205]];
+      api.golfMode = -1;
+      api.golf = function (fall) {
+        if (graf) cancelAnimationFrame(graf); graf = null;
+        const b = el.gball;
+        b.removeAttribute('opacity');
+        if (!fall) { b.removeAttribute('transform'); return; }
+        if (reduced()) { b.setAttribute('transform', 'translate(-20 4) rotate(-30 851 398)'); return; }
+        const t0 = performance.now(), DUR = 3600;
+        const tick = now => {
+          const t = ((now - t0) % DUR) / DUR;
+          let i = 0; while (i < GK.length - 2 && t > GK[i + 1][0]) i++;
+          const a = GK[i], z = GK[i + 1]; let u = clamp((t - a[0]) / (z[0] - a[0]), 0, 1);
+          if (i === 2) u = u * u;                                   /* the fall speeds up */
+          const x = lerp(a[1], z[1], u), y = lerp(a[2], z[2], u), r = lerp(a[3], z[3], u);
+          b.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ') rotate(' + r.toFixed(1) + ' 851 398)');
+          b.setAttribute('opacity', t > .93 ? ((1 - t) / .07).toFixed(2) : t < .04 ? (t / .04).toFixed(2) : '1');
+          graf = requestAnimationFrame(tick);
+        };
+        graf = requestAnimationFrame(tick);
+      };
+
+      /* the socket face: draw-on lengths and the tear segment, measured the first time the scene is shown */
+      let faceReady = false;
+      api.initFace = function () {
+        if (faceReady) return; faceReady = true;
+        initDraw($('#i-face'));
+        $$('#i-face .tearseg').forEach(p => {
+          const L = p.getTotalLength(), f1 = +p.dataset.from, f2 = +p.dataset.to;
+          p.style.strokeDasharray = ((f2 - f1) * L) + ' ' + L; p.style.strokeDashoffset = String(-f1 * L);
+        });
+      };
+      draw();
+    },
+    render(state, api) {
+      const { on, layers } = api;
+      const set = (k, v) => $$('.chip[data-toggle="' + k + '"]', api.view).forEach(c => c.classList.toggle('on', !!v));
+      const cut = state.scene === 'cut';
+      $('#i-cut').classList.toggle('on', cut); $('#i-face').classList.toggle('on', !cut);
+      if (!cut) api.initFace();
+      api.chipsEl.dataset.scene = state.scene;
+
+      const cap = state.capsule || state.stretched || state.lax || state.hagl || state.repair;
+      const lab = state.labrum || state.tear || state.repair || cap;      /* the ligaments start on the labrum, so it shows with them */
+      const chipped = state.boneloss && !state.latarjet;
+      on('i-skeleton', state.ball); on('i-ball', state.ball);
+      on('i-golf', state.golf); layers['i-golf'].classList.toggle('chipped', chipped);
+      const gm = state.golf ? (chipped ? 2 : 1) : 0;
+      if (gm !== api.golfMode) { api.golfMode = gm; api.golf(gm === 2); }
+      on('i-labrum', lab); on('i-capsule', cap);
+      on('i-cart', state.cartilage); on('i-cart-ball', state.cartilage); $('#i-cut').classList.toggle('worn', state.boneloss || state.hs > 1);
+      on('i-cuff', state.cuff || state.remp);
+      on('i-tear', state.tear); on('i-hs', state.hs > 0);
+      on('i-stretch', state.stretched); on('i-lax', state.lax); on('i-hagl', state.hagl); on('i-hagl-mark', state.hagl);
+      on('i-boneloss', chipped); on('i-repair', state.repair); on('i-remp', state.remp); on('i-latarjet', state.latarjet);
+
+      on('if-base', !cut); on('if-tear', state.tear); on('if-repair', state.repair); on('if-four', state.four); on('if-post', state.post);
+      on('if-boneloss', state.boneloss); on('if-boneloss-lbl', chipped); on('if-latarjet', state.latarjet);
+
+      set('skeleton', state.ball); set('golf', state.golf); set('labrum', lab); set('capsule', cap); set('cuff', state.cuff || state.remp);
+      set('cartilage', state.cartilage); set('lax', state.lax); set('tear', state.tear); set('hs', state.hs > 0);
+      $$('.chip[data-toggle="hs"] .dots i', api.view).forEach((d, i) => d.classList.toggle('f', i < state.hs));
+      set('stretched', state.stretched); set('hagl', state.hagl); set('boneloss', state.boneloss);
+      set('repair', state.repair); set('four', state.four); set('post', state.post); set('remp', state.remp); set('latarjet', state.latarjet);
+
+      const rest = { out: 0, torn: state.tear ? 1 : 0, dent: state.hs, chip: state.boneloss ? 1 : 0,
+                     slackA: state.stretched ? 26 : state.lax ? 16 : state.tear ? 6 : 0, slackP: state.lax ? 16 : 0,
+                     broad: state.lax ? 1 : 0, hagl: state.hagl ? 1 : 0, flash: 0 };
+      if (state.play && cut) { const kind = state.play; state.play = null; api.play(kind, rest); }
+      else { state.play = null; api.tween(rest, 320); }
+    },
+    toggle(state, k) {
+      let cue = k; state.play = null;
+      const unrepair = () => { state.repair = false; state.four = false; state.post = false; };
+      const fixOn = () => { state.repair = true; state.labrum = true; state.capsule = true; state.tear = false; state.stretched = false; state.lax = false; state.hagl = false; state.latarjet = false; };
+      switch (k) {
+        case 'skeleton': state.ball = !state.ball; if (!state.ball) Object.assign(state, { labrum: false, capsule: false, cartilage: false, cuff: false, tear: false, hs: 0, stretched: false, lax: false, hagl: false, boneloss: false, repair: false, four: false, post: false, remp: false, latarjet: false }); break;
+        case 'golf': state.golf = !state.golf; cue = state.golf ? (state.boneloss && !state.latarjet ? 'boneloss' : 'golf') : null; break;
+        case 'labrum': state.labrum = !state.labrum; if (!state.labrum) { state.tear = false; unrepair(); cue = null; } break;
+        case 'capsule': state.capsule = !state.capsule; if (!state.capsule) { state.stretched = false; state.lax = false; state.hagl = false; unrepair(); cue = null; } break;
+        case 'cartilage': state.cartilage = !state.cartilage; if (!state.cartilage) cue = null; break;
+        case 'cuff': state.cuff = !state.cuff; if (!state.cuff) { state.remp = false; cue = null; } break;
+        case 'lax': state.lax = !state.lax; if (state.lax) { state.capsule = true; state.stretched = false; unrepair(); } else cue = null; break;
+        /* the two animations: they leave the picture the way the shoulder is left afterwards */
+        case 'dislocate': state.ball = true; state.labrum = true; state.tear = true; state.hs = Math.max(state.hs, 1); unrepair(); state.remp = false; state.latarjet = false; state.play = 'first'; break;
+        case 'again': state.ball = true; state.labrum = true; state.capsule = true; state.tear = true; state.stretched = true; state.lax = false; state.hs = 2; state.boneloss = true; unrepair(); state.remp = false; state.latarjet = false; state.play = 'again'; break;
+        case 'tear': state.tear = !state.tear; if (state.tear) { state.labrum = true; unrepair(); } else cue = null; break;
+        case 'hs': state.hs = (state.hs + 1) % 3; if (!state.hs) { state.remp = false; cue = null; } break;
+        case 'stretched': state.stretched = !state.stretched; if (state.stretched) { state.capsule = true; state.lax = false; unrepair(); } else cue = null; break;
+        case 'hagl': state.hagl = !state.hagl; if (state.hagl) { state.capsule = true; unrepair(); } else cue = null; break;
+        case 'boneloss': state.boneloss = !state.boneloss; state.latarjet = false; if (state.boneloss) { if (!state.repair) { state.tear = true; state.labrum = true; } } else cue = null; break;
+        case 'repair': if (state.repair) { unrepair(); cue = null; } else { fixOn(); cue = state.scene === 'face' ? 'faceRepair' : 'repair'; } break;
+        case 'four': state.four = !state.four; if (state.four) fixOn(); else cue = null; break;
+        case 'post': state.post = !state.post; if (state.post) fixOn(); else cue = null; break;
+        case 'remp': state.remp = !state.remp; if (state.remp) { state.hs = Math.max(state.hs, 1); state.cuff = true; } else cue = null; break;
+        case 'latarjet': state.latarjet = !state.latarjet; if (state.latarjet) { state.boneloss = true; state.tear = false; state.stretched = false; unrepair(); } else cue = null; break;
+      }
+      return cue;
+    },
+    onScene(state, scene) { state.scene = scene; state.play = null; return scene === 'face' ? 'faceScene' : 'skeleton'; },
+    /* The order of the talk in the 10/1/2026 recording. */
+    STEPS: [
+      istep('skeleton',  s => { s.golf = true; }),
+      istep('labrum',    s => { s.labrum = true; }),
+      istep('dislocate', s => { s.tear = true; s.hs = 1; s.play = 'first'; }),
+      istep('capsule',   s => { s.capsule = true; }),
+      istep('hs',        s => { }),
+      istep('tear',      s => { }),
+      istep('stretched', s => { s.stretched = true; }),
+      istep('hagl',      s => { s.hagl = true; }),
+      istep('risk',      s => { s.hagl = false; s.card = 'risk'; }),
+      istep('cuff',      s => { s.card = null; s.cuff = true; }),
+      istep('when',      s => { s.card = 'when'; }),
+      istep('repair',    s => { s.card = null; s.cuff = false; s.golf = false; s.tear = false; s.stretched = false; s.repair = true; }),
+      istep('faceScene', s => { s.scene = 'face'; s.repair = false; s.tear = true; }),
+      istep('faceRepair', s => { s.tear = false; s.repair = true; }),
+      istep('four',      s => { s.four = true; }),
+      istep('post',      s => { s.post = true; }),
+      istep('same',      s => { s.card = 'options'; }),
+      istep('again',     s => { s.card = null; s.scene = 'cut'; s.repair = false; s.four = false; s.post = false; s.tear = true; s.stretched = true; s.hs = 2; s.boneloss = true; s.play = 'again'; }),
+      istep('boneloss',  s => { s.golf = true; }),
+      istep('latarjet',  s => { s.golf = false; s.tear = false; s.stretched = false; s.latarjet = true; }),
+      istep('cartilage', s => { s.latarjet = false; s.cartilage = true; }),
+      istep('remp',      s => { s.cartilage = false; s.boneloss = false; s.tear = false; s.stretched = false; s.repair = true; s.cuff = true; s.remp = true; }),
+      istep('calendar',  s => { s.card = 'calendar'; }),
+      istep('home',      s => { s.card = 'home'; })
+    ],
+    CARD_STEPS: ['risk', 'when', 'same', 'calendar', 'home'],
+    onCard(name, card) {
+      if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/shoulder-arthroscopy-faq');
+    }
+  });
 
   /* ---------- boot ---------- */
   const boot = () => {};

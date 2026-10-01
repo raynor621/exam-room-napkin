@@ -8,12 +8,13 @@ Tap-to-reveal anatomy sketches for patient talks, drawn the way Dr. Raynor draws
 ## Modules
 
 - **Shoulder** (v0.6.1): ball and socket, collarbone and blade, the four cuff tendons (top, front, and the two around the back as one see-through cuff of tissue behind the ball), biceps with the sheath and the turn onto the labrum, labrum in profile, bursa and bursitis, tendonitis, full-thickness tear, repair, biceps tenodesis. Right shoulder by default with a Left mirror. "Look at the socket" breaks out to the face-on socket: biceps at 12 o'clock, antero-inferior (Bankart) tear, SLAP tear with the equator, posterior tear down the back.
+- **Shoulder instability** (v0.7.0): the shoulder cut across and seen from above, a golf ball on a tee, with the front (A) on the left and the back (P) on the right. Labrum bumpers, the ligaments from the ball to the labrum, cuff muscles, cartilage. Two animations: **Dislocate** (the ball rides out over the front rim, the labrum comes off, the back of the ball hits the rim and leaves the Hill-Sachs dent, and it goes back in) and **Again and again** (two more, with the dent growing, the rim chipping, and the ligaments stretching). Stretched ligaments, HAGL, loose-jointed, bone loss, repair with a suture anchor, remplissage, Latarjet. A golf ball and tee inset that becomes a chipped tee with the ball falling off once there is bone loss. "Look at the socket" shows the face-on socket: antero-inferior tear, anchors one, two, three, sometimes four, some in the back, bone loss, the Latarjet block. Cards: who is at risk, options, when to fix it, the position to avoid, calendar, take-home QR.
 - **Hip** (v0.6.1): ball and socket, cartilage and arthritis, labrum and labral tear, the three shapes that predispose (deep socket, shallow socket, cam bump), a Flex animation that shows the bump hitting the labrum and clearing once it is shaved, repair with suture anchors, shave the bump, the capsule as a solid sleeve with the interportal capsulotomy and its three-stitch closure, then the outside of the hip (abductors, abductor tear, IT band and bursa, bursitis) and the back. Cards: 100 people, options, PT alone, calendar, socket depth, take-home QR.
 - **Knee**: placeholder, next.
 
 ## Controls
 
-- **Draw it** chips: reveal layers in any order (Cuff takes three taps). **Next / Back** walks the rotator cuff talk in script order.
+- **Draw it** chips: reveal layers in any order (Cuff takes three taps; Hill-Sachs takes two). **Next / Back** walks each talk in script order. Chips with a double border and a play arrow run an animation.
 - **Show them** cards: 100 people, options ladder, PT vs surgery, recovery calendar, take-home QR.
 - **Draw**: red-ink scribble layer (finger or Apple Pencil). Undo, Clear ink. Nothing is saved or sent anywhere.
 - **Cues**: one-line cue in Dr. Raynor's words for the current beat; toggle off for a patient-only screen.
