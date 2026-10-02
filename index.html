@@ -192,7 +192,7 @@
   #i-golf.chipped .tee-ok { opacity: 0; }
   #i-golf.chipped .tee-chip { opacity: 1; }
   /* this view has the longest title and the most chips: tighten it on the smaller iPads so the drawing keeps its room */
-  @media (max-width: 1100px) {
+  @media (max-width: 1120px) {
     #view-instab .bar h1 { font-size: 22px; }
     #view-instab .bar { gap: 6px; }
     #view-instab .bar .btn { padding: 6px 11px; }
@@ -604,7 +604,7 @@
               <div class="arrow">↓ six weeks ↓</div>
               <div class="fork">
                 <div><div class="lab">Getting better?</div><div class="box good">Fine at three months. No surgery needed.</div></div>
-                <div><div class="lab">Not helping?</div><div class="box hot">Surgery then. Did just as well as the people who had surgery on day one.</div></div>
+                <div><div class="lab">Not helping?</div><div class="box hot">Surgery then. Trying PT first for a few months doesn't burn the bridge.</div></div>
               </div>
             </div>
             <p class="kicker">Biggest predictor of PT working: believing it would.</p>
@@ -617,7 +617,7 @@
               <div class="mile hot"><b>Day 0</b><span>In and out the same day. Nerve block. Netflix on your own TV.</span></div>
               <div class="mile"><b>6 weeks</b><span>In a sling. Asking other people for help.</span></div>
               <div class="mile"><b>3 months</b><span>Tendon is good enough to load. Strengthening starts. Curling twos.</span></div>
-              <div class="mile"><b>4 months</b><span>Totally healed. I'll let you do anything you want to do.</span></div>
+              <div class="mile"><b>4 months</b><span>Mostly healed. I'll let you do anything you want to do.</span></div>
               <div class="mile"><b>6 months</b><span>Full recovery.</span></div>
             </div>
           </section>
@@ -993,7 +993,7 @@
                 <div><div class="lab">The rest</div><div class="box hot">Surgery then. Everyone ended up improving about the same at two years.</div></div>
               </div>
             </div>
-            <p class="kicker">In the room: seventy-two to eighty-three percent get better without an operation. It's the ones that don't that we go do surgery on.</p>
+            <p class="kicker">In the room: about eighty percent of young athletes get better without an operation. It's the ones that don't that we go do surgery on.</p>
           </section>
 
           <section data-card="calendar">
@@ -1385,6 +1385,19 @@
             <p class="kicker">We don't reflexively fix every shoulder dislocation. We fix the ones that keep coming out.</p>
           </section>
 
+          <section data-card="people">
+            <h2>100 young athletes, first dislocation</h2>
+            <p class="sub">Treated with a sling and rehab. No surgery.</p>
+            <div class="people-wrap">
+              <div class="people js-people"></div>
+              <div class="people-text">
+                <p><span class="people-count js-count">0</span> <span>of them have it come out again.</span></p>
+                <p class="quote">"Male contact athletes under the age of 25 have a really high rate of recurrence."</p>
+                <p class="kicker">After a repair, it is about 10 out of 100.</p>
+              </div>
+            </div>
+          </section>
+
           <section data-card="options">
             <h2>What do we do about you?</h2>
             <p class="sub">And we have options. Bottom rung first.</p>
@@ -1501,7 +1514,8 @@
       </div>
       <div class="row">
         <span class="k">Show them</span>
-        <button class="chip card-chip" data-card="risk">Who is at risk</button>
+        <button class="chip card-chip" data-card="risk">At risk</button>
+        <button class="chip card-chip" data-card="people">100 athletes</button>
         <button class="chip card-chip" data-card="options">Options</button>
         <button class="chip card-chip" data-card="when">When</button>
         <button class="chip card-chip" data-card="position">Position</button>
@@ -1879,14 +1893,14 @@
       arthritis: 'If you had bad arthritis, you just need to go get your hip replaced. My hip replacement guy would say: why are you here? Please leave immediately.',
       labrum: 'The labrum is this little bumper that sits on the edge of the socket. It actually goes all the way around; it’s just easier to draw up here. It creates a suction cup and deepens the socket.',
       tear: 'You can get tearing of that labrum, where it tears away from the edge of the socket, and it can cause pain.',
-      people: 'Somewhere between seventy and eighty percent of us walking around have a labral tear and have no idea.',
+      people: 'About two-thirds of us walking around have a labral tear and have no idea.',
       pincer: 'Some people have a really deep socket, so the labrum gets bumped into sooner.',
       dysplasia: 'Some people have a really shallow socket and their labrum’s really big, and the forces go abnormally across there. That’s called dysplasia.',
       cam: 'Some people have a big old bump of bone right there called a cam lesion that bumps into the labrum sooner. More forceful and more often, so it creates a labral tear.',
       flex: 'When the hip flexes up, that bump runs into the labrum. Over and over.',
       flexclear: 'With the bump shaved down, the hip flexes up without bumping into the labrum. That protects the repair.',
       options: 'Most of the time we don’t have to do surgery for that. We do physical therapy, we’ll do an injection. But sometimes those do continue to hurt and it needs an operation.',
-      pt: 'Somewhere between seventy-two and eighty-three percent of the time we can get people better with PT alone. It’s just the ones that don’t that we go do surgery on.',
+      pt: 'In young athletes, about eighty percent of the time we can get people better without an operation. It’s just the ones that don’t that we go do surgery on.',
       repair: 'We go in with a camera and an instrument, shave the socket back ever so slightly, and put little anchors in the bone, usually made all out of suture. One, two, three, sometimes four, to repair that labrum up to the edge of the socket.',
       shave: 'Then we shave down that little bone spur to give it extra room, to keep it from bumping back up into there. That’s the surgery for it.',
       capsule: 'There’s a lining, the ligaments that hold the hip, called the capsule.',
@@ -2010,7 +2024,7 @@
       if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/faqs-hip-arthroscopy');
     }
   });
-  buildPeople($('.js-people', views.hip), 75, 11);
+  buildPeople($('.js-people', views.hip), 69, 11);
 
   /* ======================================================================
      SHOULDER INSTABILITY: the dislocation talk (a golf ball on a tee), from Brett's 10/1/2026 recording
@@ -2037,12 +2051,13 @@
       labrum: 'There are things that hold the shoulder. The labrum is a little bumper that sits on the edge of the socket.',
       dislocate: 'When the shoulder dislocates, it usually comes out the front, and when it does, it usually tears that labrum. It goes out, and it goes back in.',
       capsule: 'There are ligaments attached to the humerus and to the labrum.',
-      hs: 'Sometimes you get a little dent in the back of the ball, called a Hill-Sachs lesion. Like a divot in a ping pong ball. It is only bad if the shoulder keeps coming out.',
+      hs: 'Usually you get a little dent in the back of the ball, usually small, called a Hill-Sachs lesion. Like a divot in a ping pong ball. It is only bad if the shoulder keeps coming out.',
       tear: 'The hope is that the labrum heals back in. If it doesn’t, the risk you run is recurrent instability: it keeps on happening.',
       stretched: 'Sometimes those ligaments also get a little bit stretched out, and it’s easier for it to dislocate.',
       hagl: 'Every once in a while the ligaments tear off of here instead, called a HAGL lesion. That’s pretty rare, but we always need to know about it ahead of time.',
       lax: 'There’s laxity and then there’s instability. Instability is when it starts popping out. Laxity means your ligaments are just a little bit loose, and your muscles have to make up for it.',
       risk: 'Normally it hurts, feels better, and then the shoulder keeps coming out. Male contact athletes under twenty-five have a really high rate of recurrence.',
+      people: 'Especially male contact athletes under the age of twenty-five have a really high rate of recurrence.',
       cuff: 'Normally we’ll rehab it. Physical therapy strengthens the rotator cuff muscles that run through here, and there’s one in the front. They help hold the shoulder in, so they can make up for these being a little bit compromised.',
       when: 'If it continues to feel unstable, or if it comes out again, then we do surgery.',
       repair: 'We go in and put a little anchor in the bone that’s made out of suture, then we grab these ligaments and labrum and repair it back up.',
@@ -2308,9 +2323,13 @@
     ],
     CARD_STEPS: ['risk', 'when', 'same', 'calendar', 'home'],
     onCard(name, card) {
+      if (name === 'people') animatePeople($('.js-people', card), $('.js-count', card));
       if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/shoulder-arthroscopy-faq');
     }
   });
+  /* 67 of 100: recurrent instability after a first dislocation treated without surgery in young, active patients
+     (Hurley 2020 meta-analysis: 67.4% without surgery, 9.7% after arthroscopic repair; Robinson 2006: 66.8% at five years, ages 15 to 35). */
+  buildPeople($('.js-people', views.instab), 67, 13);
 
   /* ---------- boot ---------- */
   const boot = () => {};
