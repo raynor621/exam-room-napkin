@@ -200,6 +200,25 @@
     #view-instab .chip { min-height: 48px; padding: 6px 14px; font-size: 16px; }
   }
 
+  /* ---------- Knee (ACL) ---------- */
+  .drawing .lig { fill: none; stroke: var(--tendon); stroke-width: 14; stroke-linecap: round; opacity: .85; }
+  .drawing .pcl { fill: none; stroke: var(--tendon); stroke-width: 12; stroke-linecap: round; opacity: .35; }
+  .drawing .men { fill: color-mix(in srgb, var(--navy) 18%, transparent); stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+  .drawing .tun { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-dasharray: 7 5; stroke-linecap: round; }
+  .drawing .plug { fill: var(--anchor); stroke: var(--ink); stroke-width: 2; }
+  .drawing .graft { fill: none; stroke: var(--tendon); stroke-width: 14; stroke-linecap: round; opacity: .95; }
+  .drawing .phys { fill: none; stroke: var(--ink-soft); stroke-width: 2.6; stroke-dasharray: 4 6; stroke-linecap: round; }
+  .drawing .cut { fill: none; stroke: var(--hot); stroke-width: 3; stroke-linecap: round; }
+  .drawing .numb { fill: color-mix(in srgb, var(--bursa) 25%, transparent); stroke: none; }
+  /* which graft is in the tunnels */
+  #k-inside .graft-quad { display: none; }
+  #k-inside.graft-quad .graft-quad { display: inline; }
+  #k-inside.graft-quad .graft-btb { display: none; }
+  #k-inside.graft-quad .phys-flag { display: none; }
+  /* chip rows follow the scene */
+  .chips[data-scene="inside"] .scene-side, .chips[data-scene="inside"] .scene-front,
+  .chips[data-scene="side"] .scene-inside, .chips[data-scene="side"] .scene-front,
+  .chips[data-scene="front"] .scene-inside, .chips[data-scene="front"] .scene-side { display: none; }
   /* ---------- Chips ---------- */
   .chips { display: flex; flex-direction: column; gap: 8px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
   .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -345,16 +364,16 @@
         </svg>
         <b>Hip</b><small>labrum, the bumps, the outside</small>
       </div>
-      <div class="tile soon" role="button" tabindex="0" data-go="knee">
+      <div class="tile" role="button" tabindex="0" data-go="knee">
         <svg viewBox="0 0 120 100" aria-hidden="true">
           <rect x="40" y="4" width="40" height="40" rx="14" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
           <rect x="38" y="58" width="44" height="40" rx="10" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
           <path d="M52 44 L66 58 M68 44 L54 58" stroke="var(--tendon)" stroke-width="5" stroke-linecap="round"/>
         </svg>
-        <b>Knee</b><small>next module</small>
+        <b>Knee</b><small>ACL, first draft</small>
       </div>
     </div>
-    <p style="font-size:14px; margin-top:8px;">Prototype v0.7 · shoulder, shoulder instability and hip, drawn the way Dr. Raynor draws them · nothing you draw is saved</p>
+    <p style="font-size:14px; margin-top:8px;">Prototype v0.8 · shoulder, shoulder instability and hip drawn the way Dr. Raynor draws them, plus a first knee · nothing you draw is saved</p>
   </section>
 
   <!-- ================= SHOULDER ================= -->
@@ -1529,6 +1548,423 @@
     </div>
 
   </section>
+
+  <!-- ================= KNEE (ACL) ================= -->
+  <section class="view" id="view-knee">
+    <div class="bar">
+      <button class="btn ghost js-home" aria-label="Back to joints">‹ Joints</button>
+      <h1>Knee</h1>
+      <span class="seg" role="group" aria-label="Which knee">
+        <button class="btn on js-side-right" aria-pressed="true">Right</button>
+        <button class="btn js-side-left" aria-pressed="false">Left</button>
+      </span>
+      <span class="spacer"></span>
+      <button class="btn js-draw" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        Draw
+      </button>
+      <button class="btn ghost js-undo">Undo</button>
+      <button class="btn ghost js-clear">Clear ink</button>
+      <button class="btn ghost js-cues" aria-pressed="true">Cues</button>
+      <button class="btn ghost js-reset">↺ Start over</button>
+    </div>
+
+    <div class="stage js-stage">
+      <svg class="drawing" viewBox="0 0 1000 640" preserveAspectRatio="xMidYMid meet" aria-label="Napkin sketch of a knee: inside the joint, from the side, and the front where the graft comes from">
+        <defs>
+          <radialGradient id="k-glow"><stop offset="0" stop-color="var(--hot)" stop-opacity=".45"/><stop offset="1" stop-color="var(--hot)" stop-opacity="0"/></radialGradient>
+          <symbol id="k-screw" viewBox="-5 -14 10 28">
+            <rect x="-4" y="-13" width="8" height="26" rx="2.5" fill="var(--anchor)" stroke="var(--suture)" stroke-width="1.2"/>
+            <path d="M-3 -8h6M-3 -3h6M-3 2h6M-3 7h6" stroke="var(--suture)" stroke-width="1.2"/>
+          </symbol>
+          <symbol id="k-button" viewBox="-11 -5 22 10">
+            <rect x="-10" y="-4" width="20" height="8" rx="3" fill="var(--anchor)" stroke="var(--suture)" stroke-width="1.4"/>
+            <circle cx="-4" cy="0" r="1.4" fill="var(--suture)"/><circle cx="4" cy="0" r="1.4" fill="var(--suture)"/>
+          </symbol>
+        </defs>
+
+        <!-- ===== SCENE 1: INSIDE THE KNEE. Right knee from the front, bent, kneecap out of the way (the model view).
+             Outside of the knee on the LEFT, inside on the right. Notch roof at (500,274), plateau at y 470. ===== -->
+        <g id="k-inside" class="scene on">
+          <g class="layer" id="k-bones">
+            <path class="ink draw" d="M396,0 L370,188 C352,236 318,296 330,352 C342,414 380,442 408,436 C446,428 462,392 468,340 C472,310 482,284 500,274 C518,284 528,310 532,340 C538,392 554,428 592,436 C620,442 658,414 670,352 C682,296 648,236 630,188 L604,0"/>
+            <path class="ink draw" d="M305,470 C400,452 600,452 695,470"/>
+            <path class="ink draw" d="M305,470 C298,520 328,580 342,640"/>
+            <path class="ink draw" d="M695,470 C702,520 672,580 658,640"/>
+            <path class="ink draw" d="M484,466 C490,452 496,448 500,458 C504,448 510,452 516,466"/>
+            <path class="ink draw" d="M298,500 C278,492 258,502 258,532 C254,582 262,620 266,640"/>
+            <path class="ink draw" d="M298,500 C300,560 296,600 298,640"/>
+            <text class="lbl" x="500" y="40" text-anchor="middle">thigh bone</text>
+            <text class="lbl" x="500" y="612" text-anchor="middle">shin bone</text>
+            <text class="lbl small" x="232" y="600" text-anchor="end">fibula</text>
+            <text class="lbl small" x="250" y="40" text-anchor="end">outside</text>
+            <text class="lbl small" x="750" y="40" text-anchor="start">inside</text>
+            <text class="lbl small" x="500" y="84" text-anchor="middle">kneecap is out of the way</text>
+          </g>
+
+          <!-- CARTILAGE on the ends of the bones -->
+          <g class="layer" id="k-cart">
+            <path class="cart draw" d="M340,372 C352,422 392,440 440,414"/>
+            <path class="cart draw" d="M560,414 C608,440 648,422 660,372"/>
+            <path class="cart draw" d="M318,474 C400,462 600,462 682,474"/>
+            <text class="lbl small" x="712" y="502" text-anchor="start">cartilage on the ends of the bones</text>
+          </g>
+
+          <!-- MENISCI: the little shock-absorbing discs -->
+          <g class="layer" id="k-menisci">
+            <path class="men pop" d="M318,468 C338,448 432,448 452,468 Z"/>
+            <path class="men pop" d="M548,468 C568,448 662,448 682,468 Z"/>
+            <text class="lbl" x="712" y="452" text-anchor="start">menisci</text>
+            <text class="lbl small" x="712" y="476" text-anchor="start">little shock-absorbing discs</text>
+          </g>
+          <g class="layer" id="k-stitches">
+            <path d="M596,452 l0,16 M612,450 l0,18 M628,452 l0,16" stroke="var(--suture)" stroke-width="2.6" stroke-linecap="round"/>
+            <text class="lbl" x="712" y="532" text-anchor="start">stitches</text>
+            <text class="lbl small" x="712" y="556" text-anchor="start">repair it, don't take it out</text>
+          </g>
+
+          <!-- LIGAMENTS: MCL inside, LCL outside, PCL behind, ACL in front -->
+          <g class="layer" id="k-ligs">
+            <path class="lig draw" d="M646,300 C668,360 684,440 684,520"/>
+            <path class="lig draw" d="M336,300 C318,360 298,440 282,500"/>
+            <path class="pcl draw" d="M536,298 C520,350 506,420 502,466"/>
+            <text class="lbl" x="712" y="400" text-anchor="start">MCL</text>
+            <text class="lbl small" x="712" y="424" text-anchor="start">the good one, outside</text>
+            <text class="lbl" x="288" y="400" text-anchor="end">LCL</text>
+            <text class="lbl small" x="560" y="402" text-anchor="start">PCL</text>
+            <text class="lbl small" x="560" y="424" text-anchor="start">behind</text>
+          </g>
+          <g class="layer" id="k-acl">
+            <path class="lig draw" d="M462,296 C470,360 482,420 492,466"/>
+            <text class="lbl" x="444" y="336" text-anchor="end">ACL</text>
+          </g>
+          <g class="layer" id="k-tear">
+            <circle cx="480" cy="376" r="36" fill="url(#k-glow)"/>
+            <path class="lig draw" d="M462,296 C466,320 470,340 474,352"/>
+            <path class="lig draw" d="M492,466 C489,446 487,428 486,412"/>
+            <path d="M468,352 l8,8 l-8,8 l9,7 M490,412 l-9,-6 l7,-9 l-9,-6" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl hot" x="444" y="336" text-anchor="end">ACL tear</text>
+            <text class="lbl small hot" x="444" y="360" text-anchor="end">schmutzy in the middle</text>
+          </g>
+
+          <!-- SURGERY: two poke holes, take out the stump, drill the tunnels, the new ACL -->
+          <g class="layer" id="k-portals">
+            <circle cx="300" cy="606" r="7" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+            <circle cx="700" cy="606" r="7" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+            <text class="lbl small" x="286" y="612" text-anchor="end">camera</text>
+            <text class="lbl small" x="714" y="612" text-anchor="start">instrument</text>
+          </g>
+          <g class="layer" id="k-tunnels">
+            <path class="tun draw" d="M455,305 L342,210"/><path class="tun draw" d="M469,291 L356,196"/>
+            <path class="tun draw" d="M483,470 L618,606"/><path class="tun draw" d="M499,460 L634,596"/>
+            <text class="lbl" x="288" y="200" text-anchor="end">tunnel</text>
+            <text class="lbl small" x="288" y="224" text-anchor="end">exits right where it's supposed to</text>
+            <text class="lbl" x="712" y="580" text-anchor="start">tunnel</text>
+          </g>
+          <g class="layer" id="k-graft">
+            <path class="graft draw" d="M462,298 C470,360 482,420 492,466"/>
+            <g class="graft-btb">
+              <path class="graft draw" d="M462,298 L430,270"/><path class="graft draw" d="M492,466 L522,496"/>
+              <rect class="plug pop" x="414" y="244" width="16" height="34" rx="3" transform="rotate(-50 422 261)"/>
+              <rect class="plug pop" x="548" y="510" width="16" height="34" rx="3" transform="rotate(-45 556 527)"/>
+              <use href="#k-screw" x="396" y="238" width="10" height="28" transform="rotate(-50 401 252)"/>
+              <use href="#k-screw" x="568" y="526" width="10" height="28" transform="rotate(-45 573 540)"/>
+              <text class="lbl" x="288" y="270" text-anchor="end">new ACL</text>
+              <text class="lbl small" x="288" y="294" text-anchor="end">bone on each end, plastic screws</text>
+            </g>
+            <g class="graft-quad">
+              <path class="graft draw" d="M462,298 L352,206"/><path class="graft draw" d="M492,466 L626,598"/>
+              <use href="#k-button" x="334" y="192" width="22" height="10" transform="rotate(40 345 197)"/>
+              <use href="#k-button" x="620" y="596" width="22" height="10" transform="rotate(45 631 601)"/>
+              <text class="lbl" x="288" y="270" text-anchor="end">new ACL</text>
+              <text class="lbl small" x="288" y="294" text-anchor="end">all soft tissue, buttons on each end</text>
+            </g>
+          </g>
+          <g class="layer" id="k-physis">
+            <path class="phys" d="M322,252 C400,246 600,258 678,252"/>
+            <path class="phys" d="M306,506 C400,500 600,512 694,506"/>
+            <g class="phys-flag">
+              <circle cx="398" cy="250" r="12" fill="none" stroke="var(--hot)" stroke-width="3"/>
+              <circle cx="528" cy="508" r="12" fill="none" stroke="var(--hot)" stroke-width="3"/>
+            </g>
+            <text class="lbl" x="712" y="246" text-anchor="start">growth plates</text>
+            <text class="lbl small" x="712" y="270" text-anchor="start">no bone across them</text>
+          </g>
+        </g>
+
+        <!-- ===== SCENE 2: FROM THE SIDE, like the MRI. Front of the knee on the LEFT. ===== -->
+        <g id="k-side" class="scene">
+          <g class="layer" id="k-sbones">
+            <path class="ink draw" d="M430,0 L418,190 C380,236 388,336 440,400 C486,446 574,446 616,400 C650,352 648,246 612,198 L598,0"/>
+            <g id="k-tibia">
+              <path class="ink draw" d="M404,432 C500,418 580,418 664,432"/>
+              <path class="ink draw" d="M404,432 C398,450 386,462 382,478 C376,500 384,560 396,640"/>
+              <path class="ink draw" d="M664,432 C674,480 656,560 646,640"/>
+              <path class="men" d="M420,430 C432,412 448,412 456,430 Z"/><path class="men" d="M612,430 C620,412 636,412 648,430 Z"/>
+              <ellipse class="ink" cx="352" cy="268" rx="30" ry="54" transform="rotate(-8 352 268)"/>
+              <path class="band" d="M336,218 L372,214 L402,80 L364,76 Z"/><path class="ink draw" d="M336,218 L364,76 M372,214 L402,80"/>
+              <path class="band" d="M344,320 L376,318 L402,476 L372,480 Z"/><path class="ink draw" d="M344,320 L372,480 M376,318 L402,476"/>
+              <!-- the lower stump of the torn ACL and the shin-bone bruise ride with the shin bone during the Lachman -->
+              <g class="layer" id="k-stear-low">
+                <path class="lig draw" d="M470,430 C484,412 500,392 512,376"/>
+                <path d="M514,378 l-6,-10 l10,-4 l-6,-10" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g class="layer" id="k-bruise-low">
+                <circle cx="640" cy="446" r="30" fill="url(#k-glow)"/><circle cx="640" cy="446" r="12" fill="var(--hot)" opacity=".6"/>
+              </g>
+            </g>
+            <text class="lbl small" x="200" y="40" text-anchor="start">front</text>
+            <text class="lbl small" x="800" y="40" text-anchor="end">back</text>
+            <text class="lbl small" x="300" y="268" text-anchor="end">kneecap</text>
+            <text class="lbl small" x="500" y="560" text-anchor="middle">shin bone</text>
+          </g>
+          <g class="layer" id="k-sligs">
+            <path class="pcl draw" d="M486,296 C530,340 600,400 640,440"/>
+            <text class="lbl small" x="700" y="332" text-anchor="start">PCL looks awesome</text>
+          </g>
+          <g class="layer" id="k-sacl">
+            <path class="lig draw" d="M586,268 C552,330 500,390 470,430"/>
+            <text class="lbl" x="700" y="260" text-anchor="start">ACL</text>
+          </g>
+          <g class="layer" id="k-stear">
+            <circle cx="528" cy="350" r="36" fill="url(#k-glow)"/>
+            <path class="lig draw" d="M586,268 C572,292 556,316 544,332"/>
+            <path d="M540,330 l6,10 l-10,4 l6,10" fill="none" stroke="var(--hot)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl hot" x="700" y="260" text-anchor="start">ACL tear</text>
+            <text class="lbl small hot" x="700" y="284" text-anchor="start">it just keeps on coming</text>
+          </g>
+          <g class="layer" id="k-slach-hint">
+            <path d="M560,590 L440,590" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-dasharray="6 5"/>
+            <path d="M452,582 l-14,8 l14,8" fill="none" stroke="var(--ink-soft)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl small" x="500" y="618" text-anchor="middle">let it go limp like a noodle</text>
+          </g>
+          <g class="layer" id="k-bruise">
+            <circle cx="452" cy="372" r="34" fill="url(#k-glow)"/><circle cx="452" cy="372" r="14" fill="var(--hot)" opacity=".6"/>
+            <path class="draw" d="M470,392 C520,440 590,456 626,452" fill="none" stroke="var(--hot)" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round"/>
+            <text class="lbl hot" x="700" y="500" text-anchor="start">bone bruise</text>
+            <text class="lbl small hot" x="700" y="524" text-anchor="start">this came forward, bumped into that,</text>
+            <text class="lbl small hot" x="700" y="548" text-anchor="start">and went back</text>
+          </g>
+        </g>
+
+        <!-- ===== SCENE 3: WHERE THE NEW ACL COMES FROM. Front of the straight right knee; outside on the LEFT. ===== -->
+        <g id="k-front" class="scene">
+          <g class="layer" id="k-fskin">
+            <g transform="translate(500 270) scale(1.35) translate(-500 -270)">
+              <ellipse class="ink" cx="500" cy="252" rx="50" ry="58"/>
+              <path class="band" d="M468,196 L532,196 L548,86 L452,86 Z"/><path class="ink draw" d="M468,196 L452,86 M532,196 L548,86"/>
+              <path class="band" d="M478,308 L522,308 L518,424 L482,424 Z"/><path class="ink draw" d="M478,308 L482,424 M522,308 L518,424"/>
+              <path class="ink draw" d="M470,436 C486,420 514,420 530,436"/>
+            </g>
+            <text class="lbl" x="600" y="252" text-anchor="start">kneecap</text>
+            <text class="lbl small" x="600" y="110" text-anchor="start">quad tendon</text>
+            <text class="lbl small" x="600" y="400" text-anchor="start">patellar tendon</text>
+            <text class="lbl small" x="250" y="40" text-anchor="end">outside</text>
+            <text class="lbl small" x="750" y="40" text-anchor="start">inside</text>
+          </g>
+          <g class="layer" id="k-fportals">
+            <g transform="translate(500 270) scale(1.35) translate(-500 -270)">
+              <circle cx="462" cy="342" r="6" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+              <circle cx="538" cy="342" r="6" fill="none" stroke="var(--ink)" stroke-width="2.4"/>
+            </g>
+            <text class="lbl small" x="400" y="560" text-anchor="end">two little poke holes</text>
+          </g>
+          <g class="layer" id="k-harvest">
+            <g transform="translate(500 270) scale(1.35) translate(-500 -270)">
+              <path class="cut draw" d="M500,214 L500,448"/>
+              <path d="M492,310 L492,424 M508,310 L508,424" stroke="var(--tendon)" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+              <rect class="plug pop" x="492" y="276" width="16" height="32" rx="2"/>
+              <rect class="plug pop" x="492" y="424" width="16" height="24" rx="2"/>
+            </g>
+            <text class="lbl" x="400" y="200" text-anchor="end">patellar tendon graft</text>
+            <text class="lbl small" x="400" y="224" text-anchor="end">one vertical incision</text>
+            <text class="lbl small" x="400" y="248" text-anchor="end">the middle part, with a piece of bone</text>
+            <text class="lbl small" x="400" y="272" text-anchor="end">off the kneecap and off the tibia</text>
+          </g>
+          <g class="layer" id="k-backfill">
+            <g transform="translate(500 270) scale(1.35) translate(-500 -270)">
+              <path d="M494,280 l12,0 M494,288 l12,0 M494,296 l12,0 M494,304 l12,0 M494,428 l12,0 M494,436 l12,0 M494,444 l12,0" stroke="var(--ink)" stroke-width="1.6" opacity=".6"/>
+              <path d="M494,312 L506,312 M494,422 L506,422" stroke="var(--suture)" stroke-width="2.4"/>
+            </g>
+            <text class="lbl small" x="600" y="300" text-anchor="start">closed back together</text>
+            <text class="lbl small" x="600" y="324" text-anchor="start">backfilled with bone from the tunnel</text>
+          </g>
+          <g class="layer" id="k-numb">
+            <g transform="translate(500 270) scale(1.35) translate(-500 -270)">
+              <path class="numb pop" d="M410,300 C430,296 470,300 476,330 C486,380 470,440 452,470 C430,480 416,440 412,400 Z"/>
+            </g>
+            <text class="lbl small" x="400" y="590" text-anchor="end">numb on the outside of the scar</text>
+          </g>
+          <g class="layer" id="k-quadharvest">
+            <g transform="translate(500 270) scale(1.35) translate(-500 -270)">
+              <path class="cut draw" d="M500,104 L500,192"/>
+              <path d="M494,110 L494,192 M506,110 L506,192" stroke="var(--tendon)" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+              <path class="cut draw" d="M546,466 L560,500"/>
+            </g>
+            <text class="lbl" x="400" y="100" text-anchor="end">quad tendon graft</text>
+            <text class="lbl small" x="400" y="124" text-anchor="end">an incision up here for the tendon</text>
+            <text class="lbl small" x="400" y="148" text-anchor="end">65 mm long, 9 mm wide</text>
+            <text class="lbl small" x="600" y="560" text-anchor="start">a little one here for the tunnel</text>
+          </g>
+        </g>
+      </svg>
+
+      <canvas class="js-ink" aria-label="Your drawing on top of the sketch"></canvas>
+      <div class="cue js-cue"></div>
+
+      <!-- ===== CARDS ===== -->
+      <div class="overlay js-overlay">
+        <div class="card js-card" role="dialog" aria-modal="true">
+
+          <section data-card="heal">
+            <h2>Why it won't heal on its own</h2>
+            <p class="sub">It hurts, it swells, and then it chills out. After two or three weeks people are walking around like nothing happened.</p>
+            <div class="flow">
+              <div class="fork">
+                <div><div class="lab">MCL, the good one</div><div class="box good">Outside the knee. Heals in every single time on its own.</div></div>
+                <div><div class="lab">ACL</div><div class="box hot">Inside the knee, and stuff inside the knee doesn't heal very well.</div></div>
+              </div>
+              <div class="arrow">↓</div>
+              <div class="box">It stops hurting. What people don't like is that it feels unstable with cutting, pivoting and twisting. You plant and it gives out. "I don't trust this knee."</div>
+            </div>
+            <p class="kicker">Most young people don't like their knee without a good ACL, and most of them want to have surgery for it.</p>
+          </section>
+
+          <section data-card="options">
+            <h2>What do we make it out of?</h2>
+            <p class="sub">Four options. Bottom rung first.</p>
+            <div class="ladder">
+              <div class="rung top"><b>4</b><div><div class="t">Patellar tendon (the gold standard)</div><div class="q">The middle part with a piece of bone on each end, fixed with plastic screws that absorb into bone. If I could only use one graft forever, this is it. All my athletes under twenty get it.</div></div></div>
+              <div class="rung"><b>3</b><div><div class="t">Quad tendon</div><div class="q">The middle of your quad tendon, 65 mm long and 9 mm wide, buttons on each end, nothing hard across a growth plate. Same performance. A month or two longer to get your quad back. The kneeler's choice.</div></div></div>
+              <div class="rung"><b>2</b><div><div class="t">Hamstrings</div><div class="q">Gone down in popularity. They stretch out and are unpredictable. I don't use them anymore.</div></div></div>
+              <div class="rung"><b>1</b><div><div class="t">Cadaver (allograft)</div><div class="q">Someone else's tissue. Under twenty-five, a forty percent higher failure rate. I don't like to use them under forty.</div></div></div>
+            </div>
+            <p class="kicker">Between patellar tendon and quad, there's no wrong answer.</p>
+          </section>
+
+          <section data-card="recovery">
+            <h2>What recovery looks like</h2>
+            <p class="sub">Day surgery. Walking on it right away, moving it right away.</p>
+            <div class="timeline">
+              <div class="mile hot"><b>Day 0</b><span>In and out the same day. Nerve block, asleep, home to watch Netflix.</span></div>
+              <div class="mile"><b>3 to 4 weeks</b><span>Crutches and a brace to help, but all your weight on it from day one.</span></div>
+              <div class="mile"><b>6 weeks</b><span>Walking like a normal person. The danger zone: it feels good, but the graft is weaker now than on day one.</span></div>
+              <div class="mile"><b>3 months</b><span>Everything's healed. Start jogging, work out like a normal human.</span></div>
+              <div class="mile"><b>7 months</b><span>Full return to cutting, pivoting and twisting sports. Quad grafts sometimes eight or nine.</span></div>
+            </div>
+            <p class="kicker">You're not bored for seven months. It's a long recovery, but it's a very active recovery. What takes seven months? Your quad gets super puny, and you spend that time getting it back.</p>
+          </section>
+
+          <section data-card="timing">
+            <h2>When do we do it?</h2>
+            <p class="sub">The kid on the sideline wants it tomorrow. I make him wait three weeks for the knee to chill out and calm down.</p>
+            <div class="flow">
+              <div class="box">The surgery is the same if I do it now, six months from now, or a year from now. Go to Disney first. You've not done anything bad by waiting.</div>
+              <div class="arrow">↓</div>
+              <div class="box good">Prehab in the meantime, for three reasons.</div>
+            </div>
+            <div class="ladder">
+              <div class="rung"><b>1</b><div><div class="t">Time for the knee to chill out</div><div class="q">Surgery is like another injury. Recovery is faster if the knee is calm and moving first.</div></div></div>
+              <div class="rung"><b>2</b><div><div class="t">Get the knee ready</div><div class="q">Motion and quad strength going in.</div></div></div>
+              <div class="rung top"><b>3</b><div><div class="t">The real one: meet your therapist</div><div class="q">You spend a lot of time with them afterwards. If they're weird and you don't like them, you can switch and it's not awkward.</div></div></div>
+            </div>
+          </section>
+
+          <section data-card="favorite">
+            <h2>My favorite surgery to do</h2>
+            <p class="sub">I'll do it on a Saturday. I don't care. Three reasons.</p>
+            <div class="ladder">
+              <div class="rung"><b>1</b><div><div class="t">It's fun</div><div class="q">We make new ligaments. I like doing it.</div></div></div>
+              <div class="rung"><b>2</b><div><div class="t">We're really good at it</div><div class="q">One of my most common operations. About two hundred a year.</div></div></div>
+              <div class="rung top"><b>3</b><div><div class="t">People do great</div><div class="q">A temporary life inconvenience that gives you a good knee for all the things you want to do.</div></div></div>
+            </div>
+            <p class="kicker">I wish we had a time machine so you could go back and not tear it. That being said, ACL surgery is great. You're going to do great.</p>
+          </section>
+
+          <section data-card="meniscus">
+            <h2>If the meniscus has a tear</h2>
+            <p class="sub">I repair it with stitches, usually all through the scope. All it changes is how I let you walk on it for the first six weeks.</p>
+            <div class="flow">
+              <div class="fork">
+                <div><div class="lab">One or two stitches</div><div class="box good">I don't change anything. Act like we didn't do it.</div></div>
+                <div><div class="lab">More than two</div><div class="box hot">Walk like a pirate for six weeks, leg straight. Still all your weight on it, still bending it.</div></div>
+              </div>
+            </div>
+            <p class="kicker">Repairing the meniscus instead of taking it out is the thing I'm most proud of. Taking it out is easier, and it's not the right thing to do most of the time.</p>
+          </section>
+
+          <section data-card="home">
+            <h2>Take this home</h2>
+            <p class="sub">Point your phone camera at the code. The drawing and the words are on the website.</p>
+            <div class="qr-wrap">
+              <div class="qr js-qr"></div>
+              <div>
+                <p class="url">www.brettraynormd.com/acl-recon-faq</p>
+                <p>Questions after you leave: call Jodie at <strong>(214) 265-3210</strong>. That's what we're here for.</p>
+                <p class="quote">"We operate on Tuesdays and Thursdays, right here in this building. You're asleep for it, and you go home the same day."</p>
+              </div>
+            </div>
+          </section>
+
+          <button class="btn on close js-card-close">Back to the drawing</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chips js-chips" data-scene="inside">
+      <div class="row scene-inside">
+        <span class="k">Inside</span>
+        <button class="chip" data-toggle="bones">Bones</button>
+        <button class="chip" data-toggle="ligaments">Ligaments</button>
+        <button class="chip" data-toggle="menisci">Menisci</button>
+        <button class="chip" data-toggle="cartilage">Cartilage</button>
+        <button class="chip" data-toggle="tear">ACL tear</button>
+        <button class="chip" data-toggle="stitches">Stitches</button>
+        <button class="chip scene-chip" data-scene-go="side">The side ▸</button>
+        <button class="chip scene-chip" data-scene-go="front">The front ▸</button>
+      </div>
+      <div class="row scene-inside">
+        <span class="k">Surgery</span>
+        <button class="chip" data-toggle="portals">Poke holes</button>
+        <button class="chip" data-toggle="stump">Stump out</button>
+        <button class="chip" data-toggle="tunnels">Tunnels</button>
+        <button class="chip" data-toggle="btb">New ACL: patellar tendon</button>
+        <button class="chip" data-toggle="quad">New ACL: quad tendon</button>
+        <button class="chip" data-toggle="physis">Growth plates</button>
+      </div>
+      <div class="row scene-side">
+        <span class="k">Side</span>
+        <button class="chip scene-chip" data-scene-go="inside">◂ Inside the knee</button>
+        <button class="chip" data-toggle="sligs">Ligaments</button>
+        <button class="chip" data-toggle="stear">ACL tear</button>
+        <button class="chip" data-toggle="lachman">Let it go limp ▶</button>
+        <button class="chip" data-toggle="bruise">Bone bruise</button>
+      </div>
+      <div class="row scene-front">
+        <span class="k">Front</span>
+        <button class="chip scene-chip" data-scene-go="inside">◂ Inside the knee</button>
+        <button class="chip" data-toggle="fportals">Poke holes</button>
+        <button class="chip" data-toggle="harvest">Patellar tendon graft</button>
+        <button class="chip" data-toggle="backfill">Backfill</button>
+        <button class="chip" data-toggle="numb">Numb patch</button>
+        <button class="chip" data-toggle="quadharvest">Quad tendon graft</button>
+      </div>
+      <div class="row">
+        <span class="k">Show them</span>
+        <button class="chip card-chip" data-card="heal">Won't heal</button>
+        <button class="chip card-chip" data-card="options">4 options</button>
+        <button class="chip card-chip" data-card="recovery">Recovery</button>
+        <button class="chip card-chip" data-card="timing">Timing</button>
+        <button class="chip card-chip" data-card="favorite">Favorite</button>
+        <button class="chip card-chip" data-card="meniscus">Meniscus</button>
+        <button class="chip card-chip" data-card="home">Take home</button>
+        <span class="nav">
+          <button class="chip js-back">◀ Back</button>
+          <button class="chip primary js-next">Next ▶</button>
+        </span>
+      </div>
+    </div>
+  </section>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -1540,7 +1976,7 @@
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 
   /* ---------- views ---------- */
-  const views = { home: $('#view-home'), shoulder: $('#view-shoulder'), instab: $('#view-instab'), hip: $('#view-hip') };
+  const views = { home: $('#view-home'), shoulder: $('#view-shoulder'), instab: $('#view-instab'), hip: $('#view-hip'), knee: $('#view-knee') };
   const modules = {};
   let activeModule = null;
   function show(name) {
@@ -1553,7 +1989,7 @@
     const go = () => {
       const j = t.dataset.go;
       if (modules[j]) show(j);
-      else toast('Knee is the next module: meniscus zones, ACL, kneecap tracking.');
+      else toast('Coming next.');
     };
     t.addEventListener('click', go);
     t.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
@@ -2330,6 +2766,155 @@
   /* 67 of 100: recurrent instability after a first dislocation treated without surgery in young, active patients
      (Hurley 2020 meta-analysis: 67.4% without surgery, 9.7% after arthroscopic repair; Robinson 2006: 66.8% at five years, ages 15 to 35). */
   buildPeople($('.js-people', views.instab), 67, 13);
+
+  /* ======================================================================
+     KNEE: the ACL talk. First draft, drawn from the model rather than from a sketch of Brett's.
+     Three scenes: inside the knee (the model view), from the side (the MRI), and the front (where the graft comes from).
+     ====================================================================== */
+  modules.knee = makeModule({
+    view: views.knee,
+    SKELETON: () => ({ scene: 'inside', bones: true, ligaments: false, menisci: false, cartilage: false, tear: false, portals: false, stump: false, tunnels: false,
+                       graft: false, graftType: 'btb', physis: false, stitches: false,
+                       sligs: false, stear: false, lachman: false, bruise: false,
+                       fportals: false, harvest: false, backfill: false, numb: false, quadharvest: false, card: null }),
+    /* Cue lines: Brett's words from the ACL canonical script (4/13/2026) and the adult and adolescent graft-selection scripts (7/27, 7/31). */
+    CUES: {
+      bones: 'This is a right knee, so you’ve got to think backwards. Kneecap’s out of the way. Here’s your thigh bone, your shin bone, and the little bone on the outside.',
+      ligaments: 'You have your ligaments: your MCL on the inside, your LCL on the outside, and your ACL and PCL in the middle.',
+      menisci: 'In addition to that, you have your menisci, which are these little shock-absorbing discs.',
+      cartilage: 'And then there’s the cartilage on the end of your bones.',
+      tear: 'Here’s your ACL, which is kind of all schmutzy in the middle of it. It doesn’t look like an awesome ligament. That’s what an ACL tear looks like. I do think you have a complete ACL tear.',
+      sideScene: 'Here’s your knee looking at you from the side. Here’s the front of your knee, here’s the back.',
+      insideScene: 'Back inside the knee. Right knee, so think backwards.',
+      frontScene: 'Now where does the new ACL come from? Here’s the front of your knee, kneecap in the middle.',
+      sligs: 'Here’s your PCL ligament, which looks awesome. And here’s your ACL.',
+      stear: 'Here’s your ACL, kind of all schmutzy in the middle. It also feels loose when I examine it.',
+      lachman: 'Let it go limp like a noodle. You feel that right there, how it’s kind of loosey? On your good knee you feel a pop. That’s what you don’t get on this side. It just keeps on coming.',
+      lachmanGood: 'Let it relax out this way. Feel that pop? That’s the ACL stopping it. That’s what you get on the good side.',
+      bruise: 'You know that fracture they’re talking about? I’d call that a bone bruise. When you twisted, this came forward, bumped into that, and went back. It can only travel that far if you tear your ACL.',
+      heal: 'When you sprain your MCL, those heal in every single time on their own. ACLs are really bad at healing. The ACL’s inside the knee, and stuff inside the knee doesn’t heal very well.',
+      portals: 'When we do surgery for an ACL tear, we do a reconstruction. We go in with a camera through two little poke holes.',
+      stump: 'We take out your torn stumpy ACL, and then we make you a new one.',
+      tunnels: 'We drill a hole that exits right in the middle of there, right where it’s supposed to go, and one down here.',
+      graft: 'Then we take your new ACL, put it up in there, fix it in place, and that becomes your new ACL.',
+      btb: 'With a patellar tendon, there’s a piece of bone on each end that goes in the tunnels. We fix it with screws that are plastic and absorb into bone. If your bone breaks my plastic screw, I reserve the right to use a metal one.',
+      quad: 'With a quad tendon, we take a little part of your quad and we use buttons to suspend it. Nothing hard goes across a growth plate, only soft tissue.',
+      physis: 'If the growth plates are still open, we can’t put bone across them. It can shut part of the plate down and give you a crooked leg. That’s where the quad comes in.',
+      stitches: 'If your meniscus has a tear in it, I would repair it and put stitches into it. Usually all through the scope. Every study shows a meniscus is most likely to heal when the ACL is done at the same time.',
+      options: 'Now what do we make it out of? We have four options.',
+      fportals: 'So you get two poke holes.',
+      harvest: 'And then a vertical line about like that. We harvest the middle part of this tendon with a little piece of bone off your kneecap and off your tibia. That goes up into the tunnels.',
+      backfill: 'I don’t leave you with a hole in your tendon. We close that back together, and the bone from the tunnel backfills here and here. It all heals back in. It all grows back.',
+      numb: 'You get a scar right on the front of your knee, which can be annoying if you kneel on it. It’s always numb on the outside of that scar. Nobody ever complains about it, I just tell people ahead of time.',
+      quadharvest: 'With a quad tendon there’s an incision up here where we harvest the middle part of your quad tendon, and a little incision down here to drill the tunnel. Smaller incisions, but spread out. Not right on the front, so people who kneel all the time sometimes pick that one.',
+      meniscus: 'All it changes is how I let you walk on it for the first six weeks.',
+      recovery: 'Full return to sports with no restrictions is seven months. That’s a long time. But you’re not bored for seven months.',
+      timing: 'I make that kid wait three weeks for the knee to chill out and calm down. The surgery is the same if I do it now versus six months from now.',
+      favorite: 'This is my favorite surgery to do. I’ll do it on a Saturday, I don’t care. Three reasons.',
+      home: 'I’m going to send Jodie in, and we’re going to get you all fixed up. If you have any more questions, just call. That’s what we’re here for.'
+    },
+    init(api) {
+      api.lach = { running: false, torn: false };
+      /* The Lachman: the shin bone slides forward under the thigh bone. With a good ACL it stops short, with a pop.
+         With a torn one it just keeps on coming. SMIL translate on the tibia group, started from rest when the chip is pressed. */
+      api.setLachman = function (running, torn) {
+        const tib = $('#k-tibia');
+        $$('animateTransform', tib).forEach(x => x.remove());
+        $('#k-slach-hint').classList.toggle('on', running);
+        api.lach = { running, torn: running && torn };
+        if (!running) return;
+        const a = document.createElementNS('http://www.w3.org/2000/svg', 'animateTransform');
+        a.setAttribute('attributeName', 'transform'); a.setAttribute('type', 'translate');
+        if (torn) { a.setAttribute('values', '0 0; -28 0; -28 0; 0 0'); a.setAttribute('keyTimes', '0;0.45;0.6;1'); a.setAttribute('keySplines', '0.4 0 0.6 1; 0 0 1 1; 0.4 0 0.6 1'); }
+        else { a.setAttribute('values', '0 0; -9 0; -9 0; 0 0'); a.setAttribute('keyTimes', '0;0.2;0.6;1'); a.setAttribute('keySplines', '0.2 0 0.2 1; 0 0 1 1; 0.4 0 0.6 1'); }
+        a.setAttribute('calcMode', 'spline'); a.setAttribute('dur', '2.4s'); a.setAttribute('repeatCount', 'indefinite'); a.setAttribute('begin', 'indefinite');
+        tib.appendChild(a);
+        try { a.beginElement(); } catch (e) { /* SMIL unavailable: the chip still toggles state */ }
+      };
+    },
+    render(state, api) {
+      const { on, chip, layers } = api;
+      const inside = $('#k-inside'), side = $('#k-side'), front = $('#k-front');
+      inside.classList.toggle('on', state.scene === 'inside'); side.classList.toggle('on', state.scene === 'side'); front.classList.toggle('on', state.scene === 'front');
+      api.chipsEl.dataset.scene = state.scene;
+      /* inside */
+      on('k-bones', state.bones); on('k-ligs', state.ligaments); on('k-acl', state.ligaments && !state.tear); on('k-tear', state.tear && !state.stump);
+      on('k-menisci', state.menisci); on('k-cart', state.cartilage); on('k-stitches', state.stitches);
+      on('k-portals', state.portals); on('k-tunnels', state.tunnels); on('k-graft', state.graft); on('k-physis', state.physis);
+      inside.classList.toggle('graft-quad', state.graftType === 'quad');
+      /* side */
+      on('k-sbones', true); on('k-sligs', state.sligs); on('k-sacl', state.sligs && !state.stear); on('k-stear', state.stear); on('k-stear-low', state.stear); on('k-bruise', state.bruise); on('k-bruise-low', state.bruise);
+      const run = state.lachman && state.scene === 'side';
+      if (run !== api.lach.running || (run && state.stear !== api.lach.torn)) api.setLachman(run, state.stear);
+      /* front */
+      on('k-fskin', true); on('k-fportals', state.fportals); on('k-harvest', state.harvest); on('k-backfill', state.backfill); on('k-numb', state.numb); on('k-quadharvest', state.quadharvest);
+      /* chips */
+      ['bones', 'ligaments', 'menisci', 'cartilage', 'tear', 'portals', 'stump', 'tunnels', 'physis', 'stitches', 'sligs', 'stear', 'lachman', 'bruise', 'fportals', 'harvest', 'backfill', 'numb', 'quadharvest']
+        .forEach(k => { const c = chip(k); if (c) c.classList.toggle('on', !!state[k]); });
+      chip('btb').classList.toggle('on', state.graft && state.graftType === 'btb');
+      chip('quad').classList.toggle('on', state.graft && state.graftType === 'quad');
+    },
+    toggle(state, k) {
+      let cue = k;
+      const clearSurgery = () => { state.stump = false; state.tunnels = false; state.graft = false; };
+      switch (k) {
+        case 'bones': state.bones = !state.bones; if (!state.bones) { Object.assign(state, { ligaments: false, menisci: false, cartilage: false, tear: false, portals: false, physis: false, stitches: false }); clearSurgery(); cue = null; } break;
+        case 'ligaments': state.ligaments = !state.ligaments; if (!state.ligaments) { state.tear = false; clearSurgery(); cue = null; } break;
+        case 'menisci': state.menisci = !state.menisci; if (!state.menisci) { state.stitches = false; cue = null; } break;
+        case 'cartilage': state.cartilage = !state.cartilage; if (!state.cartilage) cue = null; break;
+        case 'tear': state.tear = !state.tear; if (state.tear) state.ligaments = true; else { clearSurgery(); cue = null; } break;
+        case 'portals': state.portals = !state.portals; if (!state.portals) cue = null; break;
+        case 'stump': state.stump = !state.stump; if (state.stump) { state.tear = true; state.ligaments = true; } else { state.tunnels = false; state.graft = false; cue = null; } break;
+        case 'tunnels': state.tunnels = !state.tunnels; if (state.tunnels) { state.stump = true; state.tear = true; state.ligaments = true; } else { state.graft = false; cue = null; } break;
+        case 'btb': case 'quad':
+          if (state.graft && state.graftType === k) { state.graft = false; cue = null; }
+          else { state.graft = true; state.graftType = k; state.tunnels = true; state.stump = true; state.tear = true; state.ligaments = true; }
+          break;
+        case 'physis': state.physis = !state.physis; if (!state.physis) cue = null; break;
+        case 'stitches': state.stitches = !state.stitches; if (state.stitches) state.menisci = true; else cue = null; break;
+        case 'sligs': state.sligs = !state.sligs; if (!state.sligs) { state.stear = false; cue = null; } break;
+        case 'stear': state.stear = !state.stear; if (state.stear) state.sligs = true; else cue = null; break;
+        case 'lachman': state.lachman = !state.lachman; if (state.lachman) cue = state.stear ? 'lachman' : 'lachmanGood'; else cue = null; break;
+        case 'bruise': state.bruise = !state.bruise; if (!state.bruise) cue = null; break;
+        case 'fportals': state.fportals = !state.fportals; if (!state.fportals) cue = null; break;
+        case 'harvest': state.harvest = !state.harvest; if (state.harvest) state.quadharvest = false; else { state.backfill = false; state.numb = false; cue = null; } break;
+        case 'backfill': state.backfill = !state.backfill; if (state.backfill) { state.harvest = true; state.quadharvest = false; } else cue = null; break;
+        case 'numb': state.numb = !state.numb; if (state.numb) { state.harvest = true; state.quadharvest = false; } else cue = null; break;
+        case 'quadharvest': state.quadharvest = !state.quadharvest; if (state.quadharvest) { state.harvest = false; state.backfill = false; state.numb = false; } else cue = null; break;
+      }
+      return cue;
+    },
+    onScene(state, scene) { state.scene = scene; state.lachman = false; return scene === 'side' ? 'sideScene' : scene === 'front' ? 'frontScene' : 'insideScene'; },
+    STEPS: [
+      ['bones',      s => { }],
+      ['ligaments',  s => { s.ligaments = true; }],
+      ['menisci',    s => { s.menisci = true; }],
+      ['cartilage',  s => { s.cartilage = true; }],
+      ['tear',       s => { s.tear = true; }],
+      ['lachman',    s => { s.scene = 'side'; s.sligs = true; s.stear = true; s.lachman = true; }],
+      ['bruise',     s => { s.bruise = true; }],
+      ['heal',       s => { s.lachman = false; s.card = 'heal'; }],
+      ['portals',    s => { s.card = null; s.scene = 'inside'; s.portals = true; }],
+      ['stump',      s => { s.stump = true; }],
+      ['tunnels',    s => { s.tunnels = true; }],
+      ['graft',      s => { s.graft = true; s.graftType = 'btb'; }],
+      ['options',    s => { s.card = 'options'; }],
+      ['harvest',    s => { s.card = null; s.scene = 'front'; s.fportals = true; s.harvest = true; }],
+      ['backfill',   s => { s.backfill = true; }],
+      ['numb',       s => { s.numb = true; }],
+      ['quadharvest', s => { s.quadharvest = true; s.harvest = false; s.backfill = false; s.numb = false; }],
+      ['stitches',   s => { s.scene = 'inside'; s.stitches = true; }],
+      ['meniscus',   s => { s.card = 'meniscus'; }],
+      ['recovery',   s => { s.card = 'recovery'; }],
+      ['timing',     s => { s.card = 'timing'; }],
+      ['favorite',   s => { s.card = 'favorite'; }],
+      ['home',       s => { s.card = 'home'; }]
+    ],
+    CARD_STEPS: ['heal', 'options', 'meniscus', 'recovery', 'timing', 'favorite', 'home'],
+    onCard(name, card) {
+      if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/acl-recon-faq');
+    }
+  });
 
   /* ---------- boot ---------- */
   const boot = () => {};
