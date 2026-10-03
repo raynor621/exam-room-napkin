@@ -323,6 +323,66 @@
     .row .k { display: none; }
     .cue { font-size: 15px; }
   }
+
+  /* ---------- Patient view (v0.14): /explore, #explore or ?explore. The shoulder talk for the waiting patient:
+     same drawings, a caption in Brett's voice, Next / Back only. Brett's own mode is untouched. ---------- */
+  .pt-bar, .pt-panel, .pt-cover { display: none; }
+  html.explore #view-shoulder { position: relative; }
+  html.explore #view-shoulder > .bar, html.explore #view-shoulder > .chips,
+  html.explore #view-shoulder .cue, html.explore #view-shoulder .js-card-close { display: none; }
+  html.explore #view-shoulder .overlay { cursor: default; }
+  html.explore .pt-bar { display: flex; align-items: center; gap: 14px; padding-block: 10px 8px; }
+  html.explore .pt-panel { display: block; padding-block: 8px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  html.explore .pt-cover.open { display: flex; }
+  html.embedded .k-only, html:not(.embedded) .e-only { display: none !important; }
+  .pt-bar .spacer { flex: 1; }
+  .pt-bar h1 { font-family: var(--font-hand); font-weight: 700; font-size: 26px; margin: 0; line-height: 1; letter-spacing: -.2px; }
+  .js-pt-handoff { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  .pt-chapter { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .pt-progress { height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--ink) 10%, transparent); overflow: hidden; }
+  .pt-progress i { display: block; height: 100%; width: 0; background: var(--navy); border-radius: 3px; transition: width .35s ease; }
+  .pt-caption { margin: 12px 0 14px; font-size: clamp(19px, 2.2vw, 26px); line-height: 1.38; color: var(--ink); text-wrap: pretty;
+                min-height: calc(3 * 1.38em); max-width: 68ch; }
+  .pt-caption.in { animation: ptfade .35s ease; }
+  @keyframes ptfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .pt-nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .pt-count { flex: 1; text-align: center; color: var(--ink-soft); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .pt-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 60px; padding: 10px 26px;
+            border: 2px solid var(--navy); border-radius: 16px; background: var(--chip-bg); color: var(--chip-fg);
+            font: 700 20px var(--font-ui); cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .pt-btn:active { transform: scale(.98); }
+  .pt-btn.primary { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+  .pt-btn.ghost { border-color: transparent; background: transparent; color: var(--navy); text-decoration: underline; text-underline-offset: 4px; }
+  .pt-cover { position: absolute; inset: 0; z-index: 20; background: var(--paper); overflow: auto; align-items: center; justify-content: center; padding: 24px 8px; box-sizing: border-box; }
+  .pt-sheet { width: 100%; max-width: 1000px; margin: auto; }
+  .pt-welcome { display: grid; grid-template-columns: 230px 1fr; gap: 40px; align-items: center; }
+  .pt-head { width: 230px; height: 230px; border-radius: 50%; object-fit: cover; display: block; border: 5px solid var(--paper-2); box-shadow: var(--shadow); }
+  .pt-eyebrow { margin: 0; font-size: 14px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--tendon); }
+  .pt-cover h1 { font-family: var(--font-hand); font-size: clamp(30px, 4vw, 46px); font-weight: 800; line-height: 1.05; letter-spacing: -.5px; margin: 6px 0 14px; text-wrap: balance; }
+  .pt-lead { font-size: clamp(18px, 2vw, 22px); line-height: 1.45; margin: 0 0 22px; max-width: 60ch; }
+  .pt-ask { font-size: 20px; font-weight: 700; margin: 0 0 10px; }
+  .pt-sides { display: flex; gap: 14px; flex-wrap: wrap; }
+  .pt-sides .pt-btn { flex: 1 1 220px; min-height: 70px; font-size: 22px; }
+  .pt-fine { font-size: 14px; color: var(--ink-soft); margin: 18px 0 0; }
+  .pt-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px; }
+  .pt-cols > div { background: var(--paper-2); border: 2px solid color-mix(in srgb, var(--ink) 18%, transparent); border-radius: 18px; padding: 16px 22px; }
+  .pt-cols h2 { font-size: 20px; margin: 0 0 8px; }
+  .pt-cols ul { margin: 0; padding-left: 1.2em; }
+  .pt-cols li { font-size: 19px; line-height: 1.35; margin: 7px 0; }
+  .pt-endnav { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+  .pt-call { font-size: 19px; font-weight: 700; margin: 18px 0 0; }
+  .ptlink { background: none; border: 0; padding: 4px 8px; color: var(--navy); font-size: 15px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  @media (max-width: 760px) {
+    .pt-welcome { grid-template-columns: 1fr; gap: 14px; justify-items: center; text-align: center; }
+    .pt-head { width: 130px; height: 130px; }
+    .pt-lead { margin-inline: auto; }
+    .pt-cols { grid-template-columns: 1fr; }
+    .pt-btn { min-height: 52px; padding: 8px 18px; font-size: 18px; }
+    .pt-bar h1 { font-size: 22px; }
+    .pt-chapter { display: none; }
+    .pt-caption { min-height: calc(4 * 1.38em); }
+  }
+  @media (prefers-reduced-motion: reduce) { .pt-caption.in { animation: none; } .pt-progress i { transition: none; } }
 </style>
 </head>
 <body>
@@ -382,7 +442,8 @@
         <b>Knee pain</b><small>normal X-rays, what else hurts</small>
       </div>
     </div>
-    <p style="font-size:14px; margin-top:8px;">Prototype v0.13 · shoulder, shoulder instability and hip drawn the way Dr. Raynor draws them, plus two talks on a 3D knee · nothing you draw is saved</p>
+    <p style="font-size:14px; margin-top:8px;">Prototype v0.14 · shoulder, shoulder instability and hip drawn the way Dr. Raynor draws them, plus two talks on a 3D knee · nothing you draw is saved</p>
+    <p style="margin:0;"><button class="ptlink js-ptlink">Patient view: the waiting-room walkthrough ▸</button></p>
   </section>
 
   <!-- ================= SHOULDER ================= -->
@@ -403,6 +464,15 @@
       <button class="btn ghost js-clear" id="btn-clear">Clear ink</button>
       <button class="btn ghost js-cues" id="btn-cues" aria-pressed="true">Cues</button>
       <button class="btn ghost js-reset" id="btn-reset">↺ Start over</button>
+      <button class="btn on js-ptview" id="btn-ptview" hidden>Patient view ↺</button>
+    </div>
+
+    <!-- Patient view (v0.14): shown instead of the bar and chips when the page opens at /explore -->
+    <div class="pt-bar">
+      <h1 class="js-pt-handoff">Your Shoulder</h1>
+      <span class="pt-chapter js-pt-chapter"></span>
+      <span class="spacer"></span>
+      <button class="btn ghost js-pt-restart">↺ Start over</button>
     </div>
 
     <div class="stage js-stage" id="stage">
@@ -703,6 +773,68 @@
           <button class="chip js-back" id="btn-back">◀ Back</button>
           <button class="chip primary js-next" id="btn-next">Next ▶</button>
         </span>
+      </div>
+    </div>
+
+    <div class="pt-panel">
+      <div class="pt-progress"><i class="js-pt-fill"></i></div>
+      <p class="pt-caption js-pt-caption" aria-live="polite"></p>
+      <div class="pt-nav">
+        <button class="pt-btn js-pt-back">◀ Back</button>
+        <span class="pt-count js-pt-count"></span>
+        <button class="pt-btn ghost js-pt-skip" hidden>Skip to the end</button>
+        <button class="pt-btn primary js-pt-next">Next ▶</button>
+      </div>
+    </div>
+
+    <div class="pt-cover js-pt-cover" data-screen="welcome">
+      <div class="pt-sheet pt-welcome js-pt-welcome">
+        <img class="pt-head js-pt-handoff" alt="Dr. Brett Raynor" src="data:image/jpeg;base64,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">
+        <div>
+          <p class="pt-eyebrow"><span class="k-only">While you wait</span><span class="e-only">Shoulder pain, explained</span></p>
+          <h1>Your shoulder, the way I explain it</h1>
+          <p class="pt-lead k-only">Hi, I’m Dr. Raynor. I’ll be in shortly. In the meantime, tap through how the shoulder works, why it hurts, and what we can do about it. These are the same drawings I use in the room, so we can pick up right where you leave off. It takes about three minutes.</p>
+          <p class="pt-lead e-only">Hi, I’m Dr. Raynor. This is how I walk my patients through shoulder pain: how the shoulder works, why it hurts, and what we can do about it, with the same drawings I use in the exam room. It takes about three minutes.</p>
+          <p class="pt-ask">Which shoulder is bothering you?</p>
+          <div class="pt-sides">
+            <button class="pt-btn primary js-pt-start" data-side="right">Right shoulder</button>
+            <button class="pt-btn primary js-pt-start" data-side="left">Left shoulder</button>
+          </div>
+          <p class="pt-fine">General education, not a diagnosis. Nothing you tap is saved.</p>
+        </div>
+      </div>
+      <div class="pt-sheet js-pt-end" hidden>
+        <p class="pt-eyebrow">All done</p>
+        <h1 class="js-pt-handoff">Thanks for looking through it</h1>
+        <p class="pt-lead k-only">I’ll be in shortly. A few things to think about before I get there, so we can make the most of our time together:</p>
+        <p class="pt-lead e-only">If you’re coming in to see me, a few things to think about before your visit, so we can make the most of our time together:</p>
+        <div class="pt-cols">
+          <div>
+            <h2>Think about</h2>
+            <ul>
+              <li>Where exactly does it hurt? Be ready to point to it.</li>
+              <li>Does it wake you up at night?</li>
+              <li>What makes it worse: reaching overhead, behind your back, lifting?</li>
+              <li>What have you already tried: therapy, medicine, a shot?</li>
+              <li>What do you want to get back to doing?</li>
+            </ul>
+          </div>
+          <div>
+            <h2>Good questions to ask me</h2>
+            <ul>
+              <li>Is it torn, or is it irritated?</li>
+              <li>What happens if I wait?</li>
+              <li>What can I do at home in the meantime?</li>
+              <li>What’s the next step for me?</li>
+            </ul>
+          </div>
+        </div>
+        <p class="pt-call e-only">To make an appointment, call (214) 265-3211.</p>
+        <div class="pt-endnav">
+          <button class="pt-btn js-pt-endback">◀ Back</button>
+          <button class="pt-btn primary js-pt-restart">↺ Start over</button>
+        </div>
+        <p class="pt-fine">General education, not a diagnosis.</p>
       </div>
     </div>
   </section>
@@ -5942,7 +6074,7 @@ three/build/three.module.js:
     }));
     $$('.chip[data-card]', view).forEach(c => c.addEventListener('click', () => { state.card = state.card === c.dataset.card ? null : c.dataset.card; render(state.card); }));
     $('.js-card-close', view).addEventListener('click', () => { state.card = null; render(); });
-    overlay.addEventListener('click', e => { if (e.target === e.currentTarget) { state.card = null; render(); } });
+    overlay.addEventListener('click', e => { if (e.target === e.currentTarget && !document.documentElement.classList.contains('explore')) { state.card = null; render(); } });
 
     /* walkthrough: the order of the talk */
     const STEPS = cfg.STEPS, CARD_STEPS = new Set(cfg.CARD_STEPS);
@@ -5984,9 +6116,12 @@ three/build/three.module.js:
 
     goStep(0);
     ink.sizeCanvas();
-    return { sizeCanvas: ink.sizeCanvas, goStep, render, closeCard() { if (state.card) { state.card = null; render(); return true; } return false; } };
+    return { sizeCanvas: ink.sizeCanvas, goStep, render, closeCard() { if (state.card) { state.card = null; render(); return true; } return false; },
+             /* patient view (v0.14): set a whole state from a recipe, pick the side, and line Next up with a beat */
+             apply(recipe) { state = cfg.SKELETON(); recipe(state); render(); }, side,
+             setStep(i) { step = Math.max(0, Math.min(STEPS.length - 1, i)); $('.js-next', view).textContent = step === STEPS.length - 1 ? 'Done ✓' : 'Next ▶'; if (cfg.CUES[STEPS[step][0]]) cueEl.textContent = cfg.CUES[STEPS[step][0]]; } };
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && activeModule) activeModule.closeCard(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && activeModule && !document.documentElement.classList.contains('explore')) activeModule.closeCard(); });
 
   /* ======================================================================
      SHOULDER: rotator cuff talk, plus the socket breakout
@@ -6909,6 +7044,155 @@ three/build/three.module.js:
     }
   });
   buildPeople($('.js-people', views.kneepain), 33, 5);
+
+  /* ======================================================================
+     PATIENT VIEW (v0.14): the shoulder talk for the patient waiting in the room.
+     Opens at /explore (Vercel rewrite), #explore or ?explore. Same drawings and cards as Brett's mode, driven by
+     Next / Back, with a caption in his voice on every screen. Kiosk extras: an idle reset back to the welcome screen,
+     and a long-press on the title (or the photo) that hands the iPad to Brett's own mode on the same drawing.
+     Embedded in another site (an iframe, or ?embed), the kiosk extras are off and the copy speaks to a reader at home.
+     ====================================================================== */
+  (function patientView() {
+    const root = document.documentElement, view = views.shoulder, mod = modules.shoulder;
+    let embedded = /[?&]embed\b/.test(location.search);
+    try { if (window.self !== window.top) embedded = true; } catch (e) { embedded = true; }
+    root.classList.toggle('embedded', embedded);
+
+    const CH = ['How your shoulder works', 'Why it hurts', 'What we can do about it', 'If surgery comes up'];
+    const cuffs = s => { s.cuff = 3; s.biceps = true; };
+    const tornS = s => { cuffs(s); s.tear = 'off'; };
+    /* doc = the matching beat of Brett's walkthrough (STEPS index), so a handoff continues from the right place */
+    const PT = [
+      { ch: 0, doc: 0, set: s => { },
+        text: 'Your shoulder is a ball and socket joint. The ball is the top of your arm bone, and the socket is part of your shoulder blade.' },
+      { ch: 0, doc: 1, set: s => { s.cuff = 1; },
+        text: 'Your rotator cuff is four tendons that wrap around that ball. There’s one up top…' },
+      { ch: 0, doc: 3, set: s => { s.cuff = 3; }, first: s => { s.cuff = 2; },
+        text: '…one in the front, and two around the back. Together they keep the ball centered in the socket and help you lift and turn your arm.' },
+      { ch: 0, doc: 4, set: cuffs,
+        text: 'The biceps tendon comes up the front of your arm, makes a ninety-degree turn through a tight little sheath, and attaches at the top of the socket. That turn is a common spot for pain.' },
+      { ch: 0, doc: 6, set: s => { cuffs(s); s.bursa = true; },
+        text: 'Between the rotator cuff and the bone above it is a little balloon sac called a bursa. It helps the tendons glide instead of rub.' },
+      { ch: 1, doc: 7, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; },
+        text: 'Sometimes the bursa gets angry about doing its job too much. It swells and gets sore: that’s bursitis, one of the most common reasons a shoulder hurts.' },
+      { ch: 1, doc: 8, set: s => { cuffs(s); s.bursa = true; s.tear = 'worn'; },
+        text: 'A tendon can also hurt without being torn. When it gets irritated where it rubs and works, that’s tendonitis.' },
+      { ch: 1, doc: 9, set: tornS,
+        text: 'Sometimes a tendon tears all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both all the way through, so either one is called a full-thickness tear.' },
+      { ch: 1, doc: 9, set: s => { tornS(s); s.card = 'people'; },
+        text: 'Tears are really common, and lots of them don’t hurt at all. If I took an MRI of 100 people over 60 with no shoulder pain, about 1 in 3 would have a rotator cuff tear. A tear on an MRI doesn’t automatically mean surgery.' },
+      { ch: 2, doc: 9, set: s => { tornS(s); s.card = 'options'; },
+        text: 'Most shoulder pain gets better without an operation. We start at the bottom rung and only climb if we need to. Physical therapy is never the wrong answer.' },
+      { ch: 2, doc: 9, set: s => { tornS(s); s.card = 'study'; }, fork: true,
+        text: 'Even with a full-thickness tear, physical therapy usually comes first. Most people who give it a real try don’t end up needing surgery, and trying it first doesn’t burn the bridge.' },
+      { ch: 3, doc: 10, set: s => { cuffs(s); s.repair = true; },
+        text: 'If we do need to fix it, I roughen up the bone, put the tendon back down where it belongs, and hold it there with small anchors so it can heal back in. It’s done through a few small poke holes.' },
+      { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; },
+        text: 'If the biceps is part of the pain, I move it a little lower on the arm so it doesn’t have to slide in and out of that tight groove anymore. It adds about three minutes.' },
+      { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; s.card = 'calendar'; },
+        text: 'Recovery is biology, not caution: a tendon takes time to heal back to bone. You’re in a sling for six weeks, strengthening starts at three months, and full recovery is about six months.' }
+    ];
+    const FORK = PT.findIndex(p => p.fork);
+
+    const q = s => $(s, view);
+    const cover = q('.js-pt-cover'), welcome = q('.js-pt-welcome'), endSheet = q('.js-pt-end');
+    const caption = q('.js-pt-caption'), chapter = q('.js-pt-chapter'), fill = q('.js-pt-fill'), count = q('.js-pt-count');
+    const nextBtn = q('.js-pt-next'), backBtn = q('.js-pt-back'), skipBtn = q('.js-pt-skip'), ptviewBtn = q('.js-ptview');
+    let idx = -1, skipped = false, firstTimer = 0, active = false;
+
+    function cover_(which) {
+      cover.classList.toggle('open', !!which);
+      cover.dataset.screen = which || '';
+      welcome.hidden = which !== 'welcome'; endSheet.hidden = which !== 'end';
+      if (which) cover.scrollTop = 0;
+    }
+    function screen(i, forward) {
+      clearTimeout(firstTimer);
+      idx = i; const p = PT[i];
+      cover_(null);
+      if (forward && p.first) {
+        mod.apply(s => { PT[i - 1].set(s); p.first(s); });
+        firstTimer = setTimeout(() => { if (idx === i) mod.apply(p.set); }, 900);
+      } else mod.apply(p.set);
+      caption.textContent = p.text;
+      caption.classList.remove('in'); void caption.offsetWidth; caption.classList.add('in');
+      chapter.textContent = CH[p.ch];
+      fill.style.width = ((i + 1) / PT.length * 100).toFixed(1) + '%';
+      count.textContent = `${i + 1} of ${PT.length}`;
+      skipBtn.hidden = i !== FORK;
+      nextBtn.textContent = i === FORK ? 'If surgery comes up ▶' : i === PT.length - 1 ? 'Finish ▶' : 'Next ▶';
+    }
+    function goWelcome() {
+      clearTimeout(firstTimer);
+      idx = -1; skipped = false;
+      mod.apply(() => { }); mod.side(false);
+      cover_('welcome');
+    }
+    function goEnd(viaSkip) {
+      clearTimeout(firstTimer);
+      skipped = !!viaSkip; idx = PT.length;
+      cover_('end');
+    }
+    function enter() {
+      active = true;
+      root.classList.remove('handoff'); root.classList.add('explore');
+      root.dataset.theme = 'light';
+      ptviewBtn.hidden = true;
+      show('shoulder');
+      document.title = 'Your Shoulder · Dr. Raynor';
+      goWelcome();
+      idle();
+    }
+
+    $$('.js-pt-start', view).forEach(b => b.addEventListener('click', () => { mod.side(b.dataset.side === 'left'); skipped = false; screen(0, true); }));
+    nextBtn.addEventListener('click', () => { if (idx >= PT.length - 1) goEnd(false); else screen(idx + 1, true); });
+    backBtn.addEventListener('click', () => { if (idx <= 0) goWelcome(); else screen(idx - 1, false); });
+    skipBtn.addEventListener('click', () => goEnd(true));
+    q('.js-pt-endback').addEventListener('click', () => screen(skipped ? FORK : PT.length - 1, false));
+    $$('.js-pt-restart', view).forEach(b => b.addEventListener('click', goWelcome));
+
+    /* Brett walks in: hold the title (or the photo) for a second and the iPad is his, on the same drawing */
+    function handoff() {
+      if (embedded || !root.classList.contains('explore')) return;
+      clearTimeout(firstTimer);
+      const p = idx >= PT.length ? PT[skipped ? FORK : PT.length - 1] : PT[Math.max(idx, 0)];
+      root.classList.remove('explore'); root.classList.add('handoff');
+      cover_(null);
+      mod.apply(p.set); mod.setStep(p.doc);
+      ptviewBtn.hidden = false;
+      document.title = 'Exam Room Napkin';
+      requestAnimationFrame(mod.sizeCanvas);
+      toast('Your view. “Patient view ↺” puts theirs back.');
+      idle();
+    }
+    $$('.js-pt-handoff', view).forEach(el => {
+      let t = 0;
+      el.addEventListener('pointerdown', () => { clearTimeout(t); t = setTimeout(handoff, 1000); });
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, () => clearTimeout(t)));
+      el.addEventListener('contextmenu', e => e.preventDefault());
+      el.addEventListener('dragstart', e => e.preventDefault());
+    });
+    ptviewBtn.addEventListener('click', enter);
+
+    /* idle reset: an untouched patient view goes back to the welcome screen (3 min); a handed-off iPad goes back
+       to the patient view after 10 min, ready for the next room. Never when embedded. */
+    let idleTimer = 0;
+    function idle() {
+      clearTimeout(idleTimer);
+      if (embedded || !active) return;
+      if (root.classList.contains('explore')) { if (idx !== -1) idleTimer = setTimeout(goWelcome, 180000); }
+      else if (root.classList.contains('handoff')) idleTimer = setTimeout(() => { if (root.classList.contains('handoff')) enter(); }, 600000);
+    }
+    ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, idle, true));
+    nextBtn.addEventListener('click', idle); $$('.js-pt-start', view).forEach(b => b.addEventListener('click', idle));
+
+    /* the way in from Brett's home screen, and from the address */
+    $$('.js-ptlink').forEach(b => b.addEventListener('click', () => { if (!/^#explore\b/.test(location.hash)) { try { history.replaceState(null, '', '#explore'); } catch (e) { } } enter(); }));
+    window.addEventListener('hashchange', () => { if (/^#explore\b/.test(location.hash) && !root.classList.contains('explore')) enter(); });
+    const wanted = /^\/explore(\/|$)/.test(location.pathname) || /[?&]explore\b/.test(location.search) || /^#explore\b/.test(location.hash);
+    if (wanted) enter();
+    window.__pt = { enter, handoff, goWelcome, state: () => ({ idx, skipped, explore: root.classList.contains('explore'), handoff: root.classList.contains('handoff'), embedded }), PT_LENGTH: PT.length, FORK };
+  })();
 
   /* ---------- boot ---------- */
   const boot = () => {};
