@@ -327,10 +327,10 @@
   /* ---------- Patient view (v0.14): /explore, #explore or ?explore. The shoulder talk for the waiting patient:
      same drawings, a caption in Brett's voice, Next / Back only. Brett's own mode is untouched. ---------- */
   .pt-bar, .pt-panel, .pt-cover { display: none; }
-  html.explore #view-shoulder { position: relative; }
-  html.explore #view-shoulder > .bar, html.explore #view-shoulder > .chips,
-  html.explore #view-shoulder .cue, html.explore #view-shoulder .js-card-close { display: none; }
-  html.explore #view-shoulder .overlay { cursor: default; }
+  html.explore .view { position: relative; }
+  html.explore .view > .bar, html.explore .view > .chips,
+  html.explore .view .cue, html.explore .view .js-card-close { display: none; }
+  html.explore .view .overlay { cursor: default; }
   html.explore .pt-bar { display: flex; align-items: center; gap: 14px; padding-block: 10px 8px; }
   html.explore .pt-panel { display: block; padding-block: 8px calc(12px + env(safe-area-inset-bottom, 0px)); }
   html.explore .pt-cover.open { display: flex; }
@@ -383,6 +383,15 @@
     .pt-caption { min-height: calc(4 * 1.38em); }
   }
   @media (prefers-reduced-motion: reduce) { .pt-caption.in { animation: none; } .pt-progress i { transition: none; } }
+  /* the topic picker (/explore with no topic) */
+  .pt-picker { gap: 10px; }
+  .pt-picker .pt-head { width: 150px; height: 150px; }
+  .pt-picker .pt-lead { margin: 0 auto 10px; text-align: center; }
+  .pt-picker .tile b { font-size: 24px; }
+  .pt-fine .ptlink { font-size: 14px; padding: 0 0 0 6px; }
+  /* landscape: some of the drawings hang their labels just past the edge of their viewBox (Brett's mode has room for
+     them beside the shorter stage); give the taller patient stage the same side room */
+  @media (min-aspect-ratio: 5/4) { html.explore .view .stage svg.drawing { left: 6%; width: 88%; } }
 </style>
 </head>
 <body>
@@ -442,7 +451,7 @@
         <b>Knee pain</b><small>normal X-rays, what else hurts</small>
       </div>
     </div>
-    <p style="font-size:14px; margin-top:8px;">Prototype v0.14 · shoulder, shoulder instability and hip drawn the way Dr. Raynor draws them, plus two talks on a 3D knee · nothing you draw is saved</p>
+    <p style="font-size:14px; margin-top:8px;">Prototype v0.15 · shoulder, shoulder instability and hip drawn the way Dr. Raynor draws them, plus two talks on a 3D knee · nothing you draw is saved</p>
     <p style="margin:0;"><button class="ptlink js-ptlink">Patient view: the waiting-room walkthrough ▸</button></p>
   </section>
 
@@ -464,15 +473,6 @@
       <button class="btn ghost js-clear" id="btn-clear">Clear ink</button>
       <button class="btn ghost js-cues" id="btn-cues" aria-pressed="true">Cues</button>
       <button class="btn ghost js-reset" id="btn-reset">↺ Start over</button>
-      <button class="btn on js-ptview" id="btn-ptview" hidden>Patient view ↺</button>
-    </div>
-
-    <!-- Patient view (v0.14): shown instead of the bar and chips when the page opens at /explore -->
-    <div class="pt-bar">
-      <h1 class="js-pt-handoff">Your Shoulder</h1>
-      <span class="pt-chapter js-pt-chapter"></span>
-      <span class="spacer"></span>
-      <button class="btn ghost js-pt-restart">↺ Start over</button>
     </div>
 
     <div class="stage js-stage" id="stage">
@@ -773,68 +773,6 @@
           <button class="chip js-back" id="btn-back">◀ Back</button>
           <button class="chip primary js-next" id="btn-next">Next ▶</button>
         </span>
-      </div>
-    </div>
-
-    <div class="pt-panel">
-      <div class="pt-progress"><i class="js-pt-fill"></i></div>
-      <p class="pt-caption js-pt-caption" aria-live="polite"></p>
-      <div class="pt-nav">
-        <button class="pt-btn js-pt-back">◀ Back</button>
-        <span class="pt-count js-pt-count"></span>
-        <button class="pt-btn ghost js-pt-skip" hidden>Skip to the end</button>
-        <button class="pt-btn primary js-pt-next">Next ▶</button>
-      </div>
-    </div>
-
-    <div class="pt-cover js-pt-cover" data-screen="welcome">
-      <div class="pt-sheet pt-welcome js-pt-welcome">
-        <img class="pt-head js-pt-handoff" alt="Dr. Brett Raynor" src="data:image/jpeg;base64,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">
-        <div>
-          <p class="pt-eyebrow"><span class="k-only">While you wait</span><span class="e-only">Shoulder pain, explained</span></p>
-          <h1>Your shoulder, the way I explain it</h1>
-          <p class="pt-lead k-only">Hi, I’m Dr. Raynor. I’ll be in shortly. In the meantime, tap through how the shoulder works, why it hurts, and what we can do about it. These are the same drawings I use in the room, so we can pick up right where you leave off. It takes about three minutes.</p>
-          <p class="pt-lead e-only">Hi, I’m Dr. Raynor. This is how I walk my patients through shoulder pain: how the shoulder works, why it hurts, and what we can do about it, with the same drawings I use in the exam room. It takes about three minutes.</p>
-          <p class="pt-ask">Which shoulder is bothering you?</p>
-          <div class="pt-sides">
-            <button class="pt-btn primary js-pt-start" data-side="right">Right shoulder</button>
-            <button class="pt-btn primary js-pt-start" data-side="left">Left shoulder</button>
-          </div>
-          <p class="pt-fine">General education, not a diagnosis. Nothing you tap is saved.</p>
-        </div>
-      </div>
-      <div class="pt-sheet js-pt-end" hidden>
-        <p class="pt-eyebrow">All done</p>
-        <h1 class="js-pt-handoff">Thanks for looking through it</h1>
-        <p class="pt-lead k-only">I’ll be in shortly. A few things to think about before I get there, so we can make the most of our time together:</p>
-        <p class="pt-lead e-only">If you’re coming in to see me, a few things to think about before your visit, so we can make the most of our time together:</p>
-        <div class="pt-cols">
-          <div>
-            <h2>Think about</h2>
-            <ul>
-              <li>Where exactly does it hurt? Be ready to point to it.</li>
-              <li>Does it wake you up at night?</li>
-              <li>What makes it worse: reaching overhead, behind your back, lifting?</li>
-              <li>What have you already tried: therapy, medicine, a shot?</li>
-              <li>What do you want to get back to doing?</li>
-            </ul>
-          </div>
-          <div>
-            <h2>Good questions to ask me</h2>
-            <ul>
-              <li>Is it torn, or is it irritated?</li>
-              <li>What happens if I wait?</li>
-              <li>What can I do at home in the meantime?</li>
-              <li>What’s the next step for me?</li>
-            </ul>
-          </div>
-        </div>
-        <p class="pt-call e-only">To make an appointment, call (214) 265-3211.</p>
-        <div class="pt-endnav">
-          <button class="pt-btn js-pt-endback">◀ Back</button>
-          <button class="pt-btn primary js-pt-restart">↺ Start over</button>
-        </div>
-        <p class="pt-fine">General education, not a diagnosis.</p>
       </div>
     </div>
   </section>
@@ -2054,7 +1992,73 @@
       </div>
     </div>
   </section>
+
+  <!-- ================= PATIENT VIEW: topic picker (/explore) ================= -->
+  <section class="view home pt-picker" id="view-explore">
+    <img class="pt-head js-pt-handoff js-pt-photo" alt="Dr. Brett Raynor">
+    <p class="pt-eyebrow"><span class="k-only">While you wait</span><span class="e-only">Patient education</span></p>
+    <h1>What brings you in?</h1>
+    <p class="pt-lead k-only">Hi, I’m Dr. Raynor. I’ll be in shortly. Pick the one closest to why you’re here, and I’ll walk you through it with the same drawings I use in the room.</p>
+    <p class="pt-lead e-only">Hi, I’m Dr. Raynor. Pick a topic, and I’ll walk you through it the way I explain it in the exam room, with the same drawings.</p>
+    <div class="tiles js-pt-tiles"></div>
+    <p class="pt-fine">General education, not a diagnosis. Nothing you tap is saved.</p>
+  </section>
 </div>
+
+<!-- Patient view (v0.15): cloned into each joint view that has a patient flow; the script fills in the words -->
+<template id="pt-tpl">
+  <div class="pt-bar">
+    <h1 class="js-pt-handoff js-pt-title"></h1>
+    <span class="pt-chapter js-pt-chapter"></span>
+    <span class="spacer"></span>
+    <button class="btn ghost js-pt-topics">All topics</button>
+    <button class="btn ghost js-pt-restart">↺ Start over</button>
+  </div>
+  <div class="pt-panel">
+    <div class="pt-progress"><i class="js-pt-fill"></i></div>
+    <p class="pt-caption js-pt-caption" aria-live="polite"></p>
+    <div class="pt-nav">
+      <button class="pt-btn js-pt-back">◀ Back</button>
+      <span class="pt-count js-pt-count"></span>
+      <button class="pt-btn ghost js-pt-skip" hidden>Skip to the end</button>
+      <button class="pt-btn primary js-pt-next">Next ▶</button>
+    </div>
+  </div>
+  <div class="pt-cover js-pt-cover">
+    <div class="pt-sheet pt-welcome js-pt-welcome">
+      <img class="pt-head js-pt-handoff js-pt-photo" alt="Dr. Brett Raynor" src="data:image/jpeg;base64,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">
+      <div>
+        <p class="pt-eyebrow"><span class="k-only">While you wait</span><span class="e-only js-pt-eyebrow"></span></p>
+        <h1 class="js-pt-whead"></h1>
+        <p class="pt-lead k-only js-pt-klead"></p>
+        <p class="pt-lead e-only js-pt-elead"></p>
+        <p class="pt-ask js-pt-ask"></p>
+        <div class="pt-sides">
+          <button class="pt-btn primary js-pt-start" data-side="right"></button>
+          <button class="pt-btn primary js-pt-start" data-side="left"></button>
+        </div>
+        <p class="pt-fine">General education, not a diagnosis. Nothing you tap is saved. <button class="ptlink js-pt-topics">See other topics</button></p>
+      </div>
+    </div>
+    <div class="pt-sheet js-pt-end" hidden>
+      <p class="pt-eyebrow">All done</p>
+      <h1 class="js-pt-handoff">Thanks for looking through it</h1>
+      <p class="pt-lead k-only">I’ll be in shortly. A few things to think about before I get there, so we can make the most of our time together:</p>
+      <p class="pt-lead e-only">If you’re coming in to see me, a few things to think about before your visit, so we can make the most of our time together:</p>
+      <div class="pt-cols">
+        <div><h2>Think about</h2><ul class="js-pt-think"></ul></div>
+        <div><h2>Good questions to ask me</h2><ul class="js-pt-qs"></ul></div>
+      </div>
+      <p class="pt-call e-only">To make an appointment, call (214) 265-3211.</p>
+      <div class="pt-endnav">
+        <button class="pt-btn js-pt-endback">◀ Back</button>
+        <button class="pt-btn primary js-pt-restart">↺ Start over</button>
+        <button class="pt-btn js-pt-topics">Other topics</button>
+      </div>
+      <p class="pt-fine">General education, not a diagnosis.</p>
+    </div>
+  </div>
+</template>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -6117,7 +6121,7 @@ three/build/three.module.js:
     goStep(0);
     ink.sizeCanvas();
     return { sizeCanvas: ink.sizeCanvas, goStep, render, closeCard() { if (state.card) { state.card = null; render(); return true; } return false; },
-             /* patient view (v0.14): set a whole state from a recipe, pick the side, and line Next up with a beat */
+             /* patient view: set a whole state from a recipe, pick the side, and line Next up with a beat */
              apply(recipe) { state = cfg.SKELETON(); recipe(state); render(); }, side,
              setStep(i) { step = Math.max(0, Math.min(STEPS.length - 1, i)); $('.js-next', view).textContent = step === STEPS.length - 1 ? 'Done ✓' : 'Next ▶'; if (cfg.CUES[STEPS[step][0]]) cueEl.textContent = cfg.CUES[STEPS[step][0]]; } };
   }
@@ -7046,152 +7050,309 @@ three/build/three.module.js:
   buildPeople($('.js-people', views.kneepain), 33, 5);
 
   /* ======================================================================
-     PATIENT VIEW (v0.14): the shoulder talk for the patient waiting in the room.
-     Opens at /explore (Vercel rewrite), #explore or ?explore. Same drawings and cards as Brett's mode, driven by
-     Next / Back, with a caption in his voice on every screen. Kiosk extras: an idle reset back to the welcome screen,
-     and a long-press on the title (or the photo) that hands the iPad to Brett's own mode on the same drawing.
-     Embedded in another site (an iframe, or ?embed), the kiosk extras are off and the copy speaks to a reader at home.
+     PATIENT VIEW (v0.14 shoulder, v0.15 every talk): the talks for the patient waiting in the room.
+     /explore (Vercel rewrite; also #explore and ?explore) opens a topic picker; /explore/<topic> goes straight to one
+     (shoulder, instability, hip, acl, knee). Each topic is the doctor module behind a second door: same drawings and
+     cards, Next / Back only, a caption in Brett's voice on every screen. Kiosk extras: an idle reset back to where the
+     patient started, and a long-press on the title (or the photo) that hands the iPad to Brett's own mode on the same
+     drawing. Embedded in another site (an iframe, or ?embed), the kiosk extras are off and the copy speaks to a reader at home.
      ====================================================================== */
   (function patientView() {
-    const root = document.documentElement, view = views.shoulder, mod = modules.shoulder;
+    const root = document.documentElement;
     let embedded = /[?&]embed\b/.test(location.search);
     try { if (window.self !== window.top) embedded = true; } catch (e) { embedded = true; }
     root.classList.toggle('embedded', embedded);
+    const tpl = $('#pt-tpl'), photoSrc = $('.js-pt-photo', tpl.content).getAttribute('src');
+    views.explore = $('#view-explore');
+    $$('.js-pt-photo', views.explore).forEach(i => i.setAttribute('src', photoSrc));
 
-    const CH = ['How your shoulder works', 'Why it hurts', 'What we can do about it', 'If surgery comes up'];
+    /* ---------- the flows. Each step: chapter, the beat of Brett's walkthrough it matches (doc, for the handoff),
+       the whole state as a recipe (set), optional frames shown first when going forward (seq), the caption.
+       Captions are outward-facing: Brett's voice, first person, no em dashes. ---------- */
     const cuffs = s => { s.cuff = 3; s.biceps = true; };
-    const tornS = s => { cuffs(s); s.tear = 'off'; };
-    /* doc = the matching beat of Brett's walkthrough (STEPS index), so a handoff continues from the right place */
-    const PT = [
-      { ch: 0, doc: 0, set: s => { },
-        text: 'Your shoulder is a ball and socket joint. The ball is the top of your arm bone, and the socket is part of your shoulder blade.' },
-      { ch: 0, doc: 1, set: s => { s.cuff = 1; },
-        text: 'Your rotator cuff is four tendons that wrap around that ball. There’s one up top…' },
-      { ch: 0, doc: 3, set: s => { s.cuff = 3; }, first: s => { s.cuff = 2; },
-        text: '…one in the front, and two around the back. Together they keep the ball centered in the socket and help you lift and turn your arm.' },
-      { ch: 0, doc: 4, set: cuffs,
-        text: 'The biceps tendon comes up the front of your arm, makes a ninety-degree turn through a tight little sheath, and attaches at the top of the socket. That turn is a common spot for pain.' },
-      { ch: 0, doc: 6, set: s => { cuffs(s); s.bursa = true; },
-        text: 'Between the rotator cuff and the bone above it is a little balloon sac called a bursa. It helps the tendons glide instead of rub.' },
-      { ch: 1, doc: 7, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; },
-        text: 'Sometimes the bursa gets angry about doing its job too much. It swells and gets sore: that’s bursitis, one of the most common reasons a shoulder hurts.' },
-      { ch: 1, doc: 8, set: s => { cuffs(s); s.bursa = true; s.tear = 'worn'; },
-        text: 'A tendon can also hurt without being torn. When it gets irritated where it rubs and works, that’s tendonitis.' },
-      { ch: 1, doc: 9, set: tornS,
-        text: 'Sometimes a tendon tears all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both all the way through, so either one is called a full-thickness tear.' },
-      { ch: 1, doc: 9, set: s => { tornS(s); s.card = 'people'; },
-        text: 'Tears are really common, and lots of them don’t hurt at all. If I took an MRI of 100 people over 60 with no shoulder pain, about 1 in 3 would have a rotator cuff tear. A tear on an MRI doesn’t automatically mean surgery.' },
-      { ch: 2, doc: 9, set: s => { tornS(s); s.card = 'options'; },
-        text: 'Most shoulder pain gets better without an operation. We start at the bottom rung and only climb if we need to. Physical therapy is never the wrong answer.' },
-      { ch: 2, doc: 9, set: s => { tornS(s); s.card = 'study'; }, fork: true,
-        text: 'Even with a full-thickness tear, physical therapy usually comes first. Most people who give it a real try don’t end up needing surgery, and trying it first doesn’t burn the bridge.' },
-      { ch: 3, doc: 10, set: s => { cuffs(s); s.repair = true; },
-        text: 'If we do need to fix it, I roughen up the bone, put the tendon back down where it belongs, and hold it there with small anchors so it can heal back in. It’s done through a few small poke holes.' },
-      { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; },
-        text: 'If the biceps is part of the pain, I move it a little lower on the arm so it doesn’t have to slide in and out of that tight groove anymore. It adds about three minutes.' },
-      { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; s.card = 'calendar'; },
-        text: 'Recovery is biology, not caution: a tendon takes time to heal back to bone. You’re in a sling for six weeks, strengthening starts at three months, and full recovery is about six months.' }
-    ];
-    const FORK = PT.findIndex(p => p.fork);
+    const torn = s => { cuffs(s); s.tear = 'off'; };
+    const iHeld = s => { s.golf = true; s.labrum = true; s.capsule = true; };
+    const iOut = s => { iHeld(s); s.tear = true; s.hs = 1; };
+    const iRep = s => { s.labrum = true; s.capsule = true; s.repair = true; };
+    const hTear = s => { s.labrum = true; s.tear = true; };
+    const hFix = s => { s.labrum = true; s.repair = true; s.cam = true; s.shave = true; };
+    const kIn = s => { s.ligaments = true; s.menisci = true; s.cartilage = true; };
+    const kTorn = s => { kIn(s); s.tear = true; };
+    const kNew = s => { kTorn(s); s.portals = true; s.stump = true; s.tunnels = true; s.graft = true; s.graftType = 'btb'; };
 
-    const q = s => $(s, view);
-    const cover = q('.js-pt-cover'), welcome = q('.js-pt-welcome'), endSheet = q('.js-pt-end');
-    const caption = q('.js-pt-caption'), chapter = q('.js-pt-chapter'), fill = q('.js-pt-fill'), count = q('.js-pt-count');
-    const nextBtn = q('.js-pt-next'), backBtn = q('.js-pt-back'), skipBtn = q('.js-pt-skip'), ptviewBtn = q('.js-ptview');
-    let idx = -1, skipped = false, firstTimer = 0, active = false;
+    const FLOWS = {
+      shoulder: {
+        view: 'shoulder', part: 'shoulder', title: 'Your Shoulder', tile: 'Shoulder pain', tileSub: 'rotator cuff, bursitis, biceps',
+        about: 'how the shoulder works, why it hurts, and what we can do about it',
+        chapters: ['How your shoulder works', 'Why it hurts', 'What we can do about it', 'If surgery comes up'],
+        steps: [
+          { ch: 0, doc: 0, set: s => { }, text: 'Your shoulder is a ball and socket joint. The ball is the top of your arm bone, and the socket is part of your shoulder blade.' },
+          { ch: 0, doc: 1, set: s => { s.cuff = 1; }, text: 'Your rotator cuff is four tendons that wrap around that ball. There’s one up top…' },
+          { ch: 0, doc: 3, seq: [s => { s.cuff = 2; }], dt: 900, set: s => { s.cuff = 3; }, text: '…one in the front, and two around the back. Together they keep the ball centered in the socket and help you lift and turn your arm.' },
+          { ch: 0, doc: 4, set: cuffs, text: 'The biceps tendon comes up the front of your arm, makes a ninety-degree turn through a tight little sheath, and attaches at the top of the socket. That turn is a common spot for pain.' },
+          { ch: 0, doc: 6, set: s => { cuffs(s); s.bursa = true; }, text: 'Between the rotator cuff and the bone above it is a little balloon sac called a bursa. It helps the tendons glide instead of rub.' },
+          { ch: 1, doc: 7, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; }, text: 'Sometimes the bursa gets angry about doing its job too much. It swells and gets sore: that’s bursitis, one of the most common reasons a shoulder hurts.' },
+          { ch: 1, doc: 8, set: s => { cuffs(s); s.bursa = true; s.tear = 'worn'; }, text: 'A tendon can also hurt without being torn. When it gets irritated where it rubs and works, that’s tendonitis.' },
+          { ch: 1, doc: 9, set: torn, text: 'Sometimes a tendon tears all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both all the way through, so either one is called a full-thickness tear.' },
+          { ch: 1, doc: 9, set: s => { torn(s); s.card = 'people'; }, text: 'Tears are really common, and lots of them don’t hurt at all. If I took an MRI of 100 people over 60 with no shoulder pain, about 1 in 3 would have a rotator cuff tear. A tear on an MRI doesn’t automatically mean surgery.' },
+          { ch: 2, doc: 9, set: s => { torn(s); s.card = 'options'; }, text: 'Most shoulder pain gets better without an operation. We start at the bottom rung and only climb if we need to. Physical therapy is never the wrong answer.' },
+          { ch: 2, doc: 9, fork: true, set: s => { torn(s); s.card = 'study'; }, text: 'Even with a full-thickness tear, physical therapy usually comes first. Most people who give it a real try don’t end up needing surgery, and trying it first doesn’t burn the bridge.' },
+          { ch: 3, doc: 10, set: s => { cuffs(s); s.repair = true; }, text: 'If we do need to fix it, I roughen up the bone, put the tendon back down where it belongs, and hold it there with small anchors so it can heal back in. It’s done through a few small poke holes.' },
+          { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; }, text: 'If the biceps is part of the pain, I move it a little lower on the arm so it doesn’t have to slide in and out of that tight groove anymore. It adds about three minutes.' },
+          { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; s.card = 'calendar'; }, text: 'Recovery is biology, not caution: a tendon takes time to heal back to bone. You’re in a sling for six weeks, strengthening starts at three months, and full recovery is about six months.' }
+        ],
+        think: ['Where exactly does it hurt? Be ready to point to it.', 'Does it wake you up at night?', 'What makes it worse: reaching overhead, behind your back, lifting?', 'What have you already tried: therapy, medicine, a shot?', 'What do you want to get back to doing?'],
+        ask: ['Is it torn, or is it irritated?', 'What happens if I wait?', 'What can I do at home in the meantime?', 'What’s the next step for me?']
+      },
 
-    function cover_(which) {
-      cover.classList.toggle('open', !!which);
-      cover.dataset.screen = which || '';
-      welcome.hidden = which !== 'welcome'; endSheet.hidden = which !== 'end';
-      if (which) cover.scrollTop = 0;
-    }
-    function screen(i, forward) {
-      clearTimeout(firstTimer);
-      idx = i; const p = PT[i];
-      cover_(null);
-      if (forward && p.first) {
-        mod.apply(s => { PT[i - 1].set(s); p.first(s); });
-        firstTimer = setTimeout(() => { if (idx === i) mod.apply(p.set); }, 900);
-      } else mod.apply(p.set);
-      caption.textContent = p.text;
-      caption.classList.remove('in'); void caption.offsetWidth; caption.classList.add('in');
-      chapter.textContent = CH[p.ch];
-      fill.style.width = ((i + 1) / PT.length * 100).toFixed(1) + '%';
-      count.textContent = `${i + 1} of ${PT.length}`;
-      skipBtn.hidden = i !== FORK;
-      nextBtn.textContent = i === FORK ? 'If surgery comes up ▶' : i === PT.length - 1 ? 'Finish ▶' : 'Next ▶';
-    }
-    function goWelcome() {
-      clearTimeout(firstTimer);
-      idx = -1; skipped = false;
-      mod.apply(() => { }); mod.side(false);
-      cover_('welcome');
-    }
-    function goEnd(viaSkip) {
-      clearTimeout(firstTimer);
-      skipped = !!viaSkip; idx = PT.length;
-      cover_('end');
-    }
-    function enter() {
-      active = true;
-      root.classList.remove('handoff'); root.classList.add('explore');
-      root.dataset.theme = 'light';
-      ptviewBtn.hidden = true;
-      show('shoulder');
-      document.title = 'Your Shoulder · Dr. Raynor';
-      goWelcome();
-      idle();
-    }
+      instability: {
+        view: 'instab', part: 'shoulder', title: 'Your Shoulder: When It Pops Out', tile: 'Dislocated shoulder', tileSub: 'dislocations, the labrum, keeping it in',
+        whead: 'Shoulder dislocations, the way I explain them',
+        about: 'what holds your shoulder in, what happens when it comes out, and what we can do about it',
+        chapters: ['What holds it in', 'When it comes out', 'What we can do about it', 'If surgery comes up'],
+        steps: [
+          { ch: 0, doc: 0, set: s => { s.golf = true; }, text: 'Your shoulder is like a golf ball sitting on a tee. This picture looks straight down on it from above. A shallow tee is what lets your shoulder move so much, and it’s also why it can come out.' },
+          { ch: 0, doc: 1, set: s => { s.golf = true; s.labrum = true; }, text: 'A few things hold the ball on the tee. The labrum is a little bumper on the edge of the socket. It goes all the way around.' },
+          { ch: 0, doc: 2, set: iHeld, text: 'Ligaments run from the ball to that bumper and help hold the ball in place.' },
+          { ch: 1, doc: 3, set: s => { iOut(s); s.play = 'first'; }, text: 'When the shoulder dislocates, it usually comes out the front. On the way out it tears that bumper off the edge of the socket, and then it goes back in.' },
+          { ch: 1, doc: 4, set: iOut, text: 'The back of the ball usually gets a little dent where it hit the edge of the socket, like a divot in a ping pong ball. It’s usually small, and it only matters if the shoulder keeps coming out.' },
+          { ch: 1, doc: 6, set: s => { iOut(s); s.stretched = true; }, text: 'The hope is that the bumper heals back in. If it doesn’t, or the ligaments get a little stretched out, it’s easier for it to come out again.' },
+          { ch: 1, doc: 6, set: s => { iOut(s); s.stretched = true; s.card = 'people'; }, text: 'That’s the real problem after a dislocation: it keeps coming out. Of 100 young athletes treated with a sling and rehab, about 67 have it come out again. After a repair, it’s about 10. Young men in contact sports are at the highest risk.' },
+          { ch: 1, doc: 14, set: s => { iHeld(s); s.tear = true; s.stretched = true; s.hs = 2; s.boneloss = true; s.play = 'again'; }, text: 'Each time it comes out, it bumps the bone again. The dent gets bigger, and the edge of the socket can chip, like a golf tee with a chip in it. Then the ball wants to fall off even more.' },
+          { ch: 2, doc: 8, set: s => { iOut(s); s.cuff = true; }, text: 'Most of the time we start with rehab. Physical therapy strengthens the rotator cuff muscles around the ball, and they help hold the shoulder in.' },
+          { ch: 2, doc: 8, set: s => { iOut(s); s.cuff = true; s.card = 'position'; }, text: 'In the meantime, stay out of the position it likes to come out in: arm up and out to the side, hand going back. If something falls under the bed, don’t reach under the bed.' },
+          { ch: 2, doc: 8, fork: true, set: s => { iOut(s); s.cuff = true; s.card = 'when'; }, text: 'If it feels solid after rehab, no surgery. If it still feels unstable, or it comes out again, that’s when we fix it. The risk of waiting is it coming out more times.' },
+          { ch: 3, doc: 9, set: iRep, text: 'In the surgery, I put little anchors made of suture into the bone, then sew the bumper and the ligaments back up to the edge of the socket. It’s done through a few small poke holes.' },
+          { ch: 3, doc: 11, set: s => { s.scene = 'face'; iRep(s); }, text: 'Looking straight at the socket, it’s usually one, two, three anchors, sometimes four. That also tightens up the ligaments all the way around.' },
+          { ch: 3, doc: 16, set: s => { s.labrum = true; s.capsule = true; s.boneloss = true; s.latarjet = true; }, text: 'If too much bone has chipped off the socket, a scope repair isn’t reliable. Then it’s an open surgery called a Latarjet: a small piece of bone, with a little tendon attached, is moved over and screwed on to fill in the chip.' },
+          { ch: 3, doc: 11, set: s => { iRep(s); s.card = 'calendar'; }, text: 'Recovery: home the same day, in a sling for six weeks. Strengthening starts around two months, throwing around five months, and contact sports around six.' }
+        ],
+        think: ['How many times has it come out?', 'Did someone have to put it back in, or did it go back on its own?', 'What sport and position do you play, and is your season going on now?', 'What position makes it feel like it might slip?', 'What do you want to get back to doing?'],
+        ask: ['How likely is it to come out again?', 'Can I finish my season?', 'Is there any bone loss?', 'What’s the next step for me?']
+      },
 
-    $$('.js-pt-start', view).forEach(b => b.addEventListener('click', () => { mod.side(b.dataset.side === 'left'); skipped = false; screen(0, true); }));
-    nextBtn.addEventListener('click', () => { if (idx >= PT.length - 1) goEnd(false); else screen(idx + 1, true); });
-    backBtn.addEventListener('click', () => { if (idx <= 0) goWelcome(); else screen(idx - 1, false); });
-    skipBtn.addEventListener('click', () => goEnd(true));
-    q('.js-pt-endback').addEventListener('click', () => screen(skipped ? FORK : PT.length - 1, false));
-    $$('.js-pt-restart', view).forEach(b => b.addEventListener('click', goWelcome));
+      hip: {
+        view: 'hip', part: 'hip', title: 'Your Hip', tile: 'Hip pain', tileSub: 'the labrum, the bumps, the outside of the hip',
+        about: 'how the hip works, why it hurts, and what we can do about it',
+        chapters: ['How your hip works', 'Why it hurts', 'What we can do about it', 'If surgery comes up'],
+        steps: [
+          { ch: 0, doc: 0, set: s => { }, text: 'Your hip is a ball and socket. The ball is the top of your thigh bone, and the socket is part of your pelvis.' },
+          { ch: 0, doc: 1, set: s => { s.cartilage = true; }, text: 'The ball and socket are lined with smooth cartilage. When that wears away, that’s arthritis.' },
+          { ch: 0, doc: 3, set: s => { s.labrum = true; }, text: 'Around the edge of the socket is the labrum, a little bumper that goes all the way around. It works like a suction cup and deepens the socket.' },
+          { ch: 1, doc: 4, set: hTear, text: 'The labrum can tear away from the edge of the socket, and that can cause pain.' },
+          { ch: 1, doc: 4, set: s => { hTear(s); s.card = 'people'; }, text: 'Lots of labral tears don’t hurt at all. About two-thirds of us walking around have one and have no idea. Having a tear isn’t the problem; having one that keeps hurting is.' },
+          { ch: 1, doc: 6, seq: [s => { s.labrum = true; s.pincer = true; }], dt: 2600, set: s => { s.labrum = true; s.dysplasia = true; }, text: 'Some hips are shaped in a way that’s hard on the labrum. Some sockets are deeper than normal, so the labrum gets bumped sooner. Some are shallower, with a bigger labrum that takes more of the force.' },
+          { ch: 1, doc: 8, set: s => { s.labrum = true; s.cam = true; s.flex = true; }, text: 'Some people have a bump of extra bone on the ball, called a cam. Every time the hip bends up, that bump runs into the labrum, over and over.' },
+          { ch: 1, doc: 17, set: s => { s.abductors = true; s.itband = true; s.bursitis = true; }, text: 'Pain on the outside of the hip is usually something else. The IT band runs right over the bone there, and the little balloon sac in between, a bursa, gets angry. That’s bursitis, and an injection usually calms it down.' },
+          { ch: 1, doc: 19, set: s => { s.back = true; }, text: 'And sometimes it isn’t the hip at all. A pinch in your back can feel just like hip pain, so it’s something I always check.' },
+          { ch: 2, doc: 7, set: s => { hTear(s); s.cam = true; s.card = 'options'; }, text: 'Most of the time we don’t need surgery for this. We start at the bottom rung, physical therapy and maybe an injection, and only climb if we need to.' },
+          { ch: 2, doc: 7, fork: true, set: s => { hTear(s); s.cam = true; s.card = 'pt'; }, text: 'In young athletes, about eighty percent get better without an operation, with therapy alone or after one injection. It’s the ones that don’t that we do surgery on.' },
+          { ch: 3, doc: 9, set: s => { s.labrum = true; s.repair = true; s.cam = true; }, text: 'If we do need surgery, I go in with a camera through small poke holes, shave the edge of the socket back ever so slightly, and put in little anchors made of suture, one, two, three, sometimes four, to sew the labrum back to the edge.' },
+          { ch: 3, doc: 11, set: s => { hFix(s); s.flex = true; }, text: 'Then I shave down that bump of bone to give it room, so the hip can bend up without bumping into the repair.' },
+          { ch: 3, doc: 14, set: s => { hFix(s); s.capsule = true; s.cut = 'closed'; }, text: 'To get in there, I make a small cut in the capsule, the lining that holds the hip, and close it back up with stitches at the end. To protect that, no turning the leg out for three weeks.' },
+          { ch: 3, doc: 14, set: s => { hFix(s); s.card = 'calendar'; }, text: 'Small incisions, but a big recovery: crutches for about a month, feeling okay at six weeks, pretty good at three months, and full recovery around six months.' }
+        ],
+        think: ['Where is the pain: the groin, the outside of the hip, the buttock, or the back?', 'What makes it worse: sitting, getting in and out of the car, twisting, running?', 'Does it click or catch?', 'What have you already tried: therapy, medicine, a shot?', 'What do you want to get back to doing?'],
+        ask: ['Is it the joint itself, or the outside of the hip?', 'Could my back be part of it?', 'What happens if I wait?', 'What’s the next step for me?']
+      },
 
-    /* Brett walks in: hold the title (or the photo) for a second and the iPad is his, on the same drawing */
-    function handoff() {
-      if (embedded || !root.classList.contains('explore')) return;
-      clearTimeout(firstTimer);
-      const p = idx >= PT.length ? PT[skipped ? FORK : PT.length - 1] : PT[Math.max(idx, 0)];
-      root.classList.remove('explore'); root.classList.add('handoff');
-      cover_(null);
-      mod.apply(p.set); mod.setStep(p.doc);
-      ptviewBtn.hidden = false;
-      document.title = 'Exam Room Napkin';
-      requestAnimationFrame(mod.sizeCanvas);
-      toast('Your view. “Patient view ↺” puts theirs back.');
-      idle();
-    }
-    $$('.js-pt-handoff', view).forEach(el => {
+      acl: {
+        view: 'knee', part: 'knee', title: 'Your Knee: The ACL', tile: 'A torn ACL', tileSub: 'how it tears, the new ACL, recovery',
+        whead: 'Your ACL, the way I explain it',
+        about: 'how the knee works, what happens when the ACL tears, and how we make a new one, on the same 3D knee I use in the room',
+        chapters: ['How your knee works', 'What happened', 'Making a new ACL', 'Recovery'],
+        steps: [
+          { ch: 0, doc: 0, set: s => { }, text: 'This is your knee, bent, with the kneecap lifted out of the way: the thigh bone on top, the shin bone below, and the little bone on the outside. You can spin it with your finger.' },
+          { ch: 0, doc: 1, set: s => { s.ligaments = true; }, text: 'Four main ligaments hold it together: the MCL on the inside, the LCL on the outside, and the ACL and PCL crossing in the middle.' },
+          { ch: 0, doc: 3, seq: [s => { s.ligaments = true; s.menisci = true; }], dt: 1800, set: kIn, text: 'The menisci are two shock-absorbing cushions between the bones, and smooth cartilage covers the ends of the bones.' },
+          { ch: 1, doc: 4, set: kTorn, text: 'When the ACL tears, it comes apart in the middle and doesn’t look like a solid ligament anymore. That’s what a torn ACL looks like.' },
+          { ch: 1, doc: 6, set: s => { kTorn(s); s.scene = 'side'; s.kneecap = false; s.injury = 'play'; s.bruise = true; }, text: 'Here’s how it usually happens. You plant and twist, the shin bone slides forward and turns, and the ACL tears. The back of the shin bone bumps the thigh bone, which leaves a bone bruise, and then it slides back.' },
+          { ch: 1, doc: 8, set: s => { kTorn(s); s.card = 'heal'; }, text: 'The MCL heals on its own. The ACL is inside the knee, and it doesn’t heal well. The pain and swelling settle down in a few weeks, but the knee can give out when you cut, pivot or twist.' },
+          { ch: 2, doc: 11, seq: [s => { kTorn(s); s.portals = true; }, s => { kTorn(s); s.portals = true; s.stump = true; }], dt: 1700, set: s => { kTorn(s); s.portals = true; s.stump = true; s.tunnels = true; }, text: 'We don’t sew the old ACL back together; we make a new one. Through two small poke holes, I take out the torn ends and drill a tunnel in each bone, right where the ACL belongs.' },
+          { ch: 2, doc: 12, set: kNew, text: 'The new ACL goes up through the tunnels and is fixed in place at each end. That becomes your new ACL.' },
+          { ch: 2, doc: 13, set: s => { kNew(s); s.card = 'options'; }, text: 'The new ACL can come from a few places. My usual choices are the middle of your patellar tendon or your quad tendon, both your own tissue. We’ll talk about which one fits you best.' },
+          { ch: 2, doc: 15, seq: [s => { s.scene = 'front'; s.harvest = 1; }], dt: 2200, set: s => { s.scene = 'front'; s.harvest = 2; }, text: 'With the patellar tendon, I take the middle third of the tendon below your kneecap, with a small piece of bone on each end. I stitch the tendon back together, and it heals in.' },
+          { ch: 2, doc: 18, set: s => { s.scene = 'front'; s.quadharvest = 2; }, text: 'With the quad tendon, it’s a strip from the middle of the tendon above the kneecap. The incisions are off the front of the knee, which is why people who kneel a lot sometimes pick it.' },
+          { ch: 2, doc: 21, seq: [s => { s.scene = 'above'; s.menisci = true; s.mtear = true; }], dt: 2000, set: s => { s.scene = 'above'; s.menisci = true; s.mtear = true; s.stitches = true; }, text: 'If a meniscus is torn too, I repair it with stitches at the same surgery whenever I can. A meniscus heals best when the ACL is fixed at the same time.' },
+          { ch: 3, doc: 23, set: s => { kNew(s); s.card = 'recovery'; }, text: 'You go home the same day and walk on it right away. Crutches and a brace for three or four weeks, walking normally around six weeks, jogging at three months, and back to cutting and pivoting sports around seven months.' },
+          { ch: 3, doc: 24, set: s => { kNew(s); s.card = 'timing'; }, text: 'There’s no rush. I usually wait about three weeks for the knee to calm down, and therapy before surgery helps you recover faster afterward.' }
+        ],
+        think: ['How did it happen? Did you feel or hear a pop?', 'Has the knee given out since then?', 'What sports do you play, and when does your next season start?', 'Do you kneel a lot, at work or in your sport?', 'What do you want to get back to doing?'],
+        ask: ['Which graft is best for me?', 'When should we do surgery?', 'When can I get back to my sport?', 'What can I do before surgery?']
+      },
+
+      knee: {
+        view: 'kneepain', part: 'knee', title: 'Your Knee', tile: 'Knee pain', tileSub: 'when the X-rays look normal',
+        about: 'what’s in your knee, the things that can hurt without showing up on an X-ray, and what helps, on the same 3D knee I use in the room',
+        chapters: ['What’s in your knee', 'What can hurt', 'What helps'],
+        steps: [
+          { ch: 0, doc: 0, set: s => { }, text: 'A lot of knee pain comes from things that don’t show up on an X-ray. The space you see between the bones on an X-ray is your cartilage, and when that space looks good, the pain is coming from somewhere else.' },
+          { ch: 0, doc: 2, set: s => { s.scene = 'inside'; s.ligaments = true; }, text: 'Inside the knee, four main ligaments hold it together. When I examine you, I check each one.' },
+          { ch: 0, doc: 3, set: s => { s.scene = 'inside'; s.ligaments = true; s.menisci = true; }, text: 'Between the bones are the menisci, two shock-absorbing cushions. They can get small tears, which tend to hurt along the sides and back of the knee.' },
+          { ch: 1, doc: 7, seq: [s => { s.scene = 'above'; s.menisci = true; s.tear = 'vertical'; }, s => { s.scene = 'above'; s.menisci = true; s.tear = 'flap'; }], dt: 2000, set: s => { s.scene = 'above'; s.menisci = true; s.tear = 'horizontal'; }, text: 'Looking down on the top of the shin bone, meniscus tears come in different shapes. The most common is a horizontal tear, like a little pita pocket.' },
+          { ch: 1, doc: 7, set: s => { s.scene = 'above'; s.menisci = true; s.tear = 'horizontal'; s.card = 'people'; }, text: 'Here’s the thing: about 1 in 3 people over 50 with no knee pain have a meniscus tear on MRI and have no idea. They don’t all hurt, and they don’t all need surgery.' },
+          { ch: 1, doc: 12, set: s => { s.kneecap = false; s.chondro = 1; }, text: 'Cartilage can also wear a little, not enough to show up on an X-ray but enough to hurt. We call that chondromalacia.' },
+          { ch: 1, doc: 13, set: s => { s.flip = true; s.chondro = 1; }, text: 'The most common spot is the back of the kneecap. Some wear back there is very normal after about age thirty. What’s not normal is for it to hurt.' },
+          { ch: 1, doc: 15, set: s => { s.scene = 'side'; s.bend = true; }, text: 'The kneecap joint sees about seven times your body weight. When your quad is strong, it usually doesn’t hurt, even if it grinds. I don’t worry about the grinding; I care about the pain.' },
+          { ch: 1, doc: 17, seq: [s => { s.fatpad = true; }], dt: 2000, set: s => { s.fatpad = true; s.plica = true; }, text: 'Two other things can get irritated: a small fat pad behind the tendon below your kneecap, and a plica, a little band of tissue left over from when we were babies.' },
+          { ch: 2, doc: 18, set: s => { s.card = 'cycle'; }, text: 'Here’s the loop people get stuck in: something gets irritated, it swells, the swelling shuts down your quad, a weaker quad makes it hurt more, and the exercises that would help are the ones that hurt.' },
+          { ch: 2, doc: 18, set: s => { s.card = 'options'; }, text: 'We start low and work our way up: staying active, physical therapy to strengthen the quad, medicine to calm it down, then an injection. Surgery is not where we start.' },
+          { ch: 2, doc: 18, set: s => { s.card = 'reset'; }, text: 'An injection works like a reset button, not a Band-Aid. If we can calm the knee down, it often goes back to how it felt before it got angry.' },
+          { ch: 2, doc: 18, set: s => { s.card = 'active'; }, text: 'The best thing you can do for your knees is stay active. Squats and lunges to about ninety degrees and a stationary bike are great. On a bad day, it’s okay to back off.' }
+        ],
+        think: ['Where does it hurt: the front, the inside, the outside, or the back?', 'What makes it worse: stairs, squatting, sitting a long time, running?', 'Does it swell, catch, or give way?', 'What have you already tried: therapy, medicine, a shot?', 'What do you want to get back to doing?'],
+        ask: ['What do you think is causing it?', 'What can I do at home?', 'Do I need an MRI, or should we try other things first?', 'What’s the next step for me?']
+      }
+    };
+    const ALIASES = { shoulder: 'shoulder', cuff: 'shoulder', instability: 'instability', dislocation: 'instability', instab: 'instability',
+                      hip: 'hip', acl: 'acl', knee: 'knee', kneepain: 'knee' };
+    const STILL = s => { if (s.play) s.play = null; if (s.injury === 'play') s.injury = 'done'; };  /* the handoff does not replay an animation */
+
+    let entry = 'picker', cur = null, active = false;
+
+    /* ---------- build each flow's screens from the template ---------- */
+    Object.entries(FLOWS).forEach(([key, F]) => {
+      F.key = key; F.mod = modules[F.view]; F.viewEl = views[F.view]; F.idx = -1; F.skipped = false; F.timers = [];
+      F.fork = F.steps.findIndex(p => p.fork);
+      const frag = tpl.content.cloneNode(true), v = F.viewEl;
+      const bar = $('.pt-bar', frag), panel = $('.pt-panel', frag), cover = $('.pt-cover', frag);
+      v.insertBefore(bar, $('.js-stage', v)); v.appendChild(panel); v.appendChild(cover);
+      const q = s => $(s, v);
+      F.el = { cover, welcome: q('.js-pt-welcome'), end: q('.js-pt-end'), caption: q('.js-pt-caption'), chapter: q('.js-pt-chapter'),
+               fill: q('.js-pt-fill'), count: q('.js-pt-count'), next: q('.js-pt-next'), back: q('.js-pt-back'), skip: q('.js-pt-skip') };
+      const P = F.part, Cap = P[0].toUpperCase() + P.slice(1);
+      q('.js-pt-title').textContent = F.title;
+      q('.js-pt-eyebrow').textContent = F.tile;
+      q('.js-pt-whead').textContent = F.whead || `Your ${P}, the way I explain it`;
+      q('.js-pt-klead').textContent = `Hi, I’m Dr. Raynor. I’ll be in shortly. In the meantime, tap through ${F.about}. These are the same pictures I use in the room, so we can pick up right where you leave off. It takes about three minutes.`;
+      q('.js-pt-elead').textContent = `Hi, I’m Dr. Raynor. This is how I walk my patients through it: ${F.about}. It takes about three minutes.`;
+      q('.js-pt-ask').textContent = `Which ${P} is bothering you?`;
+      $$('.js-pt-start', v).forEach(b => { b.textContent = (b.dataset.side === 'left' ? 'Left ' : 'Right ') + P; });
+      q('.js-pt-think').innerHTML = F.think.map(t => '<li></li>').join(''); $$('.js-pt-think li', v).forEach((li, i) => li.textContent = F.think[i]);
+      q('.js-pt-qs').innerHTML = F.ask.map(t => '<li></li>').join(''); $$('.js-pt-qs li', v).forEach((li, i) => li.textContent = F.ask[i]);
+      /* Brett's bar gets a way back to the patient view (shown after a handoff) */
+      const ptBtn = document.createElement('button'); ptBtn.className = 'btn on js-ptview'; ptBtn.hidden = true; ptBtn.textContent = 'Patient view ↺';
+      const reset = $('.bar .js-reset', v); reset.parentNode.insertBefore(ptBtn, reset.nextSibling);
+      ptBtn.addEventListener('click', () => enter(entry));
+
+      $$('.js-pt-start', v).forEach(b => b.addEventListener('click', () => { side(F, b.dataset.side === 'left'); F.skipped = false; screen(F, 0, true); idle(); }));
+      F.el.next.addEventListener('click', () => { if (F.idx >= F.steps.length - 1) goEnd(F, false); else screen(F, F.idx + 1, true); idle(); });
+      F.el.back.addEventListener('click', () => { if (F.idx <= 0) goWelcome(F); else screen(F, F.idx - 1, false); });
+      F.el.skip.addEventListener('click', () => goEnd(F, true));
+      q('.js-pt-endback').addEventListener('click', () => screen(F, F.skipped ? F.fork : F.steps.length - 1, false));
+      $$('.js-pt-restart', v).forEach(b => b.addEventListener('click', () => goWelcome(F)));
+      $$('.js-pt-topics', v).forEach(b => b.addEventListener('click', showPicker));
+      $$('.js-pt-handoff', v).forEach(el => longPress(el, () => handoff(F)));
+    });
+
+    /* the picker's tiles: the doctor home's icons, the patient's words */
+    const tiles = $('.js-pt-tiles', views.explore);
+    Object.values(FLOWS).forEach(F => {
+      const src = $(`.tile[data-go="${F.view}"]`, views.home);
+      const t = document.createElement('div'); t.className = 'tile'; t.setAttribute('role', 'button'); t.tabIndex = 0; t.dataset.pt = F.key;
+      if (src && $('svg', src)) t.appendChild($('svg', src).cloneNode(true));
+      const b = document.createElement('b'); b.textContent = F.tile; const sm = document.createElement('small'); sm.textContent = F.tileSub;
+      t.appendChild(b); t.appendChild(sm);
+      const go = () => { cur = F; openFlow(F); idle(); };
+      t.addEventListener('click', go); t.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      tiles.appendChild(t);
+    });
+    $$('.js-pt-handoff', views.explore).forEach(el => longPress(el, () => handoff(null)));
+
+    function longPress(el, fn) {
       let t = 0;
-      el.addEventListener('pointerdown', () => { clearTimeout(t); t = setTimeout(handoff, 1000); });
+      el.addEventListener('pointerdown', () => { clearTimeout(t); t = setTimeout(fn, 1000); });
       ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, () => clearTimeout(t)));
       el.addEventListener('contextmenu', e => e.preventDefault());
       el.addEventListener('dragstart', e => e.preventDefault());
-    });
-    ptviewBtn.addEventListener('click', enter);
+    }
+    function side(F, left) { const b = $(left ? '.bar .js-side-left' : '.bar .js-side-right', F.viewEl); if (b) b.click(); }
+    function clearTimers(F) { F.timers.forEach(clearTimeout); F.timers = []; }
+    function coverTo(F, which) {
+      F.el.cover.classList.toggle('open', !!which);
+      F.el.welcome.hidden = which !== 'welcome'; F.el.end.hidden = which !== 'end';
+      if (which) F.el.cover.scrollTop = 0;
+    }
+    function screen(F, i, forward) {
+      clearTimers(F); F.idx = i; const p = F.steps[i];
+      coverTo(F, null);
+      if (forward && p.seq) {
+        const frames = [...p.seq, p.set], dt = p.dt || 1400;
+        F.mod.apply(frames[0]);
+        frames.slice(1).forEach((fr, k) => F.timers.push(setTimeout(() => { if (F.idx === i) F.mod.apply(fr); }, dt * (k + 1))));
+      } else F.mod.apply(p.set);
+      const c = F.el.caption; c.textContent = p.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+      F.el.chapter.textContent = F.chapters[p.ch];
+      F.el.fill.style.width = ((i + 1) / F.steps.length * 100).toFixed(1) + '%';
+      F.el.count.textContent = `${i + 1} of ${F.steps.length}`;
+      F.el.skip.hidden = i !== F.fork;
+      F.el.next.textContent = i === F.fork ? 'If surgery comes up ▶' : i === F.steps.length - 1 ? 'Finish ▶' : 'Next ▶';
+    }
+    function goWelcome(F) {
+      clearTimers(F); F.idx = -1; F.skipped = false;
+      if (views[F.view].classList.contains('active')) { F.mod.apply(() => { }); side(F, false); }
+      coverTo(F, 'welcome');
+    }
+    function goEnd(F, viaSkip) { clearTimers(F); F.skipped = !!viaSkip; F.idx = F.steps.length; coverTo(F, 'end'); }
+    function openFlow(F) {
+      cur = F; show(F.view); goWelcome(F);
+      document.title = F.title + ' · Dr. Raynor';
+    }
+    function showPicker() {
+      if (cur) clearTimers(cur);
+      cur = null; show('explore'); keepAwake();
+      document.title = 'While you wait · Dr. Raynor';
+    }
+    function enter(where) {
+      active = true; entry = where;
+      root.classList.remove('handoff'); root.classList.add('explore');
+      root.dataset.theme = 'light';
+      $$('.js-ptview').forEach(b => { b.hidden = true; });
+      if (where === 'picker') showPicker(); else openFlow(FLOWS[where]);
+      idle();
+    }
+    /* Brett walks in: hold the title (or the photo) for a second and the iPad is his, on the same drawing */
+    function handoff(F) {
+      if (embedded || !root.classList.contains('explore')) return;
+      root.classList.remove('explore'); root.classList.add('handoff');
+      $$('.js-ptview').forEach(b => { b.hidden = false; });
+      document.title = 'Exam Room Napkin';
+      if (!F) { show('home'); idle(); return; }
+      clearTimers(F);
+      const p = F.idx >= F.steps.length ? F.steps[F.skipped ? F.fork : F.steps.length - 1] : F.steps[Math.max(F.idx, 0)];
+      coverTo(F, null);
+      F.mod.apply(s => { p.set(s); STILL(s); }); F.mod.setStep(p.doc);
+      requestAnimationFrame(F.mod.sizeCanvas);
+      toast('Your view. “Patient view ↺” puts theirs back.');
+      idle();
+    }
 
-    /* idle reset: an untouched patient view goes back to the welcome screen (3 min); a handed-off iPad goes back
+    /* idle reset: an untouched patient view goes back to where the patient started (3 min); a handed-off iPad goes back
        to the patient view after 10 min, ready for the next room. Never when embedded. */
     let idleTimer = 0;
+    function atStart() { return entry === 'picker' ? !cur : (cur && cur.key === entry && cur.idx === -1); }
     function idle() {
       clearTimeout(idleTimer);
       if (embedded || !active) return;
-      if (root.classList.contains('explore')) { if (idx !== -1) idleTimer = setTimeout(goWelcome, 180000); }
-      else if (root.classList.contains('handoff')) idleTimer = setTimeout(() => { if (root.classList.contains('handoff')) enter(); }, 600000);
+      if (root.classList.contains('explore')) { if (!atStart()) idleTimer = setTimeout(() => enter(entry), 180000); }
+      else if (root.classList.contains('handoff')) idleTimer = setTimeout(() => { if (root.classList.contains('handoff')) enter(entry); }, 600000);
     }
     ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, idle, true));
-    nextBtn.addEventListener('click', idle); $$('.js-pt-start', view).forEach(b => b.addEventListener('click', idle));
+    document.addEventListener('click', () => { if (active) idle(); });
 
-    /* the way in from Brett's home screen, and from the address */
-    $$('.js-ptlink').forEach(b => b.addEventListener('click', () => { if (!/^#explore\b/.test(location.hash)) { try { history.replaceState(null, '', '#explore'); } catch (e) { } } enter(); }));
-    window.addEventListener('hashchange', () => { if (/^#explore\b/.test(location.hash) && !root.classList.contains('explore')) enter(); });
-    const wanted = /^\/explore(\/|$)/.test(location.pathname) || /[?&]explore\b/.test(location.search) || /^#explore\b/.test(location.hash);
-    if (wanted) enter();
-    window.__pt = { enter, handoff, goWelcome, state: () => ({ idx, skipped, explore: root.classList.contains('explore'), handoff: root.classList.contains('handoff'), embedded }), PT_LENGTH: PT.length, FORK };
+    /* the ways in: Brett's home screen link, and the address */
+    function wanted() {
+      const m = location.pathname.match(/^\/explore(?:\/([a-z]+))?\/?$/) || location.hash.match(/^#explore(?:\/([a-z]+))?/) ||
+                location.search.match(/[?&]explore(?:=([a-z]+))?(?:&|$)/);
+      if (!m) return null;
+      return (m[1] && ALIASES[m[1]]) || 'picker';
+    }
+    $$('.js-ptlink').forEach(b => b.addEventListener('click', () => { if (!/^#explore\b/.test(location.hash)) { try { history.replaceState(null, '', '#explore'); } catch (e) { } } enter('picker'); }));
+    window.addEventListener('hashchange', () => { const w = wanted(); if (w && !root.classList.contains('explore')) enter(w); });
+    const w0 = wanted();
+    if (w0) enter(w0);
+    window.__pt = { enter, handoff, FLOWS, state: () => ({ entry, cur: cur && cur.key, idx: cur ? cur.idx : null, skipped: cur ? cur.skipped : null,
+      explore: root.classList.contains('explore'), handoff: root.classList.contains('handoff'), embedded }) };
   })();
 
   /* ---------- boot ---------- */
