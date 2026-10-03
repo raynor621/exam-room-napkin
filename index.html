@@ -382,7 +382,7 @@
         <b>Knee pain</b><small>normal X-rays, what else hurts</small>
       </div>
     </div>
-    <p style="font-size:14px; margin-top:8px;">Prototype v0.12.5 · shoulder, shoulder instability and hip drawn the way Dr. Raynor draws them, plus two talks on a 3D knee · nothing you draw is saved</p>
+    <p style="font-size:14px; margin-top:8px;">Prototype v0.13 · shoulder, shoulder instability and hip drawn the way Dr. Raynor draws them, plus two talks on a 3D knee · nothing you draw is saved</p>
   </section>
 
   <!-- ================= SHOULDER ================= -->
@@ -6090,26 +6090,24 @@ three/build/three.module.js:
     },
     onScene(state, scene) { state.scene = scene; return scene === 'labrum' ? 'labScene' : 'labrum'; },
     beforeStep(state) { if (state.scene !== 'profile') state.scene = 'profile'; },
+    /* The order of the talk in Brett's 10/3/2026 walkthrough: ball and socket, the cuff, the biceps, then "common things
+       that hurt": a cuff tear (it can hurt without being torn), the bursa, bursitis, tendonitis, a full-thickness tear,
+       the repair, the biceps moved down. The labrum and the cards stay on the chips; Next never opens a card. */
     STEPS: [
       ['skeleton', s => { }],
       ['cuff1',    s => { s.cuff = 1; }],
       ['cuff2',    s => { s.cuff = 2; }],
       ['cuff3',    s => { s.cuff = 3; }],
       ['biceps',   s => { s.biceps = true; }],
-      ['labrum',   s => { s.labrum = true; }],
-      ['people',   s => { s.card = 'people'; }],
-      ['worn',     s => { s.card = null; s.tear = 'worn'; }],
       ['off',      s => { s.tear = 'off'; }],
       ['bursa',    s => { s.tear = 'none'; s.bursa = true; }],
       ['bursitis', s => { s.bursitis = true; }],
-      ['options',  s => { s.card = 'options'; }],
-      ['study',    s => { s.card = 'study'; }],
-      ['repair',   s => { s.card = null; s.bursitis = false; s.tear = 'none'; s.repair = true; }],
-      ['tenodesis',s => { s.tenodesis = true; }],
-      ['calendar', s => { s.card = 'calendar'; }],
-      ['home',     s => { s.card = 'home'; }]
+      ['worn',     s => { s.tear = 'worn'; }],
+      ['off',      s => { s.bursa = false; s.bursitis = false; s.tear = 'off'; }],
+      ['repair',   s => { s.tear = 'none'; s.repair = true; }],
+      ['tenodesis',s => { s.tenodesis = true; }]
     ],
-    CARD_STEPS: ['people', 'options', 'study', 'calendar', 'home'],
+    CARD_STEPS: [],
     onCard(name, card) {
       if (name === 'people') animatePeople($('.js-people', card), $('.js-count', card));
       if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/rotator-cuff-repair-faq');
@@ -6232,32 +6230,32 @@ three/build/three.module.js:
       }
       return cue;
     },
+    /* The order of the talk in Brett's 10/3/2026 walkthrough: cartilage, then arthritis as he says "when that wears away"
+       (gone again when the labrum comes up: "you don't have any of that"), the labrum and its tear, the three socket shapes,
+       flex, the surgery, the capsule, then the outside of the hip through the abductor tear. The cards stay on the chips. */
     STEPS: [
       ['skeleton',  s => { }],
       ['cartilage', s => { s.cartilage = true; }],
-      ['labrum',    s => { s.labrum = true; }],
+      ['arthritis', s => { s.arthritis = true; }],
+      ['labrum',    s => { s.arthritis = false; s.labrum = true; }],
       ['tear',      s => { s.tear = true; }],
-      ['people',    s => { s.card = 'people'; }],
-      ['pincer',    s => { s.card = null; s.pincer = true; }],
+      ['pincer',    s => { s.pincer = true; }],
       ['dysplasia', s => { s.pincer = false; s.dysplasia = true; }],
       ['cam',       s => { s.dysplasia = false; s.cam = true; }],
       ['flex',      s => { s.flex = true; }],
-      ['options',   s => { s.flex = false; s.card = 'options'; }],
-      ['pt',        s => { s.card = 'pt'; }],
-      ['repair',    s => { s.card = null; s.tear = false; s.repair = true; }],
+      ['repair',    s => { s.flex = false; s.tear = false; s.repair = true; }],
       ['shave',     s => { s.shave = true; }],
       ['flexclear', s => { s.flex = true; }],
       ['capsule',   s => { s.flex = false; s.capsule = true; }],
       ['capsulotomy', s => { s.cut = 'open'; }],
       ['closure',   s => { s.cut = 'closed'; }],
-      ['calendar',  s => { s.card = 'calendar'; }],
-      ['abductors', s => { s.card = null; s.capsule = false; s.cut = 'none'; s.abductors = true; }],
+      ['abductors', s => { s.capsule = false; s.cut = 'none'; s.abductors = true; }],
       ['itband',    s => { s.itband = true; }],
       ['bursitis',  s => { s.bursitis = true; }],
-      ['back',      s => { s.bursitis = false; s.back = true; }],
-      ['home',      s => { s.card = 'home'; }]
+      ['abtear',    s => { s.abtear = true; }],
+      ['back',      s => { s.bursitis = false; s.abtear = false; s.back = true; }]
     ],
-    CARD_STEPS: ['people', 'options', 'pt', 'calendar', 'home'],
+    CARD_STEPS: [],
     onCard(name, card) {
       if (name === 'people') animatePeople($('.js-people', card), $('.js-count', card));
       if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/faqs-hip-arthroscopy');
@@ -6533,34 +6531,30 @@ three/build/three.module.js:
       return cue;
     },
     onScene(state, scene) { state.scene = scene; state.play = null; return scene === 'face' ? 'faceScene' : 'skeleton'; },
-    /* The order of the talk in the 10/1/2026 recording. */
+    /* The order of the talk in the 10/1/2026 recording, reordered after Brett's 10/3/2026 walkthrough: the ligaments come
+       in right after the labrum and stay on through the dislocation. The cards stay on the chips; Next never opens one. */
     STEPS: [
       istep('skeleton',  s => { s.golf = true; }),
       istep('labrum',    s => { s.labrum = true; }),
-      istep('dislocate', s => { s.tear = true; s.hs = 1; s.play = 'first'; }),
       istep('capsule',   s => { s.capsule = true; }),
+      istep('dislocate', s => { s.tear = true; s.hs = 1; s.play = 'first'; }),
       istep('hs',        s => { }),
       istep('tear',      s => { }),
       istep('stretched', s => { s.stretched = true; }),
       istep('hagl',      s => { s.hagl = true; }),
-      istep('risk',      s => { s.hagl = false; s.card = 'risk'; }),
-      istep('cuff',      s => { s.card = null; s.cuff = true; }),
-      istep('when',      s => { s.card = 'when'; }),
-      istep('repair',    s => { s.card = null; s.cuff = false; s.golf = false; s.tear = false; s.stretched = false; s.repair = true; }),
+      istep('cuff',      s => { s.hagl = false; s.cuff = true; }),
+      istep('repair',    s => { s.cuff = false; s.golf = false; s.tear = false; s.stretched = false; s.repair = true; }),
       istep('faceScene', s => { s.scene = 'face'; s.repair = false; s.tear = true; }),
       istep('faceRepair', s => { s.tear = false; s.repair = true; }),
       istep('four',      s => { s.four = true; }),
       istep('post',      s => { s.post = true; }),
-      istep('same',      s => { s.card = 'options'; }),
-      istep('again',     s => { s.card = null; s.scene = 'cut'; s.repair = false; s.four = false; s.post = false; s.tear = true; s.stretched = true; s.hs = 2; s.boneloss = true; s.play = 'again'; }),
+      istep('again',     s => { s.scene = 'cut'; s.repair = false; s.four = false; s.post = false; s.tear = true; s.stretched = true; s.hs = 2; s.boneloss = true; s.play = 'again'; }),
       istep('boneloss',  s => { s.golf = true; }),
       istep('latarjet',  s => { s.golf = false; s.tear = false; s.stretched = false; s.latarjet = true; }),
       istep('cartilage', s => { s.latarjet = false; s.cartilage = true; }),
-      istep('remp',      s => { s.cartilage = false; s.boneloss = false; s.tear = false; s.stretched = false; s.repair = true; s.cuff = true; s.remp = true; }),
-      istep('calendar',  s => { s.card = 'calendar'; }),
-      istep('home',      s => { s.card = 'home'; })
+      istep('remp',      s => { s.cartilage = false; s.boneloss = false; s.tear = false; s.stretched = false; s.repair = true; s.cuff = true; s.remp = true; })
     ],
-    CARD_STEPS: ['risk', 'when', 'same', 'calendar', 'home'],
+    CARD_STEPS: [],
     onCard(name, card) {
       if (name === 'people') animatePeople($('.js-people', card), $('.js-count', card));
       if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/shoulder-arthroscopy-faq');
@@ -6886,12 +6880,12 @@ three/build/three.module.js:
       state.scene = scene; state.bend = false; state.flip = false;
       return scene === 'side' ? 'sideScene' : scene === 'front' ? 'frontScene' : scene === 'above' ? 'aboveScene' : 'insideScene';
     },
+    /* Brett's 10/3/2026 walkthrough: no cards in the Next flow ("I don't need these pop-ups, I can click through those"). */
     STEPS: [
       ['xray',        s => { }],
       ['insideScene', s => { s.scene = 'inside'; }],
       ['ligaments',   s => { s.ligaments = true; }],
       ['menisci',     s => { s.menisci = true; }],
-      ['people',      s => { s.card = 'people'; }],
       ['aboveScene',  s => { s.scene = 'above'; s.ligaments = false; }],
       ['tear-vertical', s => { s.tear = 'vertical'; }],
       ['tear-flap',   s => { s.tear = 'flap'; }],
@@ -6906,14 +6900,9 @@ three/build/three.module.js:
       ['noisy',       s => { }],
       ['fatpad',      s => { s.scene = 'front'; s.bend = false; s.chondro = 0; s.fatpad = true; }],
       ['plica',       s => { s.plica = true; }],
-      ['dontknow',    s => { }],
-      ['cycle',       s => { s.card = 'cycle'; }],
-      ['options',     s => { s.card = 'options'; }],
-      ['reset',       s => { s.card = 'reset'; }],
-      ['active',      s => { s.card = 'active'; }],
-      ['home',        s => { s.card = 'home'; }]
+      ['dontknow',    s => { }]
     ],
-    CARD_STEPS: ['people', 'cycle', 'options', 'reset', 'active', 'home'],
+    CARD_STEPS: [],
     onCard(name, card) {
       if (name === 'people') animatePeople($('.js-people', card), $('.js-count', card));
       if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/');
