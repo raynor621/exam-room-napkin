@@ -7751,10 +7751,10 @@ three/build/three.module.js:
 
       $$('.js-pt-start', v).forEach(b => b.addEventListener('click', () => { side(F, b.dataset.side === 'left'); F.skipped = false; screen(F, 0, true); idle(); }));
       F.el.next.addEventListener('click', () => { if (F.idx >= F.steps.length - 1) goEnd(F, false); else screen(F, F.idx + 1, true); idle(); });
-      F.el.back.addEventListener('click', () => { if (F.idx <= 0) goWelcome(F); else screen(F, F.idx - 1, false); });
+      F.el.back.addEventListener('click', () => { if (F.idx <= 0) { if (!embedded) goWelcome(F); } else screen(F, F.idx - 1, false); });
       F.el.skip.addEventListener('click', () => goEnd(F, true));
       q('.js-pt-endback').addEventListener('click', () => screen(F, F.skipped ? F.fork : F.steps.length - 1, false));
-      $$('.js-pt-restart', v).forEach(b => b.addEventListener('click', () => goWelcome(F)));
+      $$('.js-pt-restart', v).forEach(b => b.addEventListener('click', () => goStart(F)));
       $$('.js-pt-topics', v).forEach(b => b.addEventListener('click', showPicker));
       $$('.js-pt-handoff', v).forEach(el => longPress(el, () => handoff(F)));
     });
@@ -7802,8 +7802,14 @@ three/build/three.module.js:
       F.el.chapter.textContent = chap(F.chapters[p.ch]);
       F.el.fill.style.width = ((i + 1) / F.steps.length * 100).toFixed(1) + '%';
       F.el.count.textContent = `${i + 1} of ${F.steps.length}`;
+      F.el.back.style.visibility = embedded && i === 0 ? 'hidden' : '';
       F.el.skip.hidden = i !== F.fork; F.el.skip.parentElement.classList.toggle('has-skip', i === F.fork);
       F.el.next.textContent = i === F.fork ? (formal ? FORMAL.forkBtn : 'If surgery comes up ▶') : i === F.steps.length - 1 ? 'Finish ▶' : 'Next ▶';
+    }
+    /* on a website (embedded) there is no welcome: it opens straight on the first screen, right side (v0.25) */
+    function goStart(F) {
+      if (!embedded) { goWelcome(F); return; }
+      clearTimers(F); F.skipped = false; side(F, false); screen(F, 0, true);
     }
     function goWelcome(F) {
       clearTimers(F); F.idx = -1; F.skipped = false;
@@ -7812,7 +7818,7 @@ three/build/three.module.js:
     }
     function goEnd(F, viaSkip) { clearTimers(F); F.skipped = !!viaSkip; F.idx = F.steps.length; coverTo(F, 'end'); }
     function openFlow(F) {
-      cur = F; show(F.view); goWelcome(F);
+      cur = F; show(F.view); goStart(F);
       document.title = F.title + ' · Dr. Raynor';
     }
     function showPicker() {
