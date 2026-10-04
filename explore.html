@@ -509,6 +509,12 @@
   @media (max-height: 780px) {
     html.explore.pt-phone .view:has(.overlay.open) .pt-caption { display: none; }
   }
+
+  /* v0.26 the arm raised overhead: while it plays, the rest of the shoulder steps back and the results wait for the end */
+  #scene-profile #biceps, #scene-profile #cuff-front, #scene-profile #cuff-back { transition: opacity .35s ease; }
+  #scene-profile.impinging #biceps.on, #scene-profile.impinging #cuff-front.on, #scene-profile.impinging #cuff-back.on { opacity: .12; }
+  #scene-profile.impinging #bursitis, #scene-profile.impinging #tear-worn { opacity: 0; transition: none; }
+  #scene-profile.impinging #bursa-shape { transition: none; }
 </style>
 </head>
 <body>
@@ -711,8 +717,14 @@
 
           <!-- BURSA: the big balloon under the acromion, draped down the side of the ball -->
           <g class="layer" id="bursa">
-            <g transform="rotate(30 282 250)"><ellipse id="bursa-shape" class="pop" cx="282" cy="250" rx="34" ry="96" fill="color-mix(in srgb, var(--bursa) 40%, transparent)" stroke="var(--bursa)" stroke-width="2.6"/></g>
+            <g transform="rotate(30 282 250)"><ellipse id="bursa-shape" class="pop" cx="282" cy="250" rx="34" ry="96" fill="color-mix(in srgb, var(--bursa) 40%, transparent)" stroke="var(--bursa)" stroke-width="2.6"/><ellipse id="bursa-heat" cx="282" cy="250" rx="34" ry="96" fill="var(--hot)" stroke="var(--hot)" stroke-width="3" opacity="0"/></g>
             <text class="lbl" x="228" y="186" text-anchor="end">bursa</text>
+          </g>
+          <!-- OVERHEAD (v0.26): the pinch under the acromion; driven by the script while it plays, invisible otherwise -->
+          <g id="impinge-fx" opacity="0">
+            <circle id="impinge-glow" cx="370" cy="174" r="78" fill="url(#glow)" opacity="0"/><circle id="impinge-core" cx="370" cy="172" r="22" fill="var(--hot)" opacity="0"/>
+            <path id="impinge-spark" d="M332,164 l-20,-14 M370,150 l0,-24 M408,164 l20,-14" fill="none" stroke="var(--hot)" stroke-width="4.2" stroke-linecap="round" opacity="0"/>
+            <text id="impinge-arm" class="lbl" x="170" y="640" text-anchor="middle" opacity="0">arm raised</text>
           </g>
           <g class="layer" id="bursitis">
                         <text class="lbl hot" x="272" y="96" text-anchor="end">rubs on that bone</text>
@@ -865,6 +877,7 @@
         <button class="chip" data-toggle="biceps">Biceps</button>
         <button class="chip" data-toggle="labrum">Labrum</button>
         <button class="chip" data-toggle="bursa">Bursa</button>
+        <button class="chip" data-toggle="impinge">Arm overhead ▶</button>
         <button class="chip" data-toggle="bursitis">Bursitis</button>
         <button class="chip" data-toggle="worn">Tendonitis</button>
         <button class="chip" data-toggle="off">Full-thickness tear</button>
@@ -6261,7 +6274,7 @@ three/build/three.module.js:
   modules.shoulder = makeModule({
     view: views.shoulder,
     SKELETON: () => ({ scene: 'profile', ball: true, socket: true, blade: true, cuff: 0, biceps: false, labrum: false, bursa: false, bursitis: false, tear: 'none', repair: false, tenodesis: false,
-                       labBiceps: false, labDisloc: false, labSlap: false, labPost: false, card: null }),
+                       labBiceps: false, labDisloc: false, labSlap: false, labPost: false, play: null, card: null }),
     /* Cue lines: Brett's words, from the 9/28 recording and the rotator cuff canonical script. */
     CUES: {
       skeleton: 'So the shoulder is a ball and socket joint.',
@@ -6275,6 +6288,7 @@ three/build/three.module.js:
       worn: 'It can hurt without being torn. The tendon gets irritated where it rubs and works: tendonitis.',
       off: 'A full-thickness tear goes all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both full thickness.',
       bursa: 'It can also hurt without being torn. This bone rubs on this bone up here, so in between there’s a little balloon sac called a bursa that helps it glide instead of rub.',
+      impinge: 'We do a lot overhead. Every time the arm goes up, the top of the ball rides up under the acromion and pinches the bursa and the tendon. Do that enough and you get bursitis and tendonitis.',
       bursitis: 'Sometimes it gets angry about doing its job too much, and you get bursitis and tendinitis. The biceps is prone to getting inflamed too.',
       options: 'The question is, what do we do about you? And we have options.',
       study: 'If I had an MRI in front of me right now that said tear, I would inject that before I would ever do an operation.',
@@ -6300,6 +6314,61 @@ three/build/three.module.js:
         const inner = $('#lab-inner'), outer = $('#lab-outer'), Li = inner.getTotalLength(), Lo = outer.getTotalLength();
         const d = [-0.05, -0.025, 0, 0.025, 0.05].map(f => { const fi = (f + 1) % 1; const a = inner.getPointAtLength(fi * Li), b = outer.getPointAtLength(fi * Lo); return `M${a.x.toFixed(1)},${a.y.toFixed(1)} L${b.x.toFixed(1)},${b.y.toFixed(1)}`; }).join(' ');
         $('#lab-slap-hatch').setAttribute('d', d);
+      };
+      /* v0.26 the arm raised overhead: the ball turns about the centre of the head, so the top of it (the greater tuberosity,
+         with the cuff on it) rides up under the acromion and pinches the bursa. Three times; the bursa heats up a little each
+         time, then the state's own bursitis and tendonitis show. Everything else in the drawing steps back while it plays. */
+      const isc = $('#scene-profile'), IC = [410, 318], IANG = 40, TUB = [322, 226];
+      const bShape = $('#bursa-shape'), bHeat = $('#bursa-heat'), ifx = $('#impinge-fx'), iglow = $('#impinge-glow'), ispark = $('#impinge-spark'), icore = $('#impinge-core'), iarm = $('#impinge-arm');
+      const ireduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const iclamp = (v, a, b) => Math.max(a, Math.min(b, v)), ilerp = (a, b, t) => a + (b - a) * t, iease = t => t * t * (3 - 2 * t);
+      let iraf = null;
+      function ipose(a, heat, flash) {
+        const k = a / IANG, r = a * Math.PI / 180, dx0 = TUB[0] - IC[0], dy0 = TUB[1] - IC[1];
+        const tx = IC[0] + dx0 * Math.cos(r) - dy0 * Math.sin(r) - TUB[0], ty = IC[1] + dx0 * Math.sin(r) + dy0 * Math.cos(r) - TUB[1];
+        const set = (el, t) => { if (t) el.setAttribute('transform', t); else el.removeAttribute('transform'); };
+        set(api.layers['ball'], a ? 'rotate(' + a.toFixed(2) + ' ' + IC[0] + ' ' + IC[1] + ')' : '');
+        const tr = a ? 'translate(' + tx.toFixed(1) + ' ' + ty.toFixed(1) + ')' : '';
+        set(api.layers['cuff-top'], tr); set(api.layers['tear-worn'], tr);
+        bShape.parentNode.setAttribute('transform', (a ? 'translate(' + (tx * .72).toFixed(1) + ' ' + (ty * .95).toFixed(1) + ') ' : '') + 'rotate(30 282 250)');
+        const ry = (96 * (1 - .38 * k)).toFixed(1), rx = (34 * (1 + .22 * k)).toFixed(1);
+        [bShape, bHeat].forEach(e => { e.setAttribute('ry', ry); e.setAttribute('rx', rx); });
+        bHeat.setAttribute('opacity', (.62 * heat).toFixed(3));
+        ifx.setAttribute('opacity', a || flash ? '1' : '0');
+        iglow.setAttribute('opacity', iclamp(flash, 0, 1).toFixed(3));
+        ispark.setAttribute('opacity', iclamp(flash * 1.4 - .3, 0, 1).toFixed(3));
+        icore.setAttribute('opacity', (iclamp(flash, 0, 1) * .45).toFixed(3));
+        iarm.setAttribute('opacity', iclamp(k * 1.6 - .4, 0, 1).toFixed(3));
+      }
+      function iend(state) {
+        iraf = null; ipose(0, 0, 0);
+        isc.classList.remove('impinging');
+        api.layers['bursa'].classList.toggle('angry', !!state.bursitis);
+      }
+      api.stopImpinge = function (state) {
+        if (iraf) cancelAnimationFrame(iraf);
+        if (iraf || isc.classList.contains('impinging')) iend(state || { bursitis: api.layers['bursa'].classList.contains('angry') });
+        iraf = null;
+      };
+      api.impinge = function (state) {
+        if (iraf) cancelAnimationFrame(iraf); iraf = null;
+        if (ireduced()) { iend(state); return; }
+        isc.classList.add('impinging');
+        api.layers['bursa'].classList.remove('angry');
+        const T = { wait: 450, up: 950, hold: 700, down: 820 }, cyc = T.wait + T.up + T.hold + T.down, cycles = 3, t0 = performance.now();
+        const tick = now => {
+          const ms = now - t0;
+          if (ms >= cycles * cyc) { iend(state); return; }
+          const c = Math.floor(ms / cyc), t = ms - c * cyc, th = t - T.wait - T.up;
+          let a = 0, hit = 0, flash = 0;
+          if (t < T.wait) a = 0;
+          else if (th < 0) a = IANG * iease((t - T.wait) / T.up);
+          else if (th < T.hold) { a = IANG; hit = iclamp(th / 300, 0, 1); flash = th < T.hold * .6 ? 1 : 1 - (th - T.hold * .6) / (T.hold * .4); }
+          else { a = IANG * (1 - iease((th - T.hold) / T.down)); hit = 1; }
+          ipose(a, ilerp(c / cycles, (c + 1) / cycles, hit), flash);
+          iraf = requestAnimationFrame(tick);
+        };
+        iraf = requestAnimationFrame(tick);
       };
     },
     render(state, api) {
@@ -6334,10 +6403,12 @@ three/build/three.module.js:
       chip('repair').classList.toggle('on', state.repair);
       chip('tenodesis').classList.toggle('on', state.tenodesis);
       ['labBiceps', 'labDisloc', 'labSlap', 'labPost'].forEach(k => chip(k).classList.toggle('on', state[k]));
+      if (state.play === 'impinge' && state.scene === 'profile') { state.play = null; api.impinge(state); } else { state.play = null; api.stopImpinge(state); }
     },
     toggle(state, k) {
-      let cue = k;
+      let cue = k; state.play = null;
       switch (k) {
+        case 'impinge': state.ball = true; state.socket = true; state.blade = true; state.cuff = Math.max(state.cuff, 1); state.bursa = true; state.bursitis = true; state.tear = 'worn'; state.repair = false; state.play = 'impinge'; break;
         case 'skeleton': { const v = !(state.ball && state.socket); state.ball = v; state.socket = v; if (!v) { state.cuff = 0; state.biceps = false; state.labrum = false; state.bursa = false; state.bursitis = false; state.tear = 'none'; state.repair = false; state.tenodesis = false; } break; }
         case 'blade': state.blade = !state.blade; break;
         case 'cuff': state.cuff = (state.cuff + 1) % 4; if (state.cuff === 0) { state.tear = 'none'; state.repair = false; } cue = state.cuff ? 'cuff' + state.cuff : null; break;
@@ -6368,9 +6439,10 @@ three/build/three.module.js:
       ['biceps',   s => { s.biceps = true; }],
       ['off',      s => { s.tear = 'off'; }],
       ['bursa',    s => { s.tear = 'none'; s.bursa = true; }],
-      ['bursitis', s => { s.bursitis = true; }],
-      ['worn',     s => { s.tear = 'worn'; }],
-      ['off',      s => { s.bursa = false; s.bursitis = false; s.tear = 'off'; }],
+      ['impinge',  s => { s.bursitis = true; s.tear = 'worn'; s.play = 'impinge'; }],
+      ['bursitis', s => { s.play = null; s.bursitis = true; }],
+      ['worn',     s => { s.play = null; s.tear = 'worn'; }],
+      ['off',      s => { s.play = null; s.bursa = false; s.bursitis = false; s.tear = 'off'; }],
       ['repair',   s => { s.tear = 'none'; s.repair = true; }],
       ['tenodesis',s => { s.tenodesis = true; }]
     ],
@@ -7219,15 +7291,16 @@ three/build/three.module.js:
           { ch: 0, doc: 3, seq: [s => { s.cuff = 2; }], dt: 900, set: s => { s.cuff = 3; }, text: '…one in the front, and two around the back. Together they keep the ball centered in the socket and help you lift and turn your arm.' },
           { ch: 0, doc: 4, set: cuffs, text: 'The biceps tendon comes up the front of your arm, makes a ninety-degree turn through a tight little sheath, and attaches at the top of the socket. That turn is a common spot for pain.' },
           { ch: 0, doc: 6, set: s => { cuffs(s); s.bursa = true; }, text: 'Between the rotator cuff and the bone above it is a little balloon sac called a bursa. It helps the tendons glide instead of rub.' },
-          { ch: 1, doc: 7, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; }, text: 'Sometimes the bursa gets angry about doing its job too much. It swells and gets sore: that’s bursitis, one of the most common reasons a shoulder hurts.' },
-          { ch: 1, doc: 8, set: s => { cuffs(s); s.bursa = true; s.tear = 'worn'; }, text: 'A tendon can also hurt without being torn. When it gets irritated where it rubs and works, that’s tendonitis.' },
-          { ch: 1, doc: 9, set: torn, text: 'Sometimes a tendon tears all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both all the way through, so either one is called a full-thickness tear.' },
-          { ch: 1, doc: 9, set: s => { torn(s); s.card = 'people'; }, text: 'Tears are really common, and lots of them don’t hurt at all. If I took an MRI of 100 people over 60 with no shoulder pain, more than 1 in 4 would have a full-thickness rotator cuff tear, and about half would have some tearing. A tear on an MRI doesn’t automatically mean surgery.' },
-          { ch: 2, doc: 9, set: s => { torn(s); s.card = 'options'; }, text: 'Most shoulder pain gets better without an operation. We start at the bottom rung and only climb if we need to. Physical therapy is never the wrong answer.' },
-          { ch: 2, doc: 9, fork: true, set: s => { torn(s); s.card = 'study'; }, text: 'Even with a full-thickness tear, physical therapy usually comes first. Most people who give it a real try don’t end up needing surgery, and trying it first doesn’t burn the bridge.' },
-          { ch: 3, doc: 10, set: s => { cuffs(s); s.repair = true; }, text: 'If we do need to fix it, I roughen up the bone, put the tendon back down where it belongs, and hold it there with small anchors so it can heal back in. It’s done through a few small poke holes.' },
-          { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; }, text: 'If the biceps is part of the pain, I move it a little lower on the arm so it doesn’t have to slide in and out of that tight groove anymore. It adds about three minutes.' },
-          { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; s.card = 'calendar'; }, text: 'Recovery is biology, not caution: a tendon takes time to heal back to bone. You’re in a sling for six weeks and strengthening starts at three months. Your tendon is healed at four months, most people are doing what they want by six, and it’s about a year before you stop thinking about your shoulder.' }
+          { ch: 1, doc: 7, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; s.tear = 'worn'; s.play = 'impinge'; }, text: 'We use our shoulders overhead all the time. Each time the arm goes up, the top of the ball rides up under the acromion, the bone on top of the shoulder, and pinches the bursa and the tendon between them. Repeated often enough, both become inflamed: bursitis and tendonitis.' },
+          { ch: 1, doc: 8, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; }, text: 'Sometimes the bursa gets angry about doing its job too much. It swells and gets sore: that’s bursitis, one of the most common reasons a shoulder hurts.' },
+          { ch: 1, doc: 9, set: s => { cuffs(s); s.bursa = true; s.tear = 'worn'; }, text: 'A tendon can also hurt without being torn. When it gets irritated where it rubs and works, that’s tendonitis.' },
+          { ch: 1, doc: 10, set: torn, text: 'Sometimes a tendon tears all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both all the way through, so either one is called a full-thickness tear.' },
+          { ch: 1, doc: 10, set: s => { torn(s); s.card = 'people'; }, text: 'Tears are really common, and lots of them don’t hurt at all. If I took an MRI of 100 people over 60 with no shoulder pain, more than 1 in 4 would have a full-thickness rotator cuff tear, and about half would have some tearing. A tear on an MRI doesn’t automatically mean surgery.' },
+          { ch: 2, doc: 10, set: s => { torn(s); s.card = 'options'; }, text: 'Most shoulder pain gets better without an operation. We start at the bottom rung and only climb if we need to. Physical therapy is never the wrong answer.' },
+          { ch: 2, doc: 10, fork: true, set: s => { torn(s); s.card = 'study'; }, text: 'Even with a full-thickness tear, physical therapy usually comes first. Most people who give it a real try don’t end up needing surgery, and trying it first doesn’t burn the bridge.' },
+          { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; }, text: 'If we do need to fix it, I roughen up the bone, put the tendon back down where it belongs, and hold it there with small anchors so it can heal back in. It’s done through a few small poke holes.' },
+          { ch: 3, doc: 12, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; }, text: 'If the biceps is part of the pain, I move it a little lower on the arm so it doesn’t have to slide in and out of that tight groove anymore. It adds about three minutes.' },
+          { ch: 3, doc: 12, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; s.card = 'calendar'; }, text: 'Recovery is biology, not caution: a tendon takes time to heal back to bone. You’re in a sling for six weeks and strengthening starts at three months. Your tendon is healed at four months, most people are doing what they want by six, and it’s about a year before you stop thinking about your shoulder.' }
         ],
         think: ['Where exactly does it hurt? Be ready to point to it.', 'Does it wake you up at night?', 'What makes it worse: reaching overhead, behind your back, lifting?', 'What have you already tried: therapy, medicine, a shot?', 'What do you want to get back to doing?'],
         ask: ['Is it torn, or is it irritated?', 'What happens if I wait?', 'What can I do at home in the meantime?', 'What’s the next step for me?']
@@ -7368,6 +7441,7 @@ three/build/three.module.js:
           '…one across the front, and two across the back. Together they keep the ball centered in the socket and help you lift and rotate your arm.',
           'The biceps tendon runs up the front of the arm, turns sharply through a narrow groove, and attaches at the top of the socket. That turn is a common source of pain.',
           'Between the rotator cuff and the bone above it is a small fluid-filled sac called a bursa. It allows the tendons to glide smoothly.',
+          'Raising the arm overhead brings the top of the humerus up beneath the acromion, the bony roof of the shoulder. The bursa and the rotator cuff tendon are compressed between them, and with repetition both can become inflamed: bursitis and tendinitis.',
           'When the bursa becomes irritated, it swells and becomes painful. This is called bursitis, and it is one of the most common causes of shoulder pain.',
           'A tendon can be painful without being torn. Irritation of the tendon from repeated use is called tendinitis.',
           'Sometimes a tendon tears all the way through and pulls away from the bone. Whether the opening is small or large, this is called a full-thickness tear.',
@@ -7640,7 +7714,7 @@ three/build/three.module.js:
     const PHONE = {
       shoulder: { core: [296, 220, 230, 200], clampX1: 870, keep: '#ball text', steps: [
         { f: ['#ball', '#socket'] }, { f: ['#cuff-top .intact', '#cuff-top > text[y="452"]'] }, { f: ['#cuff-front', '#cuff-back'] }, { f: ['#biceps'] },
-        { f: ['#bursa'] }, { f: ['#bursa', '#bursitis'] }, { f: ['#tear-worn'] },
+        { f: ['#bursa'] }, { f: ['#bursa', '#bursitis'], add: [[200, 86, 330, 330]] }, { f: ['#bursa', '#bursitis'] }, { f: ['#tear-worn'] },
         { f: ['#cuff-top .retracted-only text', '#cuff-top .retracted-only path:not(.band)'] }, null, null, null,
         { f: ['#repair'] }, { f: ['#tenodesis'] }, null ] },
       instability: { core: [324, 146, 232, 240], keep: '#i-ball text, #i-skeleton > text[x="440"]', steps: [
