@@ -7276,6 +7276,293 @@ three/build/three.module.js:
                       hip: 'hip', acl: 'acl', knee: 'knee', kneepain: 'knee' };
     const STILL = s => { if (s.play) s.play = null; if (s.injury === 'play') s.injury = 'done'; };  /* the handoff does not replay an animation */
 
+
+    /* ---------- the formal wording (v0.21): /learn, #learn or ?formal. Same screens, drawings and facts as /explore, written
+       for a general reader instead of in Brett's spoken phrasing. /explore keeps his voice unchanged. Cards and the few
+       colloquial drawing labels are swapped only while the formal patient view is showing (Brett's mode keeps his own). ---------- */
+    const FORMAL = {
+      picker: {
+        k: 'Welcome. I’m Dr. Raynor, and I’ll be with you shortly. Choose the topic closest to the reason for your visit, and I’ll walk you through it with the same illustrations I use in the exam room.',
+        e: 'Choose a topic to see how I explain it to my patients in the exam room, with the same illustrations.'
+      },
+      end: {
+        h1: 'Thank you for reviewing this guide',
+        k: 'I’ll be with you shortly. Here are a few things to consider before I come in, so we can make the most of our time together:',
+        e: 'If you are scheduled to see me, here are a few things to consider before your visit, so we can make the most of our time together:',
+        think: 'Things to consider', qs: 'Questions you may want to ask'
+      },
+      /* chapter names and the fork button */
+      chapters: { 'What we can do about it': 'Treatment options', 'If surgery comes up': 'If surgery is needed', 'When it comes out': 'When it dislocates',
+                  'What holds it in': 'What holds it in place', 'What happened': 'The injury', 'Making a new ACL': 'Reconstructing the ACL',
+                  'What’s in your knee': 'Inside the knee', 'What can hurt': 'Common sources of pain', 'What helps': 'Treatment options' },
+      forkBtn: 'If surgery is needed ▶',
+      titles: { instability: 'Your Shoulder: Dislocations' },
+      lead: (F) => ({
+        k: `Welcome. I’m Dr. Raynor, and I’ll be with you shortly. In the meantime, this short guide covers ${F.fabout || F.about}. It uses the same illustrations I use in the exam room, so we can pick up where you leave off. It takes about three minutes.`,
+        e: `This short guide covers ${F.fabout || F.about}, using the same illustrations I use in the exam room. It takes about three minutes.`
+      }),
+      flows: {
+        shoulder: { whead: 'Understanding your shoulder', steps: [
+          'The shoulder is a ball-and-socket joint. The ball is the top of the arm bone (humerus), and the socket is part of the shoulder blade.',
+          'The rotator cuff is a group of four tendons that surround the ball. One runs across the top…',
+          '…one across the front, and two across the back. Together they keep the ball centered in the socket and help you lift and rotate your arm.',
+          'The biceps tendon runs up the front of the arm, turns sharply through a narrow groove, and attaches at the top of the socket. That turn is a common source of pain.',
+          'Between the rotator cuff and the bone above it is a small fluid-filled sac called a bursa. It allows the tendons to glide smoothly.',
+          'When the bursa becomes irritated, it swells and becomes painful. This is called bursitis, and it is one of the most common causes of shoulder pain.',
+          'A tendon can be painful without being torn. Irritation of the tendon from repeated use is called tendinitis.',
+          'Sometimes a tendon tears all the way through and pulls away from the bone. Whether the opening is small or large, this is called a full-thickness tear.',
+          'Rotator cuff tears are common, and many cause no pain. In people over 60 without shoulder pain, about 1 in 3 have a rotator cuff tear on MRI. A tear on an MRI does not, by itself, mean surgery.',
+          'Most shoulder pain improves without surgery. We begin with the simplest treatments and move up only if needed. Physical therapy is always a reasonable choice.',
+          'Even with a full-thickness tear, physical therapy is usually the first step. Most people who complete a course of therapy do not need surgery, and trying therapy first does not rule surgery out.',
+          'If surgery is needed, the tendon is reattached to the bone with small anchors so it can heal back in place. The procedure is done arthroscopically, through a few small incisions.',
+          'If the biceps tendon is contributing to the pain, it can be moved slightly lower on the arm so it no longer passes through the narrow groove. This adds only a few minutes to the surgery.',
+          'Tendon-to-bone healing takes time. You will wear a sling for six weeks, begin strengthening at about three months, and reach full recovery at about six months.'
+        ] },
+        instability: { whead: 'Understanding shoulder dislocations', steps: [
+          'The shoulder is often compared to a golf ball sitting on a tee. This view looks down on it from above. The shallow socket gives the shoulder its wide range of motion, but it also makes dislocation possible.',
+          'Several structures hold the ball in place. The labrum is a rim of tissue around the edge of the socket that deepens it, like a bumper.',
+          'Ligaments run from the ball to the labrum and help keep the ball centered.',
+          'Most dislocations happen toward the front. As the ball comes out, it often tears the labrum away from the edge of the socket before it returns to place.',
+          'The back of the ball often gets a small dent where it struck the edge of the socket, called a Hill-Sachs lesion. It is usually small and matters mainly if dislocations continue.',
+          'The labrum may heal back in place. If it does not, or if the ligaments are stretched, the shoulder becomes more likely to dislocate again.',
+          'Recurrence is the main concern after a dislocation. Among 100 young athletes treated with a sling and rehabilitation, about 67 dislocate again; after surgical repair, about 10 do. Young men in contact sports are at the highest risk.',
+          'Each dislocation can cause more damage: the dent can enlarge and the edge of the socket can chip, like a golf tee with a chip in it. This makes further dislocations more likely.',
+          'Treatment usually begins with rehabilitation. Physical therapy strengthens the rotator cuff muscles, which help hold the shoulder in place.',
+          'While the shoulder recovers, avoid the position in which it tends to dislocate: arm raised, out to the side, and rotated back. Avoid reaching awkwardly overhead or behind you.',
+          'If the shoulder feels stable after rehabilitation, surgery is not needed. If it remains unstable or dislocates again, surgical repair is recommended. Waiting risks additional dislocations.',
+          'In surgery, small anchors made of suture are placed in the bone, and the labrum and ligaments are reattached to the edge of the socket. The procedure is done arthroscopically, through a few small incisions.',
+          'Viewed straight on, a repair usually uses three anchors, sometimes four. The repair also tightens the ligaments around the joint.',
+          'If a significant amount of bone has been lost from the socket, an arthroscopic repair is less reliable. In that case an open procedure called a Latarjet may be recommended, in which a small piece of bone with an attached tendon is moved and secured with screws to restore the socket.',
+          'Recovery: surgery is outpatient, followed by six weeks in a sling. Strengthening begins at about two months, throwing at about five months, and contact sports at about six months.'
+        ] },
+        hip: { whead: 'Understanding your hip', steps: [
+          'The hip is a ball-and-socket joint. The ball is the top of the thigh bone (femur), and the socket is part of the pelvis.',
+          'The ball and socket are lined with smooth cartilage. Arthritis is the loss of that cartilage.',
+          'The labrum is a rim of tissue around the edge of the socket. It acts like a seal and deepens the socket.',
+          'The labrum can tear away from the edge of the socket, which can cause pain.',
+          'Many labral tears cause no symptoms. About two-thirds of people without hip pain have one on MRI. The concern is a tear that causes ongoing pain, not the tear itself.',
+          'Hip shape can affect the labrum. A deeper socket can pinch the labrum earlier in motion, and a shallower socket, often with a larger labrum, places more force across it.',
+          'Some people have extra bone at the edge of the ball, called a cam deformity. With each bend of the hip, it contacts the labrum, which can lead to a tear over time.',
+          'Pain on the outside of the hip usually has a different cause. The IT band passes over the bone there, and the bursa beneath it can become inflamed. This is called bursitis, and it often responds well to an injection.',
+          'Sometimes the source is not the hip at all. A pinched nerve in the lower back can cause pain that feels like it comes from the hip, so it is always considered.',
+          'Most of the time, this improves without surgery. We begin with physical therapy and, if needed, an injection, and move up only if necessary.',
+          'In young athletes, about eighty percent improve without an operation, with therapy alone or after a single injection. Surgery is reserved for those who do not improve.',
+          'If surgery is needed, it is done arthroscopically through small incisions. The edge of the socket is trimmed slightly, and small anchors made of suture, usually two to four, are used to reattach the labrum.',
+          'The extra bone is then shaved down so the hip can bend without pinching the repaired labrum.',
+          'To reach the joint, a small opening is made in the capsule, the lining that surrounds the hip, and it is closed with sutures at the end. To protect it, avoid turning the leg outward for three weeks.',
+          'The incisions are small, but recovery takes time: crutches for about a month, improvement by six weeks, further improvement by three months, and full recovery at about six months.'
+        ] },
+        acl: { whead: 'Understanding the ACL', fabout: 'how the knee works, what happens when the ACL tears, and how it is reconstructed, using the same 3D knee I use in the exam room', steps: [
+          'This is the knee, bent, with the kneecap moved aside: the thigh bone above, the shin bone below, and the smaller bone on the outside (fibula). You can rotate the model with your finger.',
+          'Four main ligaments stabilize the knee: the MCL on the medial side, the LCL on the lateral side, and the ACL and PCL, which cross in the center of the joint.',
+          'The menisci are two cushions between the bones that absorb shock, and smooth cartilage covers the ends of the bones.',
+          'When the ACL tears, its fibers come apart and it no longer functions as a ligament. This is what a torn ACL looks like.',
+          'ACL tears usually happen with a plant-and-twist motion. The shin bone shifts forward and rotates, the ACL tears, and the bones strike each other briefly, which often leaves a bone bruise.',
+          'The MCL heals on its own. The ACL lies inside the joint and does not heal well. Pain and swelling settle within a few weeks, but the knee can give way with cutting, pivoting, or twisting.',
+          'A torn ACL is reconstructed rather than repaired. Through two small incisions, the torn ends are removed and a tunnel is drilled in each bone at the ACL’s natural attachment points.',
+          'The new ligament, called a graft, is passed through the tunnels and secured at each end.',
+          'The graft can come from several sources. I most often use the patellar tendon or the quadriceps tendon, both your own tissue. We will discuss which is best for you.',
+          'A patellar tendon graft uses the middle third of the tendon below the kneecap, with a small piece of bone at each end. The remaining tendon is repaired and heals.',
+          'A quadriceps tendon graft uses a strip from the tendon above the kneecap. Its incisions are away from the front of the knee, which some people who kneel frequently prefer.',
+          'If a meniscus is torn, it is repaired with sutures during the same surgery whenever possible. Meniscus repairs heal best when the ACL is reconstructed at the same time.',
+          'Surgery is outpatient, and walking begins right away. Crutches and a brace are used for three to four weeks, walking is normal by about six weeks, jogging begins at three months, and return to cutting and pivoting sports is at about seven months.',
+          'There is no need to rush. Surgery is usually done about three weeks after the injury, once the knee has calmed down, and therapy before surgery helps recovery afterward.'
+        ] },
+        knee: { whead: 'Understanding your knee', fabout: 'what is inside the knee, the problems that can cause pain without showing on an X-ray, and the treatments that help, using the same 3D knee I use in the exam room', steps: [
+          'Many causes of knee pain do not show up on an X-ray. The space between the bones on an X-ray reflects the cartilage; when that space looks normal, the pain is usually coming from somewhere else.',
+          'Four main ligaments stabilize the knee: the MCL on the medial side, the LCL on the lateral side, and the ACL and PCL in the center. Each one is checked during the examination.',
+          'The menisci are two cushions between the bones that absorb shock. Small meniscus tears tend to cause pain along the sides and back of the knee.',
+          'Viewed from above, meniscus tears come in several patterns. The most common is a horizontal tear, which splits the meniscus into upper and lower layers.',
+          'About 1 in 3 people over 50 without knee pain have a meniscus tear on MRI and are unaware of it. Not every tear hurts, and not every tear needs surgery.',
+          'Cartilage can also wear slightly, not enough to show on an X-ray but enough to cause pain. This is called chondromalacia.',
+          'The most common location is the back of the kneecap. Some wear there is normal after about age thirty; pain from it is not.',
+          'The kneecap joint carries forces of up to about seven times body weight. When the quadriceps is strong, it usually does not hurt, even if it makes noise. Grinding without pain is not a concern.',
+          'Two other structures can become irritated: a small fat pad behind the tendon below the kneecap, and a plica, a fold of tissue left over from development.',
+          'Pain can set off a cycle: irritation causes swelling, swelling weakens the quadriceps, a weaker quadriceps increases pain, and the exercises that would help become uncomfortable.',
+          'Treatment starts with the simplest options and progresses as needed: staying active, physical therapy to strengthen the quadriceps, anti-inflammatory medicine, and then an injection. Surgery is not the starting point.',
+          'An injection can act as a reset. Calming the inflammation often allows the knee to return to how it felt before the flare.',
+          'Staying active is one of the best things you can do for your knees. Squats and lunges to about ninety degrees and a stationary bike are good choices. On a painful day, it is fine to rest.'
+        ] }
+      },
+      /* card text: [card, selector inside the card, HTML] */
+      cards: {
+        shoulder: [
+          ['people', 'h2', '100 people without shoulder pain'], ['people', '.sub', 'All of them over 60.'],
+          ['people', '.quote', 'Many tears cause no symptoms at all.'], ['people', '.kicker', 'A tear on an MRI does not, by itself, mean surgery.'],
+          ['options', 'h2', 'Treatment options'], ['options', '.sub', 'We start with the simplest options and move up only if needed.'],
+          ['options', '.rung:nth-child(1) .q', 'Arthroscopic repair through small incisions, with anchors that hold the tendon to the bone.'],
+          ['options', '.rung:nth-child(2) .q', 'One or two can be very helpful. Many repeated injections can weaken the tendon.'],
+          ['options', '.rung:nth-child(3) .q', 'Anti-inflammatory medicine to calm the irritation.'],
+          ['options', '.rung:nth-child(4) .q', 'Always a reasonable choice.'],
+          ['options', '.rung:nth-child(5) .t', 'Observation'], ['options', '.rung:nth-child(5) .q', 'Living with it is always an option.'],
+          ['study', '.sub', 'From a large multicenter study of full-thickness rotator cuff tears.'],
+          ['study', '.flow > .box', 'Full-thickness tear: start physical therapy.'],
+          ['study', '.fork > div:nth-child(1) .box', 'Doing well at three months: no surgery needed.'],
+          ['study', '.fork > div:nth-child(2) .lab', 'Not improving?'],
+          ['study', '.fork > div:nth-child(2) .box', 'Surgery at that point. Trying therapy first for a few months does not rule surgery out.'],
+          ['study', '.kicker', 'The strongest predictor of success with therapy was believing it would work.'],
+          ['calendar', '.sub', 'Outpatient surgery. The timeline reflects how long a tendon takes to heal to bone.'],
+          ['calendar', '.mile:nth-child(1) span', 'Home the same day, with a nerve block for comfort.'],
+          ['calendar', '.mile:nth-child(2) span', 'In a sling; plan for some help at home.'],
+          ['calendar', '.mile:nth-child(3) span', 'The tendon can handle load. Strengthening begins.'],
+          ['calendar', '.mile:nth-child(4) span', 'Mostly healed; cleared for most activities.']
+        ],
+        instab: [
+          ['people', 'h2', '100 young athletes after a first dislocation'],
+          ['people', '.quote', 'Young men in contact sports under 25 have the highest risk of recurrence.'],
+          ['position', '.sub', 'Arm up and out to the side: the position in which the shoulder tends to dislocate.'],
+          ['position', '.qr-wrap p:nth-of-type(1)', '<strong>Arm raised, out to the side, hand rotated back.</strong> For example, the throwing position, or sleeping on your stomach.'],
+          ['position', '.quote', 'Avoid reaching awkwardly overhead or behind you.'],
+          ['position', '.qr-wrap p:nth-of-type(3)', 'If a position feels unstable, avoid it.'],
+          ['when', '.sub', 'After a dislocation that has gone back into place.'],
+          ['when', '.flow > .box', 'Rehabilitation first, to strengthen the rotator cuff muscles.'],
+          ['when', '.fork > div:nth-child(1) .lab', 'Feels stable?'], ['when', '.fork > div:nth-child(1) .box', 'No surgery needed.'],
+          ['when', '.fork > div:nth-child(2) .lab', 'Still unstable, or dislocates again?'], ['when', '.fork > div:nth-child(2) .box', 'Surgical repair is recommended.'],
+          ['when', '.kicker', 'Each dislocation can damage more bone. Significant bone loss may require a larger, open operation.'],
+          ['calendar', '.mile:nth-child(1) span', 'Home the same day, with a nerve block.'],
+          ['calendar', '.mile:nth-child(2) span', 'In a sling; motion returns in stages.']
+        ],
+        hip: [
+          ['people', 'h2', '100 people without hip pain'], ['people', '.sub', 'None of them have hip pain.'],
+          ['people', '.quote', 'A labral tear is not harmful in itself.'], ['people', '.kicker', 'What matters is whether the tear is causing pain.'],
+          ['options', 'h2', 'Treatment options'], ['options', '.sub', 'We start with the simplest options and move up only if needed.'],
+          ['options', '.rung:nth-child(1) .q', 'Not rushed, but available if pain persists.'],
+          ['options', '.rung:nth-child(2) .t', 'Other injections'], ['options', '.rung:nth-child(2) .q', 'If a steroid injection helps but wears off, repeated steroid injections are avoided in a young hip.'],
+          ['options', '.rung:nth-child(3) .q', 'The injection may relieve pain, provides diagnostic information, and is usually required by insurance before surgery.'],
+          ['options', '.rung:nth-child(4) .q', 'Strengthening the gluteal muscles and stretching the IT band. Always a reasonable choice.'],
+          ['options', '.rung:nth-child(5) .t', 'Observation'], ['options', '.rung:nth-child(5) .q', 'Living with it does not harm the hip.'],
+          ['pt', '.flow > .box', 'Painful labral tear: physical therapy, rest, and activity modification.'],
+          ['pt', '.fork > div:nth-child(1) .box', '82% did not need surgery: 70% with therapy alone, 12% after one injection.'],
+          ['pt', '.fork > div:nth-child(2) .box', 'Surgery at that point. At two years, outcomes were similar in both groups.'],
+          ['pt', '.kicker', 'About eighty percent of young athletes improve without an operation; surgery is reserved for those who do not.'],
+          ['calendar', '.sub', 'Small incisions, but a significant recovery. The restrictions protect the repair.'],
+          ['calendar', '.mile:nth-child(1) span', 'About 1.5 to 2 hours of surgery; one night in the hospital.'],
+          ['calendar', '.mile:nth-child(2) span', 'No turning the leg outward while the capsule heals.'],
+          ['calendar', '.mile:nth-child(3) span', 'Crutches, while the reshaped bone heals.'],
+          ['calendar', '.mile:nth-child(4) span', 'Feeling better; further improvement by three months.']
+        ],
+        knee: [
+          ['heal', '.sub', 'Pain and swelling usually settle within two to three weeks.'],
+          ['heal', '.fork > div:nth-child(2) .box', 'Inside the knee, where ligaments do not heal well.'],
+          ['heal', '.flow > .box', 'Once the pain settles, the knee can still feel unstable with cutting, pivoting, and twisting, and may give way.'],
+          ['heal', '.kicker', 'Most young, active people are not satisfied with a knee without a functioning ACL, and most choose reconstruction.'],
+          ['options', 'h2', 'Graft options'], ['options', '.sub', 'Four choices.'],
+          ['options', '.rung:nth-child(1) .t', 'Patellar tendon'], ['options', '.rung:nth-child(2) .t', 'Quadriceps tendon'],
+          ['options', '.rung:nth-child(1) .q', 'The middle third of the tendon with bone on each end, fixed with absorbable screws. My preferred graft, and the one I use for athletes under twenty.'],
+          ['options', '.rung:nth-child(2) .q', 'A strip from the middle of the quadriceps tendon, fixed with buttons, with nothing rigid crossing a growth plate. Similar results; quadriceps strength may take a month or two longer to return. Often chosen by people who kneel frequently.'],
+          ['options', '.rung:nth-child(3) .q', 'Used less often today because they can stretch out. I no longer use them.'],
+          ['options', '.rung:nth-child(4) .t', 'Donor tissue (allograft)'],
+          ['options', '.rung:nth-child(4) .q', 'About 40% higher failure rate under age 25. I avoid it in patients under forty.'],
+          ['options', '.kicker', 'Between the patellar tendon and the quadriceps tendon, either is an excellent choice.'],
+          ['recovery', '.sub', 'Outpatient surgery. Walking and motion begin right away.'],
+          ['recovery', '.mile:nth-child(1) span', 'Home the same day, with a nerve block.'],
+          ['recovery', '.mile:nth-child(2) span', 'Crutches and a brace for support, with full weight on the leg from the start.'],
+          ['recovery', '.mile:nth-child(3) span', 'Walking normally. The graft is weaker now than at surgery, even though the knee feels good.'],
+          ['recovery', '.mile:nth-child(4) span', 'Healing is well along; jogging and regular workouts begin.'],
+          ['recovery', '.mile:nth-child(5) span', 'Return to cutting, pivoting, and twisting sports; sometimes eight or nine months with a quadriceps graft.'],
+          ['recovery', '.kicker', 'Recovery takes about seven months, but it is an active recovery. Much of that time goes to rebuilding quadriceps strength, which drops after surgery.'],
+          ['timing', '.sub', 'Surgery is usually done about three weeks after the injury, once the knee has calmed down.'],
+          ['timing', '.flow > .box:not(.good)', 'The surgery is the same whether it is done now or months from now; waiting does not cause harm.'],
+          ['timing', '.flow > .box.good', 'Therapy before surgery, for three reasons.'],
+          ['timing', '.rung:nth-child(1) .t', 'Let the knee calm down'], ['timing', '.rung:nth-child(1) .q', 'Surgery is another injury to the knee; recovery is faster when the knee is calm and moving well first.'],
+          ['timing', '.rung:nth-child(2) .t', 'Prepare the knee'], ['timing', '.rung:nth-child(2) .q', 'Restore motion and quadriceps strength.'],
+          ['timing', '.rung:nth-child(3) .t', 'Meet your therapist'], ['timing', '.rung:nth-child(3) .q', 'You will work closely with your therapist after surgery, and it helps to find a good fit beforehand.']
+        ],
+        kneepain: [
+          ['people', 'h2', '100 people without knee pain'], ['people', '.sub', 'All of them over 50.'],
+          ['people', '.people-text p:nth-of-type(1) span:last-child', 'of them have a meniscus tear on MRI, and most are unaware of it.'],
+          ['people', '.quote', 'Not every tear hurts, and not every tear needs surgery.'],
+          ['people', '.kicker', 'What matters is whether your knee hurts, not whether an MRI shows a tear.'],
+          ['cycle', 'h2', 'The quadriceps cycle'], ['cycle', '.sub', 'When the quadriceps is strong, the front of the knee usually feels better. Pain can set off a cycle that weakens it.'],
+          ['cycle', '.flow > .box:nth-child(1)', 'Something in the knee becomes irritated.'],
+          ['cycle', '.flow > .box:nth-child(3)', 'It swells, and the swelling inhibits the quadriceps.'],
+          ['cycle', '.flow > .box:nth-child(5)', 'The weaker quadriceps leads to more pain.'],
+          ['cycle', '.flow > .box:nth-child(7)', 'The exercises that would strengthen it are the ones that hurt.'],
+          ['cycle', '.flow > .arrow:last-child', '↺ and the cycle repeats'],
+          ['cycle', '.kicker', 'Often the pain comes from the body’s inflammatory response more than from the finding itself. Calming the inflammation can break the cycle.'],
+          ['options', 'h2', 'Treatment options'], ['options', '.sub', 'We start with the simplest options and move up only if needed.'],
+          ['options', '.rung:nth-child(1) .t', 'Observation'], ['options', '.rung:nth-child(1) .q', 'Staying active is fine; you are not damaging your knee.'],
+          ['options', '.rung:nth-child(2) .q', 'Quadriceps strengthening. Always a reasonable choice.'],
+          ['options', '.rung:nth-child(3) .t', 'Anti-inflammatory medicine'], ['options', '.rung:nth-child(3) .q', 'A prescription-strength anti-inflammatory, daily for one to two weeks.'],
+          ['options', '.rung:nth-child(4) .q', 'Relieves pain long enough to stay active and build strength.'],
+          ['options', '.rung:nth-child(5) .q', 'Considered if symptoms are not improving. Most findings would still be treated with an injection before surgery.'],
+          ['options', '.rung:nth-child(6) .q', 'Helpful for some problems, but not the starting point.'],
+          ['options', '.kicker', 'We start with the simplest treatment and progress as needed.'],
+          ['reset', 'h2', 'An injection as a reset'],
+          ['reset', '.sub', 'The goal is to calm an irritated knee so it can return to how it felt before the flare.'],
+          ['reset', '.mile:nth-child(1) span', 'Numbing medicine and a steroid. The numbing gives a few hours of relief; take it easy that day.'],
+          ['reset', '.mile:nth-child(2) span', 'The steroid takes effect.'],
+          ['reset', '.mile:nth-child(3) span', 'If there is no improvement by now, let us know.'],
+          ['reset', '.mile:nth-child(4) span', 'How long a good response typically lasts. Relief that lasts only a few weeks suggests limited benefit.'],
+          ['reset', '.mile:nth-child(5) span', 'A limited number of steroid injections; gel or PRP injections can be repeated.'],
+          ['reset', '.kicker', 'An MRI shows structure, not pain, so its findings do not always explain symptoms.'],
+          ['active', '.sub', 'Movement is good for knees; long periods of inactivity are not.'],
+          ['active', '.rung:nth-child(1) .t', 'Squats and lunges'], ['active', '.rung:nth-child(1) .q', 'Within a comfortable range, to about ninety degrees.'],
+          ['active', '.rung:nth-child(2) .q', 'Low impact, maintains motion, and strengthens the quadriceps.'],
+          ['active', '.rung:nth-child(3) .t', 'On a painful day'], ['active', '.rung:nth-child(3) .q', 'If the knee is very painful or you are limping, it is fine to rest that day; a weak quadriceps raises the risk of other injuries.'],
+          ['active', '.kicker', 'How your knee feels matters more than how the X-ray looks.']
+        ]
+      },
+      /* drawing labels in Brett's spoken phrasing: [view, old text, new text] */
+      labels: [
+        ['shoulder', 'rubs on that bone', 'bursitis'], ['shoulder', 'bad design', 'swollen and inflamed'],
+        ['shoulder', '(hurts right here)', '(a common source of pain)'], ['shoulder', 'crisscross and dunk', 'sutures hold the tendon to the bone'],
+        ['shoulder', 'cut it, move it down here', 'biceps moved lower'], ['shoulder', 'no more pistoning in the groove', 'out of the narrow groove'],
+        ['shoulder', 'irritated, not torn through', 'irritated, not torn'], ['shoulder', 'tight little sheath', 'narrow groove'],
+        ['instab', 'easier for it to come out', 'less stable'], ['instab', 'bone moved here, two screws', 'bone block, two screws'],
+        ['hip', 'a big old bump of bone', 'extra bone on the ball'], ['hip', 'the labrum gets bumped into sooner', 'pinches the labrum sooner'],
+        ['hip', 'forces go across it the wrong way: dysplasia', 'more force across the labrum (dysplasia)'],
+        ['hip', 'angry about its job', 'inflamed bursa'], ['hip', 'a balloon in between', 'the bursa, a cushion'],
+        ['hip', 'a pinch up here', 'a pinched nerve'], ['hip', 'extra room; crutches for a month', 'more room for the hip to bend'],
+        ['hip', 'made all out of suture', 'made of suture'], ['hip', 'an incision, so we can work in there', 'a small opening to reach the joint'],
+        ['hip', 'glute med and min', 'gluteus medius and minimus']
+      ]
+    };
+
+    /* switching wording: captions and leads are chosen per screen; cards, labels and the fixed screen copy are swapped in place
+       and put back (Brett's own mode always shows his originals) */
+    let formal = false;
+    const formalURL = () => /^\/learn(?:\/|$)/.test(location.pathname) || /^#learn\b/.test(location.hash) || /[?&]formal\b/.test(location.search);
+    const swapped = [], esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    function swapHTML(el, html) { if (!el) return false; if (el._ptOrig == null) { el._ptOrig = el.innerHTML; swapped.push(el); } el.innerHTML = html; return true; }
+    function restoreAll() { swapped.forEach(el => { el.innerHTML = el._ptOrig; }); }
+    const chap = c => (formal && FORMAL.chapters[c]) || c;
+    function copy(F) {
+      const q = s => $(s, F.viewEl), P = F.part, X = FORMAL.flows[F.key] || {};
+      F.title = (formal && FORMAL.titles[F.key]) || F.title0;
+      q('.js-pt-title').textContent = F.title;
+      q('.js-pt-whead').textContent = (formal && X.whead) || F.whead || `Your ${P}, the way I explain it`;
+      const L = formal ? FORMAL.lead({ about: F.about, fabout: X.fabout }) : {
+        k: `Hi, I’m Dr. Raynor. I’ll be in shortly. In the meantime, tap through ${F.about}. These are the same pictures I use in the room, so we can pick up right where you leave off. It takes about three minutes.`,
+        e: `Hi, I’m Dr. Raynor. This is how I walk my patients through it: ${F.about}. It takes about three minutes.` };
+      q('.js-pt-klead').textContent = L.k; q('.js-pt-elead').textContent = L.e;
+    }
+    function wording(on) {
+      formal = on; root.classList.toggle('pt-formal', on);
+      restoreAll();
+      Object.values(FLOWS).forEach(copy);
+      if (!on) return;
+      const miss = [];
+      Object.entries(FORMAL.cards).forEach(([view, list]) => list.forEach(([card, sel, html]) => {
+        const sec = $(`section[data-card="${card}"]`, views[view]);
+        if (!swapHTML(sec && $(sel, sec), html)) miss.push(`card ${view}/${card} ${sel}`);
+      }));
+      FORMAL.labels.forEach(([view, from, to]) => {
+        const ts = $$('svg text', views[view]).filter(t => t.textContent.trim() === from);
+        if (!ts.length) miss.push(`label ${view} "${from}"`);
+        ts.forEach(t => swapHTML(t, esc(to)));
+      });
+      const E = FORMAL.end;
+      Object.values(FLOWS).forEach(F => {
+        const e = F.el.end;
+        swapHTML($('h1', e), esc(E.h1)); swapHTML($('.pt-lead.k-only', e), esc(E.k)); swapHTML($('.pt-lead.e-only', e), esc(E.e));
+        swapHTML($('.pt-cols > div:nth-child(1) h2', e), esc(E.think)); swapHTML($('.pt-cols > div:nth-child(2) h2', e), esc(E.qs));
+      });
+      swapHTML($('.pt-lead.k-only', views.explore), esc(FORMAL.picker.k)); swapHTML($('.pt-lead.e-only', views.explore), esc(FORMAL.picker.e));
+      if (miss.length) console.warn('formal wording: not found', miss);
+      window.__ptMiss = miss;
+    }
+
     let entry = 'picker', cur = null, active = false;
 
     /* ---------- phone (v0.17): held upright, a hand-drawn screen zooms to what it shows. The drawings are wide pictures, so at
@@ -7389,11 +7676,8 @@ three/build/three.module.js:
       F.el = { cover, welcome: q('.js-pt-welcome'), end: q('.js-pt-end'), caption: q('.js-pt-caption'), chapter: q('.js-pt-chapter'),
                fill: q('.js-pt-fill'), count: q('.js-pt-count'), next: q('.js-pt-next'), back: q('.js-pt-back'), skip: q('.js-pt-skip') };
       const P = F.part, Cap = P[0].toUpperCase() + P.slice(1);
-      q('.js-pt-title').textContent = F.title;
+      F.title0 = F.title; copy(F);
       q('.js-pt-eyebrow').textContent = F.tile;
-      q('.js-pt-whead').textContent = F.whead || `Your ${P}, the way I explain it`;
-      q('.js-pt-klead').textContent = `Hi, I’m Dr. Raynor. I’ll be in shortly. In the meantime, tap through ${F.about}. These are the same pictures I use in the room, so we can pick up right where you leave off. It takes about three minutes.`;
-      q('.js-pt-elead').textContent = `Hi, I’m Dr. Raynor. This is how I walk my patients through it: ${F.about}. It takes about three minutes.`;
       q('.js-pt-ask').textContent = `Which ${P} is bothering you?`;
       $$('.js-pt-start', v).forEach(b => { b.textContent = (b.dataset.side === 'left' ? 'Left ' : 'Right ') + P; });
       q('.js-pt-think').innerHTML = F.think.map(t => '<li></li>').join(''); $$('.js-pt-think li', v).forEach((li, i) => li.textContent = F.think[i]);
@@ -7452,12 +7736,12 @@ three/build/three.module.js:
         F.mod.apply(frames[0]); requestAnimationFrame(() => focus(F, i));
         frames.slice(1).forEach((fr, k) => F.timers.push(setTimeout(() => { if (F.idx === i) { F.mod.apply(fr); requestAnimationFrame(() => focus(F, i)); } }, dt * (k + 1))));
       } else { F.mod.apply(p.set); requestAnimationFrame(() => focus(F, i)); }
-      const c = F.el.caption; c.textContent = p.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
-      F.el.chapter.textContent = F.chapters[p.ch];
+      const c = F.el.caption; c.textContent = formal ? (FORMAL.flows[F.key].steps[i] || p.text) : p.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
+      F.el.chapter.textContent = chap(F.chapters[p.ch]);
       F.el.fill.style.width = ((i + 1) / F.steps.length * 100).toFixed(1) + '%';
       F.el.count.textContent = `${i + 1} of ${F.steps.length}`;
       F.el.skip.hidden = i !== F.fork; F.el.skip.parentElement.classList.toggle('has-skip', i === F.fork);
-      F.el.next.textContent = i === F.fork ? 'If surgery comes up ▶' : i === F.steps.length - 1 ? 'Finish ▶' : 'Next ▶';
+      F.el.next.textContent = i === F.fork ? (formal ? FORMAL.forkBtn : 'If surgery comes up ▶') : i === F.steps.length - 1 ? 'Finish ▶' : 'Next ▶';
     }
     function goWelcome(F) {
       clearTimers(F); F.idx = -1; F.skipped = false;
@@ -7475,7 +7759,7 @@ three/build/three.module.js:
       document.title = 'While you wait · Dr. Raynor';
     }
     function enter(where) {
-      active = true; entry = where;
+      active = true; entry = where; wording(formalURL());
       root.classList.remove('handoff'); root.classList.add('explore');
       root.dataset.theme = 'light';
       $$('.js-ptview').forEach(b => { b.hidden = true; });
@@ -7486,6 +7770,7 @@ three/build/three.module.js:
     function handoff(F) {
       if (embedded || !root.classList.contains('explore')) return;
       root.classList.remove('explore'); root.classList.add('handoff');
+      restoreAll(); root.classList.remove('pt-formal');
       $$('.js-ptview').forEach(b => { b.hidden = false; });
       document.title = 'Exam Room Napkin';
       if (!F) { show('home'); idle(); return; }
@@ -7513,17 +7798,17 @@ three/build/three.module.js:
 
     /* the ways in: Brett's home screen link, and the address */
     function wanted() {
-      const m = location.pathname.match(/^\/explore(?:\/([a-z]+))?\/?$/) || location.hash.match(/^#explore(?:\/([a-z]+))?/) ||
-                location.search.match(/[?&]explore(?:=([a-z]+))?(?:&|$)/);
+      const m = location.pathname.match(/^\/(?:explore|learn)(?:\/([a-z]+))?\/?$/) || location.hash.match(/^#(?:explore|learn)(?:\/([a-z]+))?/) ||
+                location.search.match(/[?&](?:explore|formal)(?:=([a-z]+))?(?:&|$)/);
       if (!m) return null;
       return (m[1] && ALIASES[m[1]]) || 'picker';
     }
     $$('.js-ptlink').forEach(b => b.addEventListener('click', () => { if (!/^#explore\b/.test(location.hash)) { try { history.replaceState(null, '', '#explore'); } catch (e) { } } enter('picker'); }));
-    window.addEventListener('hashchange', () => { const w = wanted(); if (w && !root.classList.contains('explore')) enter(w); });
+    window.addEventListener('hashchange', () => { const w = wanted(); if (w && (!root.classList.contains('explore') || formalURL() !== formal)) enter(w); });
     const w0 = wanted();
     if (w0) enter(w0);
     window.__pt = { enter, handoff, FLOWS, state: () => ({ entry, cur: cur && cur.key, idx: cur ? cur.idx : null, skipped: cur ? cur.skipped : null,
-      explore: root.classList.contains('explore'), handoff: root.classList.contains('handoff'), embedded }) };
+      explore: root.classList.contains('explore'), formal, handoff: root.classList.contains('handoff'), embedded }) };
   })();
 
   /* ---------- boot ---------- */

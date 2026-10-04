@@ -31,6 +31,14 @@
     {
       "source": "/explore/:path*",
       "destination": "/explore.html"
+    },
+    {
+      "source": "/learn",
+      "destination": "/explore.html"
+    },
+    {
+      "source": "/learn/:path*",
+      "destination": "/explore.html"
     }
   ]
 }
