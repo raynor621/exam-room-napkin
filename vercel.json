@@ -25,6 +25,18 @@
   ],
   "rewrites": [
     {
+      "source": "/arthritis",
+      "destination": "/arthritis.html"
+    },
+    {
+      "source": "/learn/arthritis",
+      "destination": "/arthritis.html"
+    },
+    {
+      "source": "/explore/arthritis",
+      "destination": "/arthritis.html"
+    },
+    {
       "source": "/explore",
       "destination": "/explore.html"
     },
