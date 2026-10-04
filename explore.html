@@ -392,6 +392,55 @@
   /* landscape: some of the drawings hang their labels just past the edge of their viewBox (Brett's mode has room for
      them beside the shorter stage); give the taller patient stage the same side room */
   @media (min-aspect-ratio: 5/4) { html.explore .view .stage svg.drawing { left: 6%; width: 88%; } }
+  /* ---------- phone held upright (v0.17): the drawing zooms to what is shown (script), labels and cards scaled for the small screen ---------- */
+  html.explore.pt-phone .drawing .lbl { font-size: 30px; }
+  html.explore.pt-phone .drawing .lbl.small { font-size: 25px; }
+  html.explore.pt-phone #i-golf, html.explore.pt-phone #i-skeleton text[x="976"] { display: none; }
+  html.explore.pt-phone .pt-bar { gap: 8px; padding-block: 8px 6px; }
+  html.explore.pt-phone .pt-bar h1 { font-size: 18px; line-height: 1.15; }
+  html.explore.pt-phone .pt-bar .btn { min-height: 36px; padding: 4px 6px; font-size: 14px; gap: 3px; }
+  html.explore.pt-phone .pt-caption { font-size: 17px; margin: 8px 0 10px; }
+  html.explore.pt-phone .pt-btn { min-height: 48px; }
+  html.explore.pt-phone .view .overlay { padding: 6px; }
+  html.explore.pt-phone .view .card { padding: 12px 14px 10px; border-radius: 16px; }
+  html.explore.pt-phone .card h2 { font-size: 21px; }
+  html.explore.pt-phone .card .sub { font-size: 13px; margin-bottom: 6px; }
+  html.explore.pt-phone .card p { font-size: 15px; margin: 5px 0; }
+  html.explore.pt-phone .card .quote { font-size: 15px; }
+  html.explore.pt-phone .ladder { gap: 4px; }
+  html.explore.pt-phone .rung { grid-template-columns: 24px 1fr; gap: 6px; padding: 5px 8px; border-width: 1.5px; }
+  html.explore.pt-phone .rung b { font-size: 18px; }
+  html.explore.pt-phone .rung .t { font-size: 15px; }
+  html.explore.pt-phone .rung .q { font-size: 12.5px; line-height: 1.3; }
+  html.explore.pt-phone .flow { gap: 5px; margin: 6px 0; }
+  html.explore.pt-phone .flow .box { font-size: 14px; padding: 6px 9px; }
+  html.explore.pt-phone .flow .fork { gap: 6px; }
+  html.explore.pt-phone .flow .fork .lab { font-size: 14px; }
+  html.explore.pt-phone .people-count { font-size: 30px; }
+  html.explore.pt-phone .people-wrap { gap: 8px; }
+  html.explore.pt-phone .people { grid-template-columns: repeat(20, 1fr); gap: 2px; flex-basis: 100%; max-width: none; }
+  html.explore.pt-phone .timeline { gap: 4px; margin: 8px 0 4px; }
+  html.explore.pt-phone .mile b { font-size: 16px; margin-bottom: 2px; }
+  html.explore.pt-phone .mile span { font-size: 13px; }
+  /* the topic picker scrolls on a short screen; tiles two to a row on a phone */
+  .pt-picker { overflow-y: auto; }
+  @media (max-width: 600px) {
+    .pt-picker { justify-content: flex-start; padding-block: 18px 24px; }
+    .pt-picker .pt-head { width: 96px; height: 96px; }
+    .pt-picker h1 { font-size: 30px; }
+    .pt-picker .pt-lead { font-size: 16px; }
+    .pt-picker .tiles { gap: 10px; }
+    .pt-picker .tile { flex: 1 1 calc(50% - 10px); max-width: calc(50% - 5px); aspect-ratio: auto; padding: 12px 8px; }
+    .pt-picker .tile svg { width: 46%; }
+    .pt-picker .tile b { font-size: 18px; }
+    .pt-picker .tile small { font-size: 12px; }
+  }
+  /* on a phone, only the labels of what this screen is about (plus ball and socket) */
+  html.explore.pt-phone svg.pt-focus text.lbl:not(.pt-show), html.explore.pt-phone svg.pt-focus .pt-hide { display: none; }
+  /* the fork screen: Skip on its own line above Back and Next */
+  html.explore.pt-phone .pt-nav.has-skip .pt-count { display: none; }
+  html.explore.pt-phone .pt-nav.has-skip .js-pt-skip { order: -1; flex-basis: 100%; min-height: 30px; padding: 0; font-size: 16px; }
+  html.explore.pt-phone .pt-nav.has-skip .js-pt-next { flex: 1; }
 </style>
 </head>
 <body>
@@ -7210,6 +7259,106 @@ three/build/three.module.js:
 
     let entry = 'picker', cur = null, active = false;
 
+    /* ---------- phone (v0.17): held upright, a hand-drawn screen zooms to what it shows. The drawings are wide pictures, so at
+       phone width the whole sketch is too small to read; the viewBox moves to the bounding box of what is drawn on this
+       screen (or the step's own phone box), the labels grow, and the change is tweened so it reads as a zoom. ---------- */
+    const phoneMQ = matchMedia('(max-width: 600px) and (orientation: portrait)');
+    const isPhone = () => phoneMQ.matches;
+    root.classList.toggle('pt-phone', isPhone());
+    const LEAF = 'path, circle, ellipse, rect, polygon, polyline, line, text, use';
+    /* what each hand-drawn screen is about on a phone: the elements to frame (their labels are the only labels shown),
+       a core box always kept in frame (the ball, the socket), extra boxes for animations, core: false to drop the core.
+       A null entry (a card screen) keeps the screen before it. Coordinates are drawing units. */
+    const PHONE = {
+      shoulder: { core: [296, 220, 230, 200], clampX1: 870, keep: '#ball text', steps: [
+        { f: ['#ball', '#socket'] }, { f: ['#cuff-top .intact', '#cuff-top > text[y="452"]'] }, { f: ['#cuff-front', '#cuff-back'] }, { f: ['#biceps'] },
+        { f: ['#bursa'] }, { f: ['#bursa', '#bursitis'] }, { f: ['#tear-worn'] },
+        { f: ['#cuff-top .retracted-only text', '#cuff-top .retracted-only path:not(.band)'] }, null, null, null,
+        { f: ['#repair'] }, { f: ['#tenodesis'] }, null ] },
+      instability: { core: [324, 146, 232, 240], keep: '#i-ball text, #i-skeleton > text[x="440"]', steps: [
+        { f: ['#i-skeleton'] }, { f: ['#i-labrum'] }, { f: ['#i-capsule'] }, { f: ['#i-tear', '#i-labrum'], add: [[140, 100, 240, 300]] },
+        { f: ['#i-hs'] }, { f: ['#i-stretch'] }, null, { f: ['#i-boneloss'], add: [[140, 100, 240, 300]] },
+        { f: ['#i-cuff'] }, null, null, { f: ['#i-repair'] }, { f: ['#if-repair', '#if-base path'] }, { f: ['#i-latarjet'] }, { same: 11 } ] },
+      hip: { core: [400, 190, 255, 260], keep: '#h-skeleton > text.ball-lbl', steps: [
+        { f: ['#h-skeleton'] }, { f: ['#h-cartilage'] }, { f: ['#h-labrum'] }, { f: ['#h-tear'] }, null,
+        { f: ['#h-pincer', '#h-dysplasia'] }, { f: ['#h-cam', '#h-cam-lbl', '#h-flex-hint'] },
+        { f: ['#h-abductors', '#h-itband', '#h-bursitis'], core: false }, { f: ['#h-back'] }, { same: 6 }, { same: 6 },
+        { f: ['#h-repair'] }, { f: ['#h-shave', '#h-shave-marks', '#h-cam', '#h-flex-hint'] }, { f: ['#h-capsule'] }, { same: 11 } ] }
+    };
+    function phoneSpec(F, i) {
+      const P = PHONE[F.key]; if (!P || i < 0) return null;
+      let k = Math.min(i, P.steps.length - 1);
+      while (k > 0 && !P.steps[k]) k--;
+      let s = P.steps[k]; if (s && s.same != null) s = P.steps[s.same];
+      return s ? { P, s } : null;
+    }
+    function onLayer(el) {
+      let l = el.closest('.layer');
+      while (l) { if (!l.classList.contains('on')) return false; l = l.parentElement && l.parentElement.closest('.layer'); }
+      const sc = el.closest('.scene'); return !sc || sc.classList.contains('on');
+    }
+    function boxOf(svg, els) {
+      const ctm = svg.getScreenCTM(); if (!ctm) return null;
+      const m = ctm.inverse(); let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      els.forEach(root0 => [root0, ...$$(LEAF, root0)].forEach(el => {
+        if (!el.matches(LEAF) || el.closest('defs, symbol, clipPath')) return;
+        const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') return;
+        const r = el.getBoundingClientRect(); if (!r.width && !r.height) return;
+        [[r.left, r.top], [r.right, r.bottom]].forEach(([cx, cy]) => {
+          const p = new DOMPoint(cx, cy).matrixTransform(m);
+          x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y); x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y);
+        });
+      }));
+      return isFinite(x0) ? [x0, y0, x1, y1] : null;
+    }
+    function tweenVB(svg, to, ms) {
+      const from = svg.getAttribute('viewBox').trim().split(/[\s,]+/).map(Number);
+      cancelAnimationFrame(svg._vbRaf);
+      if (!ms || matchMedia('(prefers-reduced-motion: reduce)').matches) { svg.setAttribute('viewBox', to.map(v => v.toFixed(1)).join(' ')); return; }
+      const t0 = performance.now();
+      const tick = now => {
+        const t = Math.min(1, (now - t0) / ms), e = t * t * (3 - 2 * t);
+        svg.setAttribute('viewBox', from.map((v, k) => (v + (to[k] - v) * e).toFixed(1)).join(' '));
+        if (t < 1) svg._vbRaf = requestAnimationFrame(tick);
+      };
+      svg._vbRaf = requestAnimationFrame(tick);
+    }
+    function focus(F, i, ms = 450) {
+      const svg = $('svg.drawing', F.viewEl);
+      if (!svg || !svg.querySelector('.layer')) return;           /* the 3D knee: nothing to zoom */
+      if (!F.vb0) F.vb0 = svg.getAttribute('viewBox');
+      const home = F.vb0.trim().split(/[\s,]+/).map(Number);
+      $$('.pt-show', svg).forEach(e => e.classList.remove('pt-show'));
+      const spec = phoneSpec(F, i);
+      if (!isPhone() || !spec || !root.classList.contains('explore')) { svg.classList.remove('pt-focus'); tweenVB(svg, home, ms); return; }
+      const { P, s } = spec;
+      const els = $$(s.f.join(','), svg).filter(onLayer), keep = P.keep && s.core !== false ? $$(P.keep, svg).filter(onLayer) : [];
+      const mir = svg.classList.contains('mirror'), mb = c => mir ? [1000 - c[0] - c[2], c[1], c[2], c[3]] : c;   /* Left mirrors the scene about x = 500 */
+      /* a small second line under a main label is left to the caption on a phone */
+      const subtitle = t => t.classList.contains('small') && t.parentElement && t.parentElement.querySelector(':scope > text.lbl:not(.small)');
+      els.forEach(el => (el.tagName.toLowerCase() === 'text' ? [el] : $$('text', el)).forEach(t => { if (!subtitle(t)) t.classList.add('pt-show'); }));
+      keep.forEach(el => (el.tagName.toLowerCase() === 'text' ? [el] : $$('text', el)).forEach(t => t.classList.add('pt-show')));
+      /* the thin leader lines go with their labels */
+      $$('path[stroke="var(--ink-soft)"][stroke-width="2"]', svg).forEach(l => l.classList.toggle('pt-hide', !l.parentElement.querySelector('.pt-show')));
+      svg.classList.add('pt-focus');
+      /* measure in the home viewBox, so a zoom part way through does not skew it */
+      cancelAnimationFrame(svg._vbRaf); const was = svg.getAttribute('viewBox'); svg.setAttribute('viewBox', F.vb0);
+      let b = boxOf(svg, els); svg.setAttribute('viewBox', was);
+      const boxes = [...(s.core === false ? [] : [P.core]), ...(s.add || [])].map(mb).map(c => [c[0], c[1], c[0] + c[2], c[1] + c[3]]);
+      boxes.forEach(c => { b = b ? [Math.min(b[0], c[0]), Math.min(b[1], c[1]), Math.max(b[2], c[2]), Math.max(b[3], c[3])] : c; });
+      if (!b) { tweenVB(svg, home, ms); return; }
+      const pad = 22; let v = [b[0] - pad, b[1] - pad, b[2] - b[0] + 2 * pad, b[3] - b[1] + 2 * pad];
+      if (v[2] < 360) { v[0] -= (360 - v[2]) / 2; v[2] = 360; }
+      if (v[3] < 360) { v[1] -= (360 - v[3]) / 2; v[3] = 360; }
+      if (P.clampX1 && !mir && v[0] + v[2] > P.clampX1) v[2] = Math.max(360, P.clampX1 - v[0]);
+      if (P.clampX1 && mir && v[0] < 1000 - P.clampX1) { const x0 = 1000 - P.clampX1; v[2] = Math.max(360, v[2] - (x0 - v[0])); v[0] = x0; }
+      tweenVB(svg, v, ms);
+    }
+    phoneMQ.addEventListener?.('change', () => {
+      root.classList.toggle('pt-phone', isPhone());
+      Object.values(FLOWS).forEach(F => focus(F, F.idx < F.steps.length ? F.idx : -1, 0));
+    });
+
     /* ---------- build each flow's screens from the template ---------- */
     Object.entries(FLOWS).forEach(([key, F]) => {
       F.key = key; F.mod = modules[F.view]; F.viewEl = views[F.view]; F.idx = -1; F.skipped = false; F.timers = [];
@@ -7278,14 +7427,14 @@ three/build/three.module.js:
       coverTo(F, null);
       if (forward && p.seq) {
         const frames = [...p.seq, p.set], dt = p.dt || 1400;
-        F.mod.apply(frames[0]);
-        frames.slice(1).forEach((fr, k) => F.timers.push(setTimeout(() => { if (F.idx === i) F.mod.apply(fr); }, dt * (k + 1))));
-      } else F.mod.apply(p.set);
+        F.mod.apply(frames[0]); requestAnimationFrame(() => focus(F, i));
+        frames.slice(1).forEach((fr, k) => F.timers.push(setTimeout(() => { if (F.idx === i) { F.mod.apply(fr); requestAnimationFrame(() => focus(F, i)); } }, dt * (k + 1))));
+      } else { F.mod.apply(p.set); requestAnimationFrame(() => focus(F, i)); }
       const c = F.el.caption; c.textContent = p.text; c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
       F.el.chapter.textContent = F.chapters[p.ch];
       F.el.fill.style.width = ((i + 1) / F.steps.length * 100).toFixed(1) + '%';
       F.el.count.textContent = `${i + 1} of ${F.steps.length}`;
-      F.el.skip.hidden = i !== F.fork;
+      F.el.skip.hidden = i !== F.fork; F.el.skip.parentElement.classList.toggle('has-skip', i === F.fork);
       F.el.next.textContent = i === F.fork ? 'If surgery comes up ▶' : i === F.steps.length - 1 ? 'Finish ▶' : 'Next ▶';
     }
     function goWelcome(F) {
@@ -7321,7 +7470,7 @@ three/build/three.module.js:
       clearTimers(F);
       const p = F.idx >= F.steps.length ? F.steps[F.skipped ? F.fork : F.steps.length - 1] : F.steps[Math.max(F.idx, 0)];
       coverTo(F, null);
-      F.mod.apply(s => { p.set(s); STILL(s); }); F.mod.setStep(p.doc);
+      F.mod.apply(s => { p.set(s); STILL(s); }); F.mod.setStep(p.doc); focus(F, -1, 0);
       requestAnimationFrame(F.mod.sizeCanvas);
       toast('Your view. “Patient view ↺” puts theirs back.');
       idle();
