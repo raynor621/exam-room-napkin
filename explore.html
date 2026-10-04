@@ -515,6 +515,12 @@
   #scene-profile.impinging #biceps.on, #scene-profile.impinging #cuff-front.on, #scene-profile.impinging #cuff-back.on { opacity: .12; }
   #scene-profile.impinging #bursitis, #scene-profile.impinging #tear-worn { opacity: 0; transition: none; }
   #scene-profile.impinging #bursa-shape { transition: none; }
+
+  /* v0.27 the acute-tear line on the PT-vs-surgery card */
+  .card .acute { margin: 4px 0 0; padding: 4px 9px; border-left: 4px solid var(--hot); background: color-mix(in srgb, var(--hot) 8%, transparent); font-size: 15px; line-height: 1.3; font-weight: 600; border-radius: 4px; }
+  html.explore.pt-phone .card .acute { font-size: 13px; padding: 4px 8px; margin-top: 5px; }
+  @media (max-height: 780px) { html.explore:not(.pt-phone) .card .acute { font-size: 14px; padding: 4px 9px; margin-top: 5px; } }
+  @media (max-height: 700px) { html.explore.pt-phone .card .acute { font-size: 12px; } }
 </style>
 </head>
 <body>
@@ -825,7 +831,7 @@
 
           <section data-card="study">
             <h2>Physical therapy vs. surgery</h2>
-            <p class="sub">Big multicenter study, full-thickness rotator cuff tears.</p>
+            <p class="sub">Big multicenter study, full-thickness tears that came on without an injury.</p>
             <div class="flow">
               <div class="box">Full-thickness tear. Start physical therapy.</div>
               <div class="arrow">↓ six weeks ↓</div>
@@ -835,6 +841,7 @@
               </div>
             </div>
             <p class="kicker">Biggest predictor of PT working: believing it would.</p>
+            <p class="acute">Fell and can't lift your arm? That's a different tear, and it usually needs to be fixed sooner.</p>
           </section>
 
           <section data-card="calendar">
@@ -1038,7 +1045,6 @@
           <g class="layer" id="h-dysplasia">
             <path class="ink draw" d="M480.9,193.1 A140,140 0 0 1 623.3,247.7 A140,140 0 0 1 631.2,400 C644.2,404 658.2,412 652.2,428 C648.2,438 638.2,436 634.2,428"/>
             <path class="ink draw" d="M478.9,194.1 C465.9,155.1 470,100 500,62"/>
-            <path d="M414,296 l10,-22 M426,302 l10,-22 M438,308 l10,-22" stroke="var(--hot)" stroke-width="2.4" stroke-linecap="round"/>
             <text class="lbl" x="370" y="96" text-anchor="end">shallow socket, big labrum</text>
             <text class="lbl small" x="370" y="124" text-anchor="end">forces go across it the wrong way: dysplasia</text>
           </g>
@@ -7293,16 +7299,17 @@ three/build/three.module.js:
           { ch: 0, doc: 6, set: s => { cuffs(s); s.bursa = true; }, text: 'Between the rotator cuff and the bone above it is a little balloon sac called a bursa. It helps the tendons glide instead of rub.' },
           { ch: 1, doc: 7, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; s.tear = 'worn'; s.play = 'impinge'; }, text: 'We use our shoulders overhead all the time. Each time the arm goes up, the top of the ball rides up under the acromion, the bone on top of the shoulder, and pinches the bursa and the tendon between them. Repeated often enough, both become inflamed: bursitis and tendonitis.' },
           { ch: 1, doc: 8, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; }, text: 'Sometimes the bursa gets angry about doing its job too much. It swells and gets sore: that’s bursitis, one of the most common reasons a shoulder hurts.' },
-          { ch: 1, doc: 9, set: s => { cuffs(s); s.bursa = true; s.tear = 'worn'; }, text: 'A tendon can also hurt without being torn. When it gets irritated where it rubs and works, that’s tendonitis.' },
+          { ch: 1, doc: 9, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; s.tear = 'worn'; }, text: 'A tendon can also hurt without being torn. When it gets irritated where it rubs and works, that’s tendonitis, and it usually goes hand in hand with bursitis.' },
           { ch: 1, doc: 10, set: torn, text: 'Sometimes a tendon tears all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both all the way through, so either one is called a full-thickness tear.' },
           { ch: 1, doc: 10, set: s => { torn(s); s.card = 'people'; }, text: 'Tears are really common, and lots of them don’t hurt at all. If I took an MRI of 100 people over 60 with no shoulder pain, more than 1 in 4 would have a full-thickness rotator cuff tear, and about half would have some tearing. A tear on an MRI doesn’t automatically mean surgery.' },
+          { ch: 1, doc: 10, set: torn, text: 'Not all tears are the same. The ones that come on slowly over time often don’t need surgery. A tear from an injury is different: if you fell or felt a pop and suddenly can’t lift your arm, that kind of tear usually does best when it’s fixed sooner rather than later. Tell me if that’s how yours started.' },
           { ch: 2, doc: 10, set: s => { torn(s); s.card = 'options'; }, text: 'Most shoulder pain gets better without an operation. We start at the bottom rung and only climb if we need to. Physical therapy is never the wrong answer.' },
-          { ch: 2, doc: 10, fork: true, set: s => { torn(s); s.card = 'study'; }, text: 'Even with a full-thickness tear, physical therapy usually comes first. Most people who give it a real try don’t end up needing surgery, and trying it first doesn’t burn the bridge.' },
+          { ch: 2, doc: 10, fork: true, set: s => { torn(s); s.card = 'study'; }, text: 'For a full-thickness tear that came on without an injury, physical therapy usually comes first. Most people who give it a real try don’t end up needing surgery, and trying it first doesn’t burn the bridge.' },
           { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; }, text: 'If we do need to fix it, I roughen up the bone, put the tendon back down where it belongs, and hold it there with small anchors so it can heal back in. It’s done through a few small poke holes.' },
           { ch: 3, doc: 12, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; }, text: 'If the biceps is part of the pain, I move it a little lower on the arm so it doesn’t have to slide in and out of that tight groove anymore. It adds about three minutes.' },
           { ch: 3, doc: 12, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; s.card = 'calendar'; }, text: 'Recovery is biology, not caution: a tendon takes time to heal back to bone. You’re in a sling for six weeks and strengthening starts at three months. Your tendon is healed at four months, most people are doing what they want by six, and it’s about a year before you stop thinking about your shoulder.' }
         ],
-        think: ['Where exactly does it hurt? Be ready to point to it.', 'Does it wake you up at night?', 'What makes it worse: reaching overhead, behind your back, lifting?', 'What have you already tried: therapy, medicine, a shot?', 'What do you want to get back to doing?'],
+        think: ['Where exactly does it hurt? Be ready to point to it.', 'Did it start with a fall or an injury, or come on gradually?', 'Does it wake you up at night?', 'What makes it worse: reaching overhead, behind your back, lifting?', 'What have you already tried: therapy, medicine, a shot?', 'What do you want to get back to doing?'],
         ask: ['Is it torn, or is it irritated?', 'What happens if I wait?', 'What can I do at home in the meantime?', 'What’s the next step for me?']
       },
 
@@ -7342,8 +7349,10 @@ three/build/three.module.js:
           { ch: 0, doc: 3, set: s => { s.labrum = true; }, text: 'Around the edge of the socket is the labrum, a little bumper that goes all the way around. It works like a suction cup and deepens the socket.' },
           { ch: 1, doc: 4, set: hTear, text: 'The labrum can tear away from the edge of the socket, and that can cause pain.' },
           { ch: 1, doc: 4, set: s => { hTear(s); s.card = 'people'; }, text: 'Lots of labral tears don’t hurt at all. About two-thirds of us walking around have one and have no idea. Having a tear isn’t the problem; having one that keeps hurting is.' },
-          { ch: 1, doc: 6, seq: [s => { s.labrum = true; s.pincer = true; }], dt: 2600, set: s => { s.labrum = true; s.dysplasia = true; }, text: 'Some hips are shaped in a way that’s hard on the labrum. Some sockets are deeper than normal, so the labrum gets bumped sooner. Some are shallower, with a bigger labrum that takes more of the force.' },
-          { ch: 1, doc: 8, set: s => { s.labrum = true; s.cam = true; s.flex = true; }, text: 'Some people have a bump of extra bone on the ball, called a cam. Every time the hip bends up, that bump runs into the labrum, over and over.' },
+          { ch: 1, doc: 5, set: s => { s.labrum = true; s.pincer = true; }, text: 'Some hips are shaped in a way that’s hard on the labrum. Some sockets are deeper than normal, so the labrum gets bumped sooner.' },
+          { ch: 1, doc: 6, set: s => { s.labrum = true; s.dysplasia = true; }, text: 'Other sockets are shallower than normal, with a bigger labrum that takes more of the force. That’s called dysplasia.' },
+          { ch: 1, doc: 7, set: s => { s.labrum = true; s.cam = true; }, text: 'Some people have a bump of extra bone where the ball meets the neck of the thigh bone. That’s called a cam.' },
+          { ch: 1, doc: 8, set: s => { s.labrum = true; s.cam = true; s.flex = true; }, text: 'Every time the hip bends up, that bump jams into the edge of the socket where the labrum attaches, over and over. Over time, that can tear it.' },
           { ch: 1, doc: 17, set: s => { s.abductors = true; s.itband = true; s.bursitis = true; }, text: 'Pain on the outside of the hip is usually something else. The IT band runs right over the bone there, and the little balloon sac in between, a bursa, gets angry. That’s bursitis, and an injection usually calms it down.' },
           { ch: 1, doc: 19, set: s => { s.back = true; }, text: 'And sometimes it isn’t the hip at all. A pinch in your back can feel just like hip pain, so it’s something I always check.' },
           { ch: 2, doc: 7, set: s => { hTear(s); s.cam = true; s.card = 'options'; }, text: 'Most of the time we don’t need surgery for this. We start at the bottom rung, physical therapy and maybe an injection, and only climb if we need to.' },
@@ -7443,11 +7452,12 @@ three/build/three.module.js:
           'Between the rotator cuff and the bone above it is a small fluid-filled sac called a bursa. It allows the tendons to glide smoothly.',
           'Raising the arm overhead brings the top of the humerus up beneath the acromion, the bony roof of the shoulder. The bursa and the rotator cuff tendon are compressed between them, and with repetition both can become inflamed: bursitis and tendinitis.',
           'When the bursa becomes irritated, it swells and becomes painful. This is called bursitis, and it is one of the most common causes of shoulder pain.',
-          'A tendon can be painful without being torn. Irritation of the tendon from repeated use is called tendinitis.',
+          'A tendon can be painful without being torn. Irritation of the tendon from repeated use is called tendinitis, and it usually occurs together with bursitis.',
           'Sometimes a tendon tears all the way through and pulls away from the bone. Whether the opening is small or large, this is called a full-thickness tear.',
           'Rotator cuff tears are common, and many cause no pain. In people over 60 without shoulder pain, more than 1 in 4 have a full-thickness rotator cuff tear on MRI, and about half have some tearing. A tear on an MRI does not, by itself, mean surgery.',
+          'Not all rotator cuff tears are alike. Tears that develop gradually over time often do well without surgery. A tear caused by a fall or other injury is different: if the arm suddenly becomes weak or hard to lift, that kind of tear usually does best when it is repaired sooner rather than later. Let me know if an injury started your symptoms.',
           'Most shoulder pain improves without surgery. We begin with the simplest treatments and move up only if needed. Physical therapy is always a reasonable choice.',
-          'Even with a full-thickness tear, physical therapy is usually the first step. Most people who complete a course of therapy do not need surgery, and trying therapy first does not rule surgery out.',
+          'For a full-thickness tear that developed without an injury, physical therapy is usually the first step. Most people who complete a course of therapy do not need surgery, and trying therapy first does not rule surgery out.',
           'If surgery is needed, the tendon is reattached to the bone with small anchors so it can heal back in place. The procedure is done arthroscopically, through a few small incisions.',
           'If the biceps tendon is contributing to the pain, it can be moved slightly lower on the arm so it no longer passes through the narrow groove. This adds only a few minutes to the surgery.',
           'Tendon-to-bone healing takes time. You will wear a sling for six weeks and begin strengthening at about three months. The tendon is healed at about four months, most people return to their usual activities by six months, and full recovery takes about a year.'
@@ -7475,8 +7485,10 @@ three/build/three.module.js:
           'The labrum is a rim of tissue around the edge of the socket. It acts like a seal and deepens the socket.',
           'The labrum can tear away from the edge of the socket, which can cause pain.',
           'Many labral tears cause no symptoms. About two-thirds of people without hip pain have one on MRI. The concern is a tear that causes ongoing pain, not the tear itself.',
-          'Hip shape can affect the labrum. A deeper socket can pinch the labrum earlier in motion, and a shallower socket, often with a larger labrum, places more force across it.',
-          'Some people have extra bone at the edge of the ball, called a cam deformity. With each bend of the hip, it contacts the labrum, which can lead to a tear over time.',
+          'The shape of the hip can affect the labrum. In some hips the socket is deeper than normal, and the labrum is pinched earlier in motion.',
+          'In others the socket is shallower than normal, a condition called dysplasia. The labrum is often larger and carries more of the load.',
+          'Some people have extra bone where the ball meets the neck of the thigh bone, called a cam deformity.',
+          'With each bend of the hip, the cam presses into the edge of the socket where the labrum attaches. Over time this can tear the labrum and damage the cartilage.',
           'Pain on the outside of the hip usually has a different cause. The IT band passes over the bone there, and the bursa beneath it can become inflamed. This is called bursitis, and it often responds well to an injection.',
           'Sometimes the source is not the hip at all. A pinched nerve in the lower back can cause pain that feels like it comes from the hip, so it is always considered.',
           'Most of the time, this improves without surgery. We begin with physical therapy and, if needed, an injection, and move up only if necessary.',
@@ -7529,7 +7541,8 @@ three/build/three.module.js:
           ['options', '.rung:nth-child(3) .q', 'Anti-inflammatory medicine to calm the irritation.'],
           ['options', '.rung:nth-child(4) .q', 'Always a reasonable choice.'],
           ['options', '.rung:nth-child(5) .t', 'Observation'], ['options', '.rung:nth-child(5) .q', 'Living with it is always an option.'],
-          ['study', '.sub', 'From a large multicenter study of full-thickness rotator cuff tears.'],
+          ['study', '.sub', 'From a large multicenter study of full-thickness rotator cuff tears that developed without an injury.'],
+          ['study', '.acute', 'A tear caused by a fall or injury is different: it usually does best when repaired sooner.'],
           ['study', '.flow > .box', 'Full-thickness tear: start physical therapy.'],
           ['study', '.fork > div:nth-child(1) .box', 'Doing well at three months: no surgery needed.'],
           ['study', '.fork > div:nth-child(2) .lab', 'Not improving?'],
@@ -7715,7 +7728,7 @@ three/build/three.module.js:
       shoulder: { core: [296, 220, 230, 200], clampX1: 870, keep: '#ball text', steps: [
         { f: ['#ball', '#socket'] }, { f: ['#cuff-top .intact', '#cuff-top > text[y="452"]'] }, { f: ['#cuff-front', '#cuff-back'] }, { f: ['#biceps'] },
         { f: ['#bursa'] }, { f: ['#bursa', '#bursitis'], add: [[200, 86, 330, 330]] }, { f: ['#bursa', '#bursitis'] }, { f: ['#tear-worn'] },
-        { f: ['#cuff-top .retracted-only text', '#cuff-top .retracted-only path:not(.band)'] }, null, null, null,
+        { f: ['#cuff-top .retracted-only text', '#cuff-top .retracted-only path:not(.band)'] }, null, null, null, null,
         { f: ['#repair'] }, { f: ['#tenodesis'] }, null ] },
       instability: { core: [324, 146, 232, 240], keep: '#i-ball text, #i-skeleton > text[x="440"]', steps: [
         { f: ['#i-skeleton'] }, { f: ['#i-labrum'] }, { f: ['#i-capsule'] }, { f: ['#i-tear', '#i-labrum'], add: [[140, 100, 240, 300]] },
@@ -7723,9 +7736,9 @@ three/build/three.module.js:
         { f: ['#i-cuff'] }, null, null, { f: ['#i-repair'] }, { f: ['#if-repair', '#if-base path'] }, { f: ['#i-latarjet'] }, { same: 11 } ] },
       hip: { core: [400, 190, 255, 260], keep: '#h-skeleton > text.ball-lbl', steps: [
         { f: ['#h-skeleton'] }, { f: ['#h-cartilage'] }, { f: ['#h-labrum'] }, { f: ['#h-tear'] }, null,
-        { f: ['#h-pincer', '#h-dysplasia'] }, { f: ['#h-cam', '#h-cam-lbl', '#h-flex-hint'] },
-        { f: ['#h-abductors', '#h-itband', '#h-bursitis'], core: false }, { f: ['#h-back'] }, { same: 6 }, { same: 6 },
-        { f: ['#h-repair'] }, { f: ['#h-shave', '#h-shave-marks', '#h-cam', '#h-flex-hint'] }, { f: ['#h-capsule'] }, { same: 11 } ] }
+        { f: ['#h-pincer'] }, { f: ['#h-dysplasia'] }, { f: ['#h-cam', '#h-cam-lbl'] }, { f: ['#h-cam', '#h-cam-lbl', '#h-flex-hint'] },
+        { f: ['#h-abductors', '#h-itband', '#h-bursitis'], core: false }, { f: ['#h-back'] }, { same: 8 }, { same: 8 },
+        { f: ['#h-repair'] }, { f: ['#h-shave', '#h-shave-marks', '#h-cam', '#h-flex-hint'] }, { f: ['#h-capsule'] }, { same: 13 } ] }
     };
     function phoneSpec(F, i) {
       const P = PHONE[F.key]; if (!P || i < 0) return null;
