@@ -451,6 +451,10 @@
     .pt-brand img { height: 37px; }
     .pt-brand-rule { height: 38px; }
   }
+
+  /* v0.23: the rotator cuff calendar has a sixth stop (1 year) */
+  .timeline.six { grid-template-columns: repeat(6, 1fr); }
+  @media (max-width: 560px) { .timeline.six { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -734,7 +738,7 @@
             <div class="people-wrap">
               <div class="people js-people" id="people"></div>
               <div class="people-text">
-                <p><span class="people-count js-count" id="people-count">0</span> <span>of them have a rotator cuff tear on MRI.</span></p>
+                <p><span class="people-count js-count" id="people-count">0</span> <span>of them have a full-thickness rotator cuff tear on MRI.</span></p>
                 <p class="quote">"They just got voluntold to get into an MRI scanner."</p>
                 <p class="kicker">A tear is not harming anything by being there.</p>
               </div>
@@ -746,7 +750,7 @@
             <p class="sub">And we have options. Bottom rung first.</p>
             <div class="ladder">
               <div class="rung top"><b>5</b><div><div class="t">Surgery</div><div class="q">We have the ability to go fix this. Four poke holes, anchors, back into the bone.</div></div></div>
-              <div class="rung"><b>4</b><div><div class="t">Injection</div><div class="q">One or two: I won't lose any sleep. A gajillion: not good for your cuff.</div></div></div>
+              <div class="rung"><b>4</b><div><div class="t">Injection</div><div class="q">One or two: I won't lose any sleep. More than two can damage your cuff, and before a cuff repair they can raise the redo rate two to three times.</div></div></div>
               <div class="rung"><b>3</b><div><div class="t">Medicine</div><div class="q">Anti-inflammatories to calm it down.</div></div></div>
               <div class="rung"><b>2</b><div><div class="t">Physical therapy</div><div class="q">Never the wrong answer.</div></div></div>
               <div class="rung"><b>1</b><div><div class="t">Do nothing and live with it</div><div class="q">Keep on keeping on. Always an option.</div></div></div>
@@ -770,12 +774,13 @@
           <section data-card="calendar">
             <h2>The recovery calendar</h2>
             <p class="sub">Day surgery. It's biology, not caution: soft tissue takes this long to heal to bone.</p>
-            <div class="timeline">
+            <div class="timeline six">
               <div class="mile hot"><b>Day 0</b><span>In and out the same day. Nerve block. Netflix on your own TV.</span></div>
               <div class="mile"><b>6 weeks</b><span>In a sling. Asking other people for help.</span></div>
               <div class="mile"><b>3 months</b><span>Tendon is good enough to load. Strengthening starts. Curling twos.</span></div>
-              <div class="mile"><b>4 months</b><span>Mostly healed. I'll let you do anything you want to do.</span></div>
-              <div class="mile"><b>6 months</b><span>Full recovery.</span></div>
+              <div class="mile"><b>4 months</b><span>Your tendon's healed. I don't have restrictions for you, but your shoulder still does.</span></div>
+              <div class="mile"><b>6 months</b><span>Doing the things you want to do, but still noticing it.</span></div>
+              <div class="mile"><b>1 year</b><span>Full recovery. You don't think about your shoulder anymore.</span></div>
             </div>
           </section>
 
@@ -1742,7 +1747,7 @@
               <div class="rung top"><b>4</b><div><div class="t">Patellar tendon (the gold standard)</div><div class="q">The middle part with a piece of bone on each end, fixed with plastic screws that absorb into bone. If I could only use one graft forever, this is it. All my athletes under twenty get it.</div></div></div>
               <div class="rung"><b>3</b><div><div class="t">Quad tendon</div><div class="q">The middle of your quad tendon, 65 mm long and 9 mm wide, buttons on each end, nothing hard across a growth plate. Same performance. A month or two longer to get your quad back. The kneeler's choice.</div></div></div>
               <div class="rung"><b>2</b><div><div class="t">Hamstrings</div><div class="q">Gone down in popularity. They stretch out and are unpredictable. I don't use them anymore.</div></div></div>
-              <div class="rung"><b>1</b><div><div class="t">Cadaver (allograft)</div><div class="q">Someone else's tissue. Under twenty-five, a forty percent higher failure rate. I don't like to use them under forty.</div></div></div>
+              <div class="rung"><b>1</b><div><div class="t">Cadaver (allograft)</div><div class="q">Someone else's tissue. Under twenty-five, about three times as likely to fail. I don't like to use them under forty.</div></div></div>
             </div>
             <p class="kicker">Between patellar tendon and quad, there's no wrong answer.</p>
           </section>
@@ -1755,16 +1760,16 @@
               <div class="mile"><b>3 to 4 weeks</b><span>Crutches and a brace to help, but all your weight on it from day one.</span></div>
               <div class="mile"><b>6 weeks</b><span>Walking like a normal person. The danger zone: it feels good, but the graft is weaker now than on day one.</span></div>
               <div class="mile"><b>3 months</b><span>Everything's healed. Start jogging, work out like a normal human.</span></div>
-              <div class="mile"><b>7 months</b><span>Full return to cutting, pivoting and twisting sports. Quad grafts sometimes eight or nine.</span></div>
+              <div class="mile"><b>7 to 9 months</b><span>Back to cutting, pivoting and twisting sports. Waiting until nine lowers the chance of tearing it again.</span></div>
             </div>
-            <p class="kicker">You're not bored for seven months. It's a long recovery, but it's a very active recovery. What takes seven months? Your quad gets super puny, and you spend that time getting it back.</p>
+            <p class="kicker">You're not bored for seven to nine months. It's a long recovery, but it's a very active recovery. What takes that long? Your quad gets super puny, and you spend that time getting it back.</p>
           </section>
 
           <section data-card="timing">
             <h2>When do we do it?</h2>
             <p class="sub">The kid on the sideline wants it tomorrow. I make him wait three weeks for the knee to chill out and calm down.</p>
             <div class="flow">
-              <div class="box">The surgery is the same if I do it now, six months from now, or a year from now. Go to Disney first. You've not done anything bad by waiting.</div>
+              <div class="box">The surgery is the same if I do it now, six months from now, or a year from now, as long as you don't go tear up your meniscus or damage your cartilage in the meantime. Go to Disney first.</div>
               <div class="arrow">↓</div>
               <div class="box good">Prehab in the meantime, for three reasons.</div>
             </div>
@@ -6220,7 +6225,7 @@ three/build/three.module.js:
       study: 'If I had an MRI in front of me right now that said tear, I would inject that before I would ever do an operation.',
       repair: 'We roughen up the bone, stick the tendon back down, and hold it there so it can heal back in.',
       tenodesis: 'I cut your biceps and move it over here so it doesn’t have to piston in and out of that groove. Extra three minutes.',
-      calendar: 'Sling for six weeks. Load it at three months. Six-month full recovery.',
+      calendar: 'Sling for six weeks. Load it at three months. Your tendon’s healed at four months. Doing what you want at six, but still noticing it. A year before you don’t think about your shoulder.',
       home: 'You have a phone. If this doesn’t work or wears off, you just call Jodie. That’s the bat phone.',
       labScene: 'If we take the socket and look directly at it: this is posterior, this is anterior. The labrum goes all the way around.',
       labBiceps: 'And the biceps inserts right at 12 o’clock. Three types of labral tears, in our simple orthopedic minds.',
@@ -6320,7 +6325,7 @@ three/build/three.module.js:
       if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/rotator-cuff-repair-faq');
     }
   });
-  buildPeople($('.js-people', views.shoulder), 37, 7);
+  buildPeople($('.js-people', views.shoulder), 28, 7);
 
   /* ======================================================================
      HIP: the young hip talk (labrum, bumps, scope) and the outside of the hip
@@ -6879,8 +6884,8 @@ three/build/three.module.js:
       numb: 'You get a scar right on the front of your knee, which can be annoying if you kneel on it. It’s always numb on the outside of that scar. Nobody ever complains about it, I just tell people ahead of time.',
       quadharvest: 'With a quad tendon there’s an incision up here where we harvest the middle part of your quad tendon, and a little incision down here to drill the tunnel. Smaller incisions, but spread out. Not right on the front, so people who kneel all the time sometimes pick that one.',
       meniscus: 'All it changes is how I let you walk on it for the first six weeks.',
-      recovery: 'Full return to sports with no restrictions is seven months. That’s a long time. But you’re not bored for seven months.',
-      timing: 'I make that kid wait three weeks for the knee to chill out and calm down. The surgery is the same if I do it now versus six months from now.',
+      recovery: 'Full return to sports with no restrictions is seven to nine months, and waiting until nine lowers the chance of tearing it again. That’s a long time. But you’re not bored.',
+      timing: 'I make that kid wait three weeks for the knee to chill out and calm down. The surgery is the same if I do it now versus six months from now, as long as you don’t go tear up your meniscus or damage your cartilage in the meantime.',
       favorite: 'This is my favorite surgery to do. I’ll do it on a Saturday, I don’t care. Three reasons.',
       home: 'I’m going to send Jodie in, and we’re going to get you all fixed up. If you have any more questions, just call. That’s what we’re here for.'
     },
@@ -7012,7 +7017,7 @@ three/build/three.module.js:
       aboveScene: 'If I lift the thigh bone off and look down at the top of the shin bone, there are your two menisci, the shock absorbers. You can tear them different ways.',
       ligaments: 'You have your ligaments: MCL, LCL, ACL and PCL. Those are all fine. I just felt those. You didn’t tear a ligament without knowing it.',
       menisci: 'Now you could have a meniscus tear. The menisci are these little shock-absorbing discs that sit between the bones. They can get little tears in them, and they hurt more on the sides and back of your knee.',
-      people: 'If I took an MRI of the next hundred people walking across the street over the age of fifty, forty percent of people have a meniscus tear and have no idea. No pain whatsoever. They don’t all hurt, and they do not all need surgery.',
+      people: 'If I took an MRI of the next hundred people walking across the street over the age of fifty, about one in four of them have a meniscus tear and have no idea. No pain whatsoever. They don’t all hurt, and they do not all need surgery.',
       'tear-vertical': 'A little vertical tear near the edge, where the blood supply is. That’s the kind we can put stitches in, and it can heal.',
       'tear-flap': 'Sometimes you get a little split in the edge, and a little flap of it flips back and forth and irritates the bone next to it. Like a little hangnail that stirs up inflammation.',
       'tear-horizontal': 'A horizontal tear, like a little pita pocket: undersurface tearing of the back of the inside meniscus. That’s the most common thing to see.',
@@ -7115,7 +7120,7 @@ three/build/three.module.js:
       if (name === 'home') makeQR($('.js-qr', card), 'https://www.brettraynormd.com/');
     }
   });
-  buildPeople($('.js-people', views.kneepain), 33, 5);
+  buildPeople($('.js-people', views.kneepain), 25, 5);
 
   /* ======================================================================
      PATIENT VIEW (v0.14 shoulder, v0.15 every talk): the talks for the patient waiting in the room.
@@ -7162,12 +7167,12 @@ three/build/three.module.js:
           { ch: 1, doc: 7, set: s => { cuffs(s); s.bursa = true; s.bursitis = true; }, text: 'Sometimes the bursa gets angry about doing its job too much. It swells and gets sore: that’s bursitis, one of the most common reasons a shoulder hurts.' },
           { ch: 1, doc: 8, set: s => { cuffs(s); s.bursa = true; s.tear = 'worn'; }, text: 'A tendon can also hurt without being torn. When it gets irritated where it rubs and works, that’s tendonitis.' },
           { ch: 1, doc: 9, set: torn, text: 'Sometimes a tendon tears all the way through and pulls away from the bone. A pinhole in your jeans and a gaping hole are both all the way through, so either one is called a full-thickness tear.' },
-          { ch: 1, doc: 9, set: s => { torn(s); s.card = 'people'; }, text: 'Tears are really common, and lots of them don’t hurt at all. If I took an MRI of 100 people over 60 with no shoulder pain, about 1 in 3 would have a rotator cuff tear. A tear on an MRI doesn’t automatically mean surgery.' },
+          { ch: 1, doc: 9, set: s => { torn(s); s.card = 'people'; }, text: 'Tears are really common, and lots of them don’t hurt at all. If I took an MRI of 100 people over 60 with no shoulder pain, more than 1 in 4 would have a full-thickness rotator cuff tear, and about half would have some tearing. A tear on an MRI doesn’t automatically mean surgery.' },
           { ch: 2, doc: 9, set: s => { torn(s); s.card = 'options'; }, text: 'Most shoulder pain gets better without an operation. We start at the bottom rung and only climb if we need to. Physical therapy is never the wrong answer.' },
           { ch: 2, doc: 9, fork: true, set: s => { torn(s); s.card = 'study'; }, text: 'Even with a full-thickness tear, physical therapy usually comes first. Most people who give it a real try don’t end up needing surgery, and trying it first doesn’t burn the bridge.' },
           { ch: 3, doc: 10, set: s => { cuffs(s); s.repair = true; }, text: 'If we do need to fix it, I roughen up the bone, put the tendon back down where it belongs, and hold it there with small anchors so it can heal back in. It’s done through a few small poke holes.' },
           { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; }, text: 'If the biceps is part of the pain, I move it a little lower on the arm so it doesn’t have to slide in and out of that tight groove anymore. It adds about three minutes.' },
-          { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; s.card = 'calendar'; }, text: 'Recovery is biology, not caution: a tendon takes time to heal back to bone. You’re in a sling for six weeks, strengthening starts at three months, and full recovery is about six months.' }
+          { ch: 3, doc: 11, set: s => { cuffs(s); s.repair = true; s.tenodesis = true; s.card = 'calendar'; }, text: 'Recovery is biology, not caution: a tendon takes time to heal back to bone. You’re in a sling for six weeks and strengthening starts at three months. Your tendon is healed at four months, most people are doing what they want by six, and it’s about a year before you stop thinking about your shoulder.' }
         ],
         think: ['Where exactly does it hurt? Be ready to point to it.', 'Does it wake you up at night?', 'What makes it worse: reaching overhead, behind your back, lifting?', 'What have you already tried: therapy, medicine, a shot?', 'What do you want to get back to doing?'],
         ask: ['Is it torn, or is it irritated?', 'What happens if I wait?', 'What can I do at home in the meantime?', 'What’s the next step for me?']
@@ -7242,7 +7247,7 @@ three/build/three.module.js:
           { ch: 2, doc: 15, seq: [s => { s.scene = 'front'; s.harvest = 1; }], dt: 2200, set: s => { s.scene = 'front'; s.harvest = 2; }, text: 'With the patellar tendon, I take the middle third of the tendon below your kneecap, with a small piece of bone on each end. I stitch the tendon back together, and it heals in.' },
           { ch: 2, doc: 18, set: s => { s.scene = 'front'; s.quadharvest = 2; }, text: 'With the quad tendon, it’s a strip from the middle of the tendon above the kneecap. The incisions are off the front of the knee, which is why people who kneel a lot sometimes pick it.' },
           { ch: 2, doc: 21, seq: [s => { s.scene = 'above'; s.menisci = true; s.mtear = true; }], dt: 2000, set: s => { s.scene = 'above'; s.menisci = true; s.mtear = true; s.stitches = true; }, text: 'If a meniscus is torn too, I repair it with stitches at the same surgery whenever I can. A meniscus heals best when the ACL is fixed at the same time.' },
-          { ch: 3, doc: 23, set: s => { kNew(s); s.card = 'recovery'; }, text: 'You go home the same day and walk on it right away. Crutches and a brace for three or four weeks, walking normally around six weeks, jogging at three months, and back to cutting and pivoting sports around seven months.' },
+          { ch: 3, doc: 23, set: s => { kNew(s); s.card = 'recovery'; }, text: 'You go home the same day and walk on it right away. Crutches and a brace for three or four weeks, walking normally around six weeks, jogging at three months, and back to cutting and pivoting sports between seven and nine months. Waiting until nine lowers the chance of tearing it again.' },
           { ch: 3, doc: 24, set: s => { kNew(s); s.card = 'timing'; }, text: 'There’s no rush. I usually wait about three weeks for the knee to calm down, and therapy before surgery helps you recover faster afterward.' }
         ],
         think: ['How did it happen? Did you feel or hear a pop?', 'Has the knee given out since then?', 'What sports do you play, and when does your next season start?', 'Do you kneel a lot, at work or in your sport?', 'What do you want to get back to doing?'],
@@ -7258,7 +7263,7 @@ three/build/three.module.js:
           { ch: 0, doc: 2, set: s => { s.scene = 'inside'; s.ligaments = true; }, text: 'Four main ligaments hold the knee together: the MCL on the medial side, the LCL on the lateral side, and the ACL and PCL crossing in the middle. When I examine you, I check each one.' },
           { ch: 0, doc: 3, set: s => { s.scene = 'inside'; s.ligaments = true; s.menisci = true; }, text: 'Between the bones are the menisci, two shock-absorbing cushions. They can get small tears, which tend to hurt along the sides and back of the knee.' },
           { ch: 1, doc: 7, seq: [s => { s.scene = 'above'; s.menisci = true; s.tear = 'vertical'; }, s => { s.scene = 'above'; s.menisci = true; s.tear = 'flap'; }], dt: 2000, set: s => { s.scene = 'above'; s.menisci = true; s.tear = 'horizontal'; }, text: 'Looking down on the top of the shin bone, meniscus tears come in different shapes. The most common is a horizontal tear, like a little pita pocket.' },
-          { ch: 1, doc: 7, set: s => { s.scene = 'above'; s.menisci = true; s.tear = 'horizontal'; s.card = 'people'; }, text: 'Here’s the thing: about 1 in 3 people over 50 with no knee pain have a meniscus tear on MRI and have no idea. They don’t all hurt, and they don’t all need surgery.' },
+          { ch: 1, doc: 7, set: s => { s.scene = 'above'; s.menisci = true; s.tear = 'horizontal'; s.card = 'people'; }, text: 'Here’s the thing: about 1 in 4 people over 50 with no knee pain have a meniscus tear on MRI and have no idea. They don’t all hurt, and they don’t all need surgery.' },
           { ch: 1, doc: 12, set: s => { s.kneecap = false; s.chondro = 1; }, text: 'Cartilage can also wear a little, not enough to show up on an X-ray but enough to hurt. We call that chondromalacia.' },
           { ch: 1, doc: 13, set: s => { s.flip = true; s.chondro = 1; }, text: 'The most common spot is the back of the kneecap. Some wear back there is very normal after about age thirty. What’s not normal is for it to hurt.' },
           { ch: 1, doc: 15, set: s => { s.scene = 'side'; s.bend = true; }, text: 'The kneecap joint sees about seven times your body weight. When your quad is strong, it usually doesn’t hurt, even if it grinds. I don’t worry about the grinding; I care about the pain.' },
@@ -7311,12 +7316,12 @@ three/build/three.module.js:
           'When the bursa becomes irritated, it swells and becomes painful. This is called bursitis, and it is one of the most common causes of shoulder pain.',
           'A tendon can be painful without being torn. Irritation of the tendon from repeated use is called tendinitis.',
           'Sometimes a tendon tears all the way through and pulls away from the bone. Whether the opening is small or large, this is called a full-thickness tear.',
-          'Rotator cuff tears are common, and many cause no pain. In people over 60 without shoulder pain, about 1 in 3 have a rotator cuff tear on MRI. A tear on an MRI does not, by itself, mean surgery.',
+          'Rotator cuff tears are common, and many cause no pain. In people over 60 without shoulder pain, more than 1 in 4 have a full-thickness rotator cuff tear on MRI, and about half have some tearing. A tear on an MRI does not, by itself, mean surgery.',
           'Most shoulder pain improves without surgery. We begin with the simplest treatments and move up only if needed. Physical therapy is always a reasonable choice.',
           'Even with a full-thickness tear, physical therapy is usually the first step. Most people who complete a course of therapy do not need surgery, and trying therapy first does not rule surgery out.',
           'If surgery is needed, the tendon is reattached to the bone with small anchors so it can heal back in place. The procedure is done arthroscopically, through a few small incisions.',
           'If the biceps tendon is contributing to the pain, it can be moved slightly lower on the arm so it no longer passes through the narrow groove. This adds only a few minutes to the surgery.',
-          'Tendon-to-bone healing takes time. You will wear a sling for six weeks, begin strengthening at about three months, and reach full recovery at about six months.'
+          'Tendon-to-bone healing takes time. You will wear a sling for six weeks and begin strengthening at about three months. The tendon is healed at about four months, most people return to their usual activities by six months, and full recovery takes about a year.'
         ] },
         instability: { whead: 'Understanding shoulder dislocations', steps: [
           'The shoulder is often compared to a golf ball sitting on a tee. This view looks down on it from above. The shallow socket gives the shoulder its wide range of motion, but it also makes dislocation possible.',
@@ -7365,7 +7370,7 @@ three/build/three.module.js:
           'A patellar tendon graft uses the middle third of the tendon below the kneecap, with a small piece of bone at each end. The remaining tendon is repaired and heals.',
           'A quadriceps tendon graft uses a strip from the tendon above the kneecap. Its incisions are away from the front of the knee, which some people who kneel frequently prefer.',
           'If a meniscus is torn, it is repaired with sutures during the same surgery whenever possible. Meniscus repairs heal best when the ACL is reconstructed at the same time.',
-          'Surgery is outpatient, and walking begins right away. Crutches and a brace are used for three to four weeks, walking is normal by about six weeks, jogging begins at three months, and return to cutting and pivoting sports is at about seven months.',
+          'Surgery is outpatient, and walking begins right away. Crutches and a brace are used for three to four weeks, walking is normal by about six weeks, jogging begins at three months, and return to cutting and pivoting sports is between seven and nine months. Waiting until nine months lowers the risk of a re-tear.',
           'There is no need to rush. Surgery is usually done about three weeks after the injury, once the knee has calmed down, and therapy before surgery helps recovery afterward.'
         ] },
         knee: { whead: 'Understanding your knee', fabout: 'what is inside the knee, the problems that can cause pain without showing on an X-ray, and the treatments that help, using the same 3D knee I use in the exam room', steps: [
@@ -7373,7 +7378,7 @@ three/build/three.module.js:
           'Four main ligaments stabilize the knee: the MCL on the medial side, the LCL on the lateral side, and the ACL and PCL in the center. Each one is checked during the examination.',
           'The menisci are two cushions between the bones that absorb shock. Small meniscus tears tend to cause pain along the sides and back of the knee.',
           'Viewed from above, meniscus tears come in several patterns. The most common is a horizontal tear, which splits the meniscus into upper and lower layers.',
-          'About 1 in 3 people over 50 without knee pain have a meniscus tear on MRI and are unaware of it. Not every tear hurts, and not every tear needs surgery.',
+          'About 1 in 4 people over 50 without knee pain have a meniscus tear on MRI and are unaware of it. Not every tear hurts, and not every tear needs surgery.',
           'Cartilage can also wear slightly, not enough to show on an X-ray but enough to cause pain. This is called chondromalacia.',
           'The most common location is the back of the kneecap. Some wear there is normal after about age thirty; pain from it is not.',
           'The kneecap joint carries forces of up to about seven times body weight. When the quadriceps is strong, it usually does not hurt, even if it makes noise. Grinding without pain is not a concern.',
@@ -7391,7 +7396,7 @@ three/build/three.module.js:
           ['people', '.quote', 'Many tears cause no symptoms at all.'], ['people', '.kicker', 'A tear on an MRI does not, by itself, mean surgery.'],
           ['options', 'h2', 'Treatment options'], ['options', '.sub', 'We start with the simplest options and move up only if needed.'],
           ['options', '.rung:nth-child(1) .q', 'Arthroscopic repair through small incisions, with anchors that hold the tendon to the bone.'],
-          ['options', '.rung:nth-child(2) .q', 'One or two can be very helpful. Many repeated injections can weaken the tendon.'],
+          ['options', '.rung:nth-child(2) .q', 'One or two can be very helpful. More than two can weaken the tendon, and before a rotator cuff repair they can raise the revision rate two to three times.'],
           ['options', '.rung:nth-child(3) .q', 'Anti-inflammatory medicine to calm the irritation.'],
           ['options', '.rung:nth-child(4) .q', 'Always a reasonable choice.'],
           ['options', '.rung:nth-child(5) .t', 'Observation'], ['options', '.rung:nth-child(5) .q', 'Living with it is always an option.'],
@@ -7405,7 +7410,9 @@ three/build/three.module.js:
           ['calendar', '.mile:nth-child(1) span', 'Home the same day, with a nerve block for comfort.'],
           ['calendar', '.mile:nth-child(2) span', 'In a sling; plan for some help at home.'],
           ['calendar', '.mile:nth-child(3) span', 'The tendon can handle load. Strengthening begins.'],
-          ['calendar', '.mile:nth-child(4) span', 'Mostly healed; cleared for most activities.']
+          ['calendar', '.mile:nth-child(4) span', 'The tendon is healed. No formal restrictions, though the shoulder is still recovering.'],
+          ['calendar', '.mile:nth-child(5) span', 'Back to most usual activities, though still aware of the shoulder.'],
+          ['calendar', '.mile:nth-child(6) span', 'Full recovery.']
         ],
         instab: [
           ['people', 'h2', '100 young athletes after a first dislocation'],
@@ -7452,17 +7459,17 @@ three/build/three.module.js:
           ['options', '.rung:nth-child(2) .q', 'A strip from the middle of the quadriceps tendon, fixed with buttons, with nothing rigid crossing a growth plate. Similar results; quadriceps strength may take a month or two longer to return. Often chosen by people who kneel frequently.'],
           ['options', '.rung:nth-child(3) .q', 'Used less often today because they can stretch out. I no longer use them.'],
           ['options', '.rung:nth-child(4) .t', 'Donor tissue (allograft)'],
-          ['options', '.rung:nth-child(4) .q', 'About 40% higher failure rate under age 25. I avoid it in patients under forty.'],
+          ['options', '.rung:nth-child(4) .q', 'About three times as likely to fail under age 25. I avoid it in patients under forty.'],
           ['options', '.kicker', 'Between the patellar tendon and the quadriceps tendon, either is an excellent choice.'],
           ['recovery', '.sub', 'Outpatient surgery. Walking and motion begin right away.'],
           ['recovery', '.mile:nth-child(1) span', 'Home the same day, with a nerve block.'],
           ['recovery', '.mile:nth-child(2) span', 'Crutches and a brace for support, with full weight on the leg from the start.'],
           ['recovery', '.mile:nth-child(3) span', 'Walking normally. The graft is weaker now than at surgery, even though the knee feels good.'],
           ['recovery', '.mile:nth-child(4) span', 'Healing is well along; jogging and regular workouts begin.'],
-          ['recovery', '.mile:nth-child(5) span', 'Return to cutting, pivoting, and twisting sports; sometimes eight or nine months with a quadriceps graft.'],
-          ['recovery', '.kicker', 'Recovery takes about seven months, but it is an active recovery. Much of that time goes to rebuilding quadriceps strength, which drops after surgery.'],
+          ['recovery', '.mile:nth-child(5) span', 'Return to cutting, pivoting, and twisting sports. Waiting until nine months lowers the risk of re-tearing the graft.'],
+          ['recovery', '.kicker', 'Recovery takes seven to nine months, but it is an active recovery. Much of that time goes to rebuilding quadriceps strength, which drops after surgery.'],
           ['timing', '.sub', 'Surgery is usually done about three weeks after the injury, once the knee has calmed down.'],
-          ['timing', '.flow > .box:not(.good)', 'The surgery is the same whether it is done now or months from now; waiting does not cause harm.'],
+          ['timing', '.flow > .box:not(.good)', 'The surgery is the same whether it is done now or months from now, as long as the meniscus and cartilage are protected in the meantime.'],
           ['timing', '.flow > .box.good', 'Therapy before surgery, for three reasons.'],
           ['timing', '.rung:nth-child(1) .t', 'Let the knee calm down'], ['timing', '.rung:nth-child(1) .q', 'Surgery is another injury to the knee; recovery is faster when the knee is calm and moving well first.'],
           ['timing', '.rung:nth-child(2) .t', 'Prepare the knee'], ['timing', '.rung:nth-child(2) .q', 'Restore motion and quadriceps strength.'],
