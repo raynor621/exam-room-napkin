@@ -7704,7 +7704,11 @@ three/build/three.module.js:
     /* switching wording: captions and leads are chosen per screen; cards, labels and the fixed screen copy are swapped in place
        and put back (Brett's own mode always shows his originals) */
     let formal = false;
-    const formalURL = () => /^\/learn(?:\/|$)/.test(location.pathname) || /^#learn\b/.test(location.hash) || /[?&]formal\b/.test(location.search);
+    /* 10/4/2026: Brett retired the your-voice patient wording (/explore). The patient side is formal everywhere; /explore redirects
+       to /learn (vercel.json). His words stay in the clinical mode. The old wording is archived in the vault (archive/2026-10-04 explore
+       wording, with RESTORE.md); setting EXPLORE_RETIRED to false brings it back. */
+    const EXPLORE_RETIRED = true;
+    const formalURL = () => EXPLORE_RETIRED || /^\/learn(?:\/|$)/.test(location.pathname) || /^#learn\b/.test(location.hash) || /[?&]formal\b/.test(location.search);
     const swapped = [], esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
     function swapHTML(el, html) { if (!el) return false; if (el._ptOrig == null) { el._ptOrig = el.innerHTML; swapped.push(el); } el.innerHTML = html; return true; }
     function restoreAll() { swapped.forEach(el => { el.innerHTML = el._ptOrig; }); }
@@ -7999,7 +8003,7 @@ three/build/three.module.js:
       if (!m) return null;
       return (m[1] && ALIASES[m[1]]) || 'picker';
     }
-    $$('.js-ptlink').forEach(b => b.addEventListener('click', () => { if (!/^#explore\b/.test(location.hash)) { try { history.replaceState(null, '', '#explore'); } catch (e) { } } enter('picker'); }));
+    $$('.js-ptlink').forEach(b => b.addEventListener('click', () => { if (!/^#(explore|learn)\b/.test(location.hash)) { try { history.replaceState(null, '', '#learn'); } catch (e) { } } enter('picker'); }));
     window.addEventListener('hashchange', () => { const w = wanted(); if (w && (!root.classList.contains('explore') || formalURL() !== formal)) enter(w); });
     const w0 = wanted();
     if (w0) enter(w0);

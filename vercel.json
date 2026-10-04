@@ -52,5 +52,17 @@
       "source": "/learn/:path*",
       "destination": "/explore.html"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/explore",
+      "destination": "/learn",
+      "permanent": false
+    },
+    {
+      "source": "/explore/:path*",
+      "destination": "/learn/:path*",
+      "permanent": false
+    }
   ]
 }
