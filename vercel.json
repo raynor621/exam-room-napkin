@@ -26,11 +26,11 @@
   "rewrites": [
     {
       "source": "/explore",
-      "destination": "/index.html"
+      "destination": "/explore.html"
     },
     {
       "source": "/explore/:path*",
-      "destination": "/index.html"
+      "destination": "/explore.html"
     }
   ]
 }

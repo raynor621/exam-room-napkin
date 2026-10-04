@@ -30,6 +30,7 @@ Each topic is the doctor module behind a second door: the same drawings and card
 - **Kiosk extras:** an untouched patient view goes back to where it was opened (the picker, or that topic's welcome) after 3 minutes. **Hold the title (or the photo) for a second** to hand the iPad to Dr. Raynor's own mode on the same drawing and side, with Next lined up at the matching beat; **Patient view ↺** in his bar (or 10 minutes untouched) puts it back for the next room. Lock the iPad to the app with Guided Access.
 - **Embedding:** inside an iframe (or with `?embed`) the kiosk extras are off and the welcome and end screens speak to someone reading at home (with the office number). Light theme; works down to phone width.
 - **Brett's mode is unchanged.** His home screen has a "Patient view" link at the bottom.
+- **Its own app, "While You Wait" (v0.16):** `/explore` is served from `explore.html`, the same page with its own home-screen name and icon (cream badge, the ball drawn as a clock face; source in `icon/wait-icon-source.svg` in the vault). Open `/explore` (or a topic address) in Safari, Share, **Add to Home Screen**, and it lands as **While You Wait**, opening straight into the patient view, separate from Clinic Diagrams. `explore.html` is generated: after any change to `index.html`, run `python3 tools/make_explore.py` before pushing.
 
 ## Controls
 
@@ -43,7 +44,8 @@ Each topic is the doctor module behind a second door: the same drawings and card
 - `index.html`: the whole app, one self-contained file (no build step, no external CSS or fonts; three.js r169 is bundled inside for the 3D knee; the take-home QR loads one library from cdnjs and falls back to the typed address offline).
 - `sw.js`: service worker. Page loads are network-first (a new version shows up on the next open); the cached shell is the offline fallback once the app has been loaded once.
 - `apple-touch-icon.png`: the home screen icon on the iPad.
-- `vercel.json`: static-site headers (the service worker is never cached, so updates land on the next open) and the `/explore` rewrite to `index.html` for the patient view.
+- `explore.html` and `wait-touch-icon.png`: the While You Wait app (the patient view with its own name and icon), generated from `index.html` by `tools/make_explore.py`.
+- `vercel.json`: static-site headers (the service worker is never cached, so updates land on the next open) and the `/explore` and `/explore/<topic>` rewrites to `explore.html` for the patient view.
 
 ## On the iPad
 
