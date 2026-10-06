@@ -1554,9 +1554,9 @@
         </g>
 
         <!-- ======================= SCENE 2: the socket, looking straight at it =======================
-             Same pear and the same orientation as the Shoulder module's socket (A on the LEFT since v0.7.1), so it matches the drawing above it
+             v0.31 (Brett, 10/5/2026): data-flip="invert" puts anterior on the RIGHT for a right shoulder (posterior on the left), the opposite of the Shoulder module's socket
              (Brett's 10/1/2026 sketch has A on the left in both). Anchor positions are fractions along the ring (tools/gen_instab.py). -->
-        <g id="i-face" class="scene">
+        <g id="i-face" class="scene" data-flip="invert">
          <g transform="translate(0 -40)">
           <g class="layer" id="if-base">
             <path id="if-inner" class="ink draw" d="M500,200 C560,200 608,290 608,380 C608,460 560,516 500,516 C440,516 392,460 392,380 C392,290 440,200 500,200 Z"/>
@@ -6152,16 +6152,20 @@ three/build/three.module.js:
 
   /* ---------- Right/Left mirror: SVG transform attributes in user units, so Safari agrees with Chrome ---------- */
   function makeMirror(svg) {
-    return function setSide(left) {
+    /* v0.31: a scene marked data-flip="invert" (the instability socket face) is mirrored on Right instead of Left */
+    const flipOf = (left, el) => { const sc = el.closest('.scene'); return sc && sc.dataset.flip === 'invert' ? !left : left; };
+    function setSide(left) {
       svg.classList.toggle('mirror', left);
-      $$('.scene', svg).forEach(g => { if (left) g.setAttribute('transform', 'translate(1000 0) scale(-1 1)'); else g.removeAttribute('transform'); });
+      $$('.scene', svg).forEach(g => { if (flipOf(left, g)) g.setAttribute('transform', 'translate(1000 0) scale(-1 1)'); else g.removeAttribute('transform'); });
       $$('text', svg).forEach(t => {
         if (!t.dataset.anchor) t.dataset.anchor = t.getAttribute('text-anchor') || 'start';
         const a = t.dataset.anchor, x = parseFloat(t.getAttribute('x')) || 0;
-        if (left) { t.setAttribute('transform', `translate(${2 * x} 0) scale(-1 1)`); t.setAttribute('text-anchor', a === 'end' ? 'start' : a === 'start' ? 'end' : a); }
+        if (flipOf(left, t)) { t.setAttribute('transform', `translate(${2 * x} 0) scale(-1 1)`); t.setAttribute('text-anchor', a === 'end' ? 'start' : a === 'start' ? 'end' : a); }
         else { t.removeAttribute('transform'); t.setAttribute('text-anchor', a); }
       });
-    };
+    }
+    setSide(false);   /* the page opens on Right, so an inverted scene needs its flip from the start */
+    return setSide;
   }
 
   /* ---------- 100 people grid ---------- */
@@ -7825,7 +7829,7 @@ three/build/three.module.js:
       if (!isPhone() || !spec || !root.classList.contains('explore')) { svg.classList.remove('pt-focus'); tweenVB(svg, home, ms); return; }
       const { P, s } = spec;
       const els = $$(s.f.join(','), svg).filter(onLayer), keep = P.keep && s.core !== false ? $$(P.keep, svg).filter(onLayer) : [];
-      const mir = svg.classList.contains('mirror'), mb = c => mir ? [1000 - c[0] - c[2], c[1], c[2], c[3]] : c;   /* Left mirrors the scene about x = 500 */
+      const onSc = svg.querySelector('.scene.on'), mir = svg.classList.contains('mirror') !== !!(onSc && onSc.dataset.flip === 'invert'), mb = c => mir ? [1000 - c[0] - c[2], c[1], c[2], c[3]] : c;   /* Left mirrors the scene about x = 500 */
       /* a small second line under a main label is left to the caption on a phone */
       const subtitle = t => t.classList.contains('small') && t.parentElement && t.parentElement.querySelector(':scope > text.lbl:not(.small)');
       els.forEach(el => (el.tagName.toLowerCase() === 'text' ? [el] : $$('text', el)).forEach(t => { if (!subtitle(t)) t.classList.add('pt-show'); }));
