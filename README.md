@@ -66,3 +66,7 @@ Master copy and companion note live in the Cowork Assistant Vault under `Artifac
 The numbers on the cards were checked against the literature on 10/1/2026 (v0.7.2); the citations are in the companion note in the vault.
 
 No patient data anywhere in this repo or app.
+
+## Recovery roadmaps (v0.33, 10/6/2026)
+
+`recovery.html` is a standalone patient page, no build step: `/recovery/<topic>` (ACL today: `/recovery/acl`). All wording lives in the `#roadmaps` JSON block at the top of the file (stages with start and end day for the surgery-date tracker, boxes, resources); a new procedure is a new key in that block plus nothing else. "Where am I?" stores the surgery date in localStorage only (`raynor-recovery-<topic>-date`); `?date=YYYY-MM-DD` sets it, `#stage-<id>` opens a stage. Source text: `Inbox/2026-10-06 - ACL Recovery Roadmap - Draft.md` (v2, settled from Brett's clinic talks).

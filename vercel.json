@@ -25,6 +25,14 @@
   ],
   "rewrites": [
     {
+      "source": "/recovery",
+      "destination": "/recovery.html"
+    },
+    {
+      "source": "/recovery/:topic",
+      "destination": "/recovery.html"
+    },
+    {
       "source": "/arthritis",
       "destination": "/arthritis.html"
     },

@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="While You Wait">
+<meta name="theme-color" content="#fbf9f3">
+<link rel="apple-touch-icon" href="/wait-touch-icon.png">
+<link rel="icon" type="image/png" href="/wait-touch-icon.png">
+<title>What Does Recovery Look Like After ACL Reconstruction Surgery? · Dr. Raynor</title>
+<meta name="description" content="A stage-by-stage recovery roadmap after ACL reconstruction: crutches and brace, physical therapy, driving, jogging at about 3 months, and return to sport at 7 to 9 months. M. Brett Raynor, M.D., Texas Orthopaedic Associates, Dallas.">
+<style>
+/* Recovery roadmaps: same look as the rest of While You Wait (paper, navy, system sans). Patient pages stay light. */
+:root {
+  --paper: #fbf9f3; --paper-2: #f2eee3; --card: #ffffff; --ink: #1e2a44; --ink-soft: #5b6478; --line: #e4dfd2;
+  --tendon: #cf5546; --hot: #d63a2f; --bursa: #4f8fc9; --navy: #14325c; --navy-soft: #e3edf8; --done: #8fa3bf;
+  --shadow: 0 6px 22px rgba(20, 30, 60, .10);
+  --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 17px; line-height: 1.5;
+  -webkit-tap-highlight-color: transparent; }
+a { color: var(--navy); }
+button, input { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid var(--bursa); outline-offset: 2px; }
+
+.wrap { max-width: 780px; margin: 0 auto; padding: max(20px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom)); }
+.kicker { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; margin: 0 0 6px; }
+h1 { font-size: clamp(26px, 5vw, 36px); line-height: 1.15; margin: 0 0 14px; color: var(--navy); letter-spacing: -.01em; text-wrap: balance; }
+.lead { font-size: 18px; margin: 0 0 10px; }
+.lead + .lead { color: var(--ink-soft); font-size: 16px; }
+
+/* ---------- where am I ---------- */
+.tracker { margin: 22px 0 18px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; box-shadow: var(--shadow); }
+.tracker h2 { font-size: 17px; margin: 0 0 4px; color: var(--navy); }
+.tracker p.hint { margin: 0 0 12px; font-size: 15px; color: var(--ink-soft); }
+.tracker .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.tracker label { font-size: 15px; font-weight: 600; }
+.tracker input[type=date] { padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); min-height: 44px; min-width: 170px; }
+.btn { appearance: none; border: 1px solid var(--navy); background: var(--card); color: var(--navy); border-radius: 999px; padding: 9px 16px; min-height: 44px; cursor: pointer; font-weight: 600; font-size: 15px; }
+.btn.solid { background: var(--navy); color: #fff; }
+.btn.link { border: 0; background: none; padding: 9px 6px; text-decoration: underline; font-weight: 500; color: var(--ink-soft); }
+.status { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); display: none; }
+.status.on { display: block; }
+.status .where { font-size: 20px; font-weight: 700; color: var(--navy); margin: 0 0 2px; }
+.status .stage-now { margin: 0 0 6px; font-size: 16px; }
+.status .next { margin: 0; font-size: 15px; color: var(--ink-soft); }
+
+/* ---------- at a glance ---------- */
+.glance { margin: 8px 0 22px; }
+.glance h2, .section-h { font-size: 20px; color: var(--navy); margin: 26px 0 10px; }
+.track { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; position: relative; padding-top: 30px; }
+.seg { appearance: none; border: 0; background: none; padding: 0; text-align: left; cursor: pointer; min-width: 0; }
+.seg .bar { display: block; height: 10px; border-radius: 6px; background: var(--navy-soft); position: relative; }
+.seg .nm { display: block; font-weight: 700; font-size: 14px; margin-top: 8px; color: var(--navy); }
+.seg .tm { display: block; font-size: 12.5px; color: var(--ink-soft); line-height: 1.3; }
+.seg.past .bar { background: var(--done); }
+.seg.now .bar { background: var(--tendon); }
+.seg.now .nm { color: var(--tendon); }
+.seg:hover .bar { filter: brightness(.95); }
+.you { position: absolute; top: 0; transform: translateX(-50%); font-size: 12px; font-weight: 700; color: #fff; background: var(--tendon);
+  border-radius: 999px; padding: 3px 9px; white-space: nowrap; display: none; pointer-events: none; }
+.you::after { content: ''; position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%); border: 5px solid transparent; border-bottom: 0; border-top-color: var(--tendon); }
+.you.on { display: block; }
+@media (max-width: 600px) {
+  .track { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
+  .seg { display: grid; grid-template-columns: 14px 1fr; column-gap: 12px; padding: 6px 0; }
+  .seg .bar { grid-row: 1 / span 2; width: 10px; height: auto; min-height: 40px; }
+  .seg .nm { margin-top: 0; font-size: 15px; }
+  .seg .tm { font-size: 13.5px; }
+  .you, .you.on { display: none !important; }
+  .seg.now .you-inline { display: inline-block; }
+}
+.you-inline { display: none; margin-left: 8px; font-size: 11.5px; font-weight: 700; color: #fff; background: var(--tendon); border-radius: 999px; padding: 1px 8px; vertical-align: 2px; }
+
+/* ---------- stages ---------- */
+.stages-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 0 10px; }
+.stages-h .section-h { margin: 0; }
+details.stage { background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 0 0 10px; box-shadow: 0 1px 0 rgba(0,0,0,.02); scroll-margin-top: 12px; }
+details.stage > summary { list-style: none; cursor: pointer; padding: 14px 48px 14px 18px; position: relative; display: block; }
+details.stage > summary::-webkit-details-marker { display: none; }
+details.stage > summary::after { content: ''; position: absolute; right: 20px; top: 50%; width: 10px; height: 10px; border-right: 2.5px solid var(--navy); border-bottom: 2.5px solid var(--navy); transform: translateY(-70%) rotate(45deg); transition: transform .15s; }
+details.stage[open] > summary::after { transform: translateY(-30%) rotate(-135deg); }
+.s-num { font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; color: var(--ink-soft); }
+.s-title { display: block; font-size: 19px; font-weight: 700; color: var(--navy); line-height: 1.25; }
+.s-glance { display: block; font-size: 15px; color: var(--ink-soft); margin-top: 2px; }
+details.stage.now { border-color: var(--tendon); box-shadow: 0 0 0 2px rgba(207, 85, 70, .18); }
+details.stage.now .s-num { color: var(--tendon); }
+.now-tag { display: none; margin-left: 8px; font-size: 11.5px; font-weight: 700; color: #fff; background: var(--tendon); border-radius: 999px; padding: 1px 8px; letter-spacing: 0; text-transform: none; vertical-align: 1px; }
+details.stage.now .now-tag { display: inline-block; }
+.s-body { padding: 0 18px 16px; }
+.s-body p { margin: 0 0 10px; }
+.s-body h3 { font-size: 15.5px; margin: 14px 0 4px; color: var(--ink); }
+.s-body ul, .s-body ol { margin: 0 0 6px; padding-left: 22px; }
+.s-body li { margin: 3px 0; }
+.ready { margin-top: 14px; background: var(--navy-soft); border-radius: 10px; padding: 10px 14px; font-size: 15.5px; }
+.ready b { color: var(--navy); }
+.why { margin: 14px 0 6px; border-left: 4px solid var(--bursa); background: var(--paper); border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 15.5px; }
+.why h3 { margin-top: 0; color: var(--navy); }
+.cite { font-size: 13px; color: var(--ink-soft); }
+
+/* ---------- side boxes ---------- */
+.box { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; margin: 10px 0; }
+.box h2 { font-size: 18px; margin: 0 0 6px; color: var(--navy); }
+.box p { margin: 0 0 8px; }
+.box ul { margin: 0; padding-left: 22px; }
+.box li { margin: 4px 0; }
+.box.call { border-color: rgba(207, 85, 70, .45); background: #fff8f6; }
+.box.call h2 { color: var(--tendon); }
+.phone { font-weight: 700; white-space: nowrap; }
+.resources li { margin: 6px 0; }
+.foot { margin-top: 26px; font-size: 14px; color: var(--ink-soft); }
+.foot .sig { color: var(--ink); font-weight: 600; margin: 0; }
+.foot p { margin: 0 0 4px; }
+.foot .note { margin-top: 12px; font-size: 13px; }
+
+html.embedded .wrap { padding-top: 16px; }
+
+@media print {
+  body { background: #fff; font-size: 12pt; }
+  .tracker .row, .btn { display: none !important; }
+  details.stage, .box, .tracker { box-shadow: none; break-inside: avoid; }
+  details.stage > summary::after { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<main class="wrap" id="app">
+  <noscript><p>This roadmap needs JavaScript turned on. You can also call our office at (214) 265-3211.</p></noscript>
+</main>
+
+<script id="roadmaps" type="application/json">
+{
+  "acl": {
+    "kicker": "M. Brett Raynor, M.D. · Recovery roadmap",
+    "title": "What Does Recovery Look Like After ACL Reconstruction Surgery?",
+    "lead": [
+      "ACL reconstruction recovery is long, but it is active. You are working toward something the whole time. Most patients feel mostly normal at about three months and return to full sports at seven to nine months. This page walks through each stage: what you can do, what physical therapy is working on, what is normal, and what gets you to the next stage.",
+      "Every recovery is a little different. Your physical therapist and our team will tell you when you're ready for each step. Strength and testing decide when you move on, not the calendar."
+    ],
+    "stages": [
+      {
+        "id": "prehab", "num": "Before surgery", "name": "Prehab", "timing": "About 3 weeks",
+        "start": -21, "end": 0,
+        "glance": "Calm the knee, regain motion, wake up the quad",
+        "body": [
+          {"p": "We usually schedule surgery about three weeks after your first visit and send you to physical therapy in the meantime. This does three things:"},
+          {"ol": [
+            "<b>It lets your knee calm down.</b> Surgery on a calm knee leads to a faster recovery.",
+            "<b>It gets the knee ready.</b> Better motion and quad strength going in mean a faster recovery coming out.",
+            "<b>You meet your therapist.</b> You will spend a lot of time together after surgery, so it helps to start that relationship early."
+          ]},
+          {"h": "Between now and surgery"},
+          {"ul": [
+            "Keep the knee moving.",
+            "Ice it if it swells.",
+            "Avoid cutting, pivoting and twisting, which can damage the meniscus.",
+            "Straight-ahead cardio is fine: bike, elliptical, walking, swimming."
+          ]}
+        ]
+      },
+      {
+        "id": "protect", "num": "Stage 1", "name": "Protect", "timing": "Surgery to week 2",
+        "start": 0, "end": 14,
+        "glance": "Home the same day; full weight with crutches for balance; brace on; PT starts within days",
+        "body": [
+          {"p": "<b>Surgery day.</b> ACL reconstruction is outpatient surgery: you go home the same day. You are asleep for the operation, and a nerve block plus numbing medicine keeps you comfortable when you wake up. Plan for someone to drive you home and stay with you the first night."},
+          {"h": "Getting around"},
+          {"ul": [
+            "You can put your full weight on the leg from the start. The crutches are for balance, not because the knee can't take your weight.",
+            "Wear your brace whenever you are up and walking. Sleeping in it is optional, but it helps if you move around a lot at night."
+          ]},
+          {"h": "Swelling and pain"},
+          {"ul": [
+            "Ice and elevate several times a day.",
+            "Getting your knee fully straight as early as possible is our top priority. A straight knee is how you walk normally again. Your therapist will show you how to work on it every day.",
+            "You will go home with prescription pain medication.",
+            "If you were sent home with a CPM (continuous passive motion) machine, use it as much or as little as you like. Some patients sleep in it."
+          ]},
+          {"h": "Preventing blood clots"},
+          {"ul": ["Take one baby aspirin daily for about 4 weeks, unless we tell you otherwise."]},
+          {"h": "Incision care"},
+          {"ul": [
+            "You can shower right away. Cover the dressing for the first 3 days.",
+            "After day 3, you can remove the dressing and let water run over the incisions. Do not scrub them.",
+            "Do not soak the incisions in a bath, pool or hot tub until they are fully sealed, usually about 3 weeks.",
+            "You have two small stitches. We remove them at your first post-op visit, about 7 to 10 days after surgery. Removing them doesn't hurt."
+          ]},
+          {"h": "Physical therapy"},
+          {"ul": [
+            "PT starts within the first few days: the sooner, the better.",
+            "The early goals are getting the knee fully straight, getting the quad firing again, and controlling swelling."
+          ]},
+          {"h": "What's normal"},
+          {"ul": [
+            "Swelling and some bruising.",
+            "A numb patch just to the outside of the incision. It shrinks over time, and most people stop noticing it.",
+            "Feeling tired and sore for the first several days."
+          ]}
+        ],
+        "ready": "the incisions look good at your first post-op visit and your knee is moving with PT."
+      },
+      {
+        "id": "walk", "num": "Stage 2", "name": "Walk", "timing": "Weeks 2 to 6",
+        "start": 14, "end": 42,
+        "glance": "Crutches and brace off around weeks 3 to 4; walking normally by about week 6",
+        "body": [
+          {"h": "Getting around"},
+          {"ul": [
+            "Most patients are done with the crutches and the brace around weeks 3 to 4.",
+            "Most people are walking normally by about week 6."
+          ]},
+          {"h": "Physical therapy"},
+          {"ul": ["Range of motion, quad strength and normal walking."]},
+          {"h": "Daily life"},
+          {"ul": [
+            "<b>Driving:</b> you can drive once you are walking on the leg without crutches and are no longer taking prescription pain medication. Practice in an empty parking lot first.",
+            "<b>School and work:</b> return as soon as you feel able, as long as you can follow your restrictions. Desk work and school often come back within the first week or two. Jobs on your feet take longer.",
+            "<b>Out-of-town patients:</b> plan to stay in the Dallas area for about 6 weeks after surgery. After that, you are independent enough to travel home and continue PT there.",
+            "<b>Water:</b> once the incisions are fully sealed (usually about 3 weeks), you can get into a pool or hot tub."
+          ]}
+        ],
+        "ready": "you are out of the crutches and brace and walking with good control."
+      },
+      {
+        "id": "build", "num": "Stage 3", "name": "Build", "timing": "Weeks 6 to 12",
+        "start": 42, "end": 84,
+        "glance": "Walking normally; bike, elliptical, light weights; daily life back to normal",
+        "body": [
+          {"h": "What you can do"},
+          {"ul": [
+            "Full daily activities.",
+            "Stationary bike, elliptical, light weights and the exercises your therapist gives you.",
+            "Gentle swimming usually starts around 6 to 8 weeks."
+          ]},
+          {"h": "What you can't do yet"},
+          {"ul": ["No jogging, jumping, cutting or pivoting yet."]},
+          {"h": "Physical therapy"},
+          {"ul": [
+            "The focus is strength, especially the quad.",
+            "A strong quad is the single most important part of the rest of your recovery."
+          ]},
+          {"h": "What's normal"},
+          {"ul": ["Your knee feels pretty good, and that's exactly why this stage takes discipline. The graft is still maturing and your quad is still weak, even when the knee feels ready for more."]}
+        ],
+        "ready": "you reach the 3-month mark, your knee is quiet (little swelling), your motion is full, and your therapist says your strength is ready to start running."
+      },
+      {
+        "id": "run", "num": "Stage 4", "name": "Run", "timing": "Months 3 to 6",
+        "start": 84, "end": 213,
+        "glance": "Jogging starts at 3 months; agility and sport drills; gym is full go",
+        "body": [
+          {"h": "Running"},
+          {"ul": [
+            "Jogging starts at about 3 months.",
+            "Expect it to feel heavy and clunky at first. That's normal, and it gets better quickly.",
+            "Build up gradually: walk a route and run sections of it. Run more sections each time it goes well. Once you can run a full mile, start adding distance."
+          ]},
+          {"h": "Training"},
+          {"ul": [
+            "Strength work continues.",
+            "Agility drills and sport-specific drills are added in a controlled way.",
+            "In the gym, you are full go."
+          ]},
+          {"h": "Functional brace"},
+          {"ul": ["Athletes are fitted for a functional ACL brace to wear for sports during their first year back."]}
+        ],
+        "ready": "you are running comfortably and your therapist says you're ready for sport-specific training and a sport test."
+      },
+      {
+        "id": "return", "num": "Stage 5", "name": "Return to Sport", "short": "Return", "timing": "Months 7 to 9",
+        "start": 213, "end": 274,
+        "glance": "Sport test with PT; full return once strength is back",
+        "body": [
+          {"p": "Before you return to cutting, pivoting and twisting sports, you'll do a functional sport test with your physical therapist. It measures quad strength, hop tests and how well the leg holds up compared with your other side. The goal is quad strength at 90% or better of the other leg."},
+          {"why": {
+            "h": "Why seven to nine months if the graft heals at three?",
+            "p": "The wait isn't for the graft. It's for your muscles. The quad gets very weak after surgery, and until it's strong again, you're at higher risk of injuring the knee again. A large study of athletes after ACL reconstruction found:",
+            "ul": [
+              "The re-injury rate dropped by about half for each month of waiting, up to 9 months after surgery.",
+              "Athletes who passed strength and function testing before returning had far fewer re-injuries than those who didn't."
+            ],
+            "cite": "Grindem H, et al. Br J Sports Med. 2016;50(13):804-8.",
+            "doi": "https://doi.org/10.1136/bjsports-2016-096031"
+          }},
+          {"p": "For most patients, we aim for closer to nine months. If your season is starting and you pass your sport test at seven months, we can talk about a phased return: full practice first, then games."}
+        ],
+        "ready": "you pass your sport test and we clear you together. Then you're back, with no restrictions.",
+        "readyLabel": "Ready when:"
+      }
+    ],
+    "boxes": [
+      {
+        "h": "If you also had a meniscus repair",
+        "p": "Meniscus repair changes mostly the first 6 weeks. The rest of the roadmap is the same.",
+        "ul": [
+          "<b>One or two stitches:</b> no change. Follow the roadmap as written.",
+          "<b>More stitches:</b> you still put full weight on the leg, but with the brace locked straight for 6 weeks, so the brace stays on longer than the standard roadmap. You still bend the knee in PT, limited to 90 degrees for the first 2 weeks.",
+          "<b>Meniscus root repair (uncommon):</b> toe-touch weight bearing on crutches for 6 weeks. We'll tell you ahead of time if we expect this."
+        ]
+      },
+      {
+        "h": "If your graft is different",
+        "ul": [
+          "<b>Quadriceps tendon graft:</b> same roadmap. Quad strength often takes a little longer to come back, so the later stages may run a bit longer.",
+          "<b>Donor tissue (allograft):</b> the early weeks are usually easier, with no graft-site soreness. Return to sport still depends on passing your strength and sport testing."
+        ]
+      }
+    ],
+    "resources": [
+      ["Post-op instructions video", "https://www.brettraynormd.com/knee-ligament-fracture-tendon-postop-instructions-video"],
+      ["Dressing change video", "https://www.brettraynormd.com/knee-arthroscopy-ligament-dressing"],
+      ["ACL reconstruction FAQs", "https://www.brettraynormd.com/acl-recon-faq"],
+      ["Recommended physical therapists", "https://www.brettraynormd.com/recommended-physical-therapists"]
+    ]
+  }
+}
+</script>
+
+<script>
+(() => {
+  'use strict';
+  const DAY = 86400000;
+  const PHONE = '(214) 265-3211', TEL = 'tel:+12142653211';
+  let embedded = false;
+  try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
+  if (/[?&]embed\b/.test(location.search)) embedded = true;
+  if (embedded) document.documentElement.classList.add('embedded');
+
+  const ALL = JSON.parse(document.getElementById('roadmaps').textContent);
+  const seg = location.pathname.split('/').filter(Boolean);
+  const topic = (seg[0] === 'recovery' && ALL[seg[1]]) ? seg[1] : (ALL[new URLSearchParams(location.search).get('topic')] ? new URLSearchParams(location.search).get('topic') : 'acl');
+  const R = ALL[topic];
+  const KEY = 'raynor-recovery-' + topic + '-date';
+  const LINK_TARGET = embedded ? ' target="_blank" rel="noopener"' : '';
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const list = (tag, items) => '<' + tag + '>' + items.map(i => '<li>' + i + '</li>').join('') + '</' + tag + '>';
+  const block = b => {
+    if (b.p) return '<p>' + b.p + '</p>';
+    if (b.h) return '<h3>' + b.h + '</h3>';
+    if (b.ul) return list('ul', b.ul);
+    if (b.ol) return list('ol', b.ol);
+    if (b.why) {
+      const w = b.why;
+      return '<div class="why"><h3>' + w.h + '</h3><p>' + w.p + '</p>' + list('ul', w.ul) +
+        '<p class="cite">' + esc(w.cite) + ' <a href="' + w.doi + '" target="_blank" rel="noopener">Read the study</a></p></div>';
+    }
+    return '';
+  };
+
+  const stageHTML = (s, i) =>
+    '<details class="stage" id="stage-' + s.id + '" data-i="' + i + '">' +
+      '<summary><span class="s-num">' + esc(s.num) + ' · ' + esc(s.timing) + '<span class="now-tag">You are here</span></span>' +
+      '<span class="s-title">' + esc(s.name) + '</span>' +
+      '<span class="s-glance">' + esc(s.glance) + '</span></summary>' +
+      '<div class="s-body">' + s.body.map(block).join('') +
+      (s.ready ? '<div class="ready"><b>' + (s.readyLabel || 'Ready for the next stage when:') + '</b> ' + s.ready + '</div>' : '') +
+      '</div></details>';
+
+  const segHTML = (s, i) =>
+    '<button class="seg" type="button" data-i="' + i + '" aria-label="' + esc(s.num + ': ' + s.name + ', ' + s.timing) + '">' +
+      '<span class="bar"></span><span class="nm">' + esc(s.short || s.name) + '<span class="you-inline">You are here</span></span>' +
+      '<span class="tm">' + esc(s.timing) + '</span></button>';
+
+  const boxHTML = b => '<section class="box"><h2>' + b.h + '</h2>' + (b.p ? '<p>' + b.p + '</p>' : '') + list('ul', b.ul) + '</section>';
+
+  document.getElementById('app').innerHTML =
+    '<p class="kicker">' + esc(R.kicker) + '</p>' +
+    '<h1>' + esc(R.title) + '</h1>' +
+    R.lead.map(p => '<p class="lead">' + p + '</p>').join('') +
+
+    '<section class="tracker" aria-labelledby="tr-h">' +
+      '<h2 id="tr-h">Where am I in my recovery?</h2>' +
+      '<p class="hint">Enter your surgery date and we\'ll show you which stage you\'re in and what comes next. The date stays on this device only.</p>' +
+      '<div class="row"><label for="sx-date">Surgery date</label>' +
+        '<input id="sx-date" type="date">' +
+        '<button class="btn solid" type="button" id="sx-go">Show me</button>' +
+        '<button class="btn link" type="button" id="sx-clear" hidden>Clear</button></div>' +
+      '<div class="status" id="sx-status" aria-live="polite"><p class="where" id="sx-where"></p><p class="stage-now" id="sx-now"></p><p class="next" id="sx-next"></p></div>' +
+    '</section>' +
+
+    '<section class="glance" aria-labelledby="gl-h"><h2 id="gl-h">At a glance</h2>' +
+      '<div class="track" id="track"><span class="you" id="you">You are here</span>' + R.stages.map(segHTML).join('') + '</div></section>' +
+
+    '<div class="stages-h"><h2 class="section-h">Stage by stage</h2><button class="btn link" type="button" id="toggle-all">Open all stages</button></div>' +
+    R.stages.map(stageHTML).join('') +
+
+    R.boxes.map(boxHTML).join('') +
+
+    '<section class="box call"><h2>When to call us</h2>' +
+      '<p>Call the office at <a class="phone" href="' + TEL + '">' + PHONE + '</a> if you have:</p>' +
+      list('ul', [
+        'Pain that isn\'t controlled with your medication',
+        'Significant new swelling, or drainage from an incision',
+        'Fever over 101.5°F',
+        'Calf pain or swelling',
+        'Numbness or tingling that is new or getting worse',
+        'Anything else that worries you. That\'s what we\'re here for.'
+      ]) +
+      '<p style="margin-top:8px"><b>If you have chest pain or trouble breathing, call 911.</b></p></section>' +
+
+    '<section class="box resources"><h2>More resources</h2>' +
+      list('ul', R.resources.map(r => '<a href="' + r[1] + '"' + LINK_TARGET + '>' + esc(r[0]) + '</a>')) + '</section>' +
+
+    '<footer class="foot"><p class="sig">M. Brett Raynor, M.D.</p><p>Texas Orthopaedic Associates, a Division of OrthoLoneStar</p>' +
+      '<p>7115 Greenville Ave, Suite 310, Dallas, TX 75231 · <a href="' + TEL + '">' + PHONE + '</a></p>' +
+      '<p class="note">This is a general guide. If your own instructions from our team are different, follow those.</p></footer>';
+
+  const $ = id => document.getElementById(id);
+  const details = [...document.querySelectorAll('details.stage')];
+  const segs = [...document.querySelectorAll('.seg')];
+  const input = $('sx-date');
+
+  // date helpers in local time (a date input gives YYYY-MM-DD)
+  const today = () => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); };
+  const parse = v => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+  const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const t0 = today();
+  input.max = iso(new Date(t0.getTime() + 180 * DAY));
+  input.min = iso(new Date(t0.getTime() - 3 * 365 * DAY));
+
+  const store = {
+    get() { try { return localStorage.getItem(KEY); } catch (e) { return null; } },
+    set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} },
+    clear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+  };
+
+  const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+  function describe(days) {
+    if (days < 0) { const n = -days; return n === 1 ? 'Your surgery is tomorrow.' : 'Your surgery is in ' + plural(n, 'day') + '.'; }
+    if (days === 0) return 'Today is your surgery day.';
+    if (days < 14) return 'You are ' + plural(days, 'day') + ' out from surgery.';
+    if (days < 84) { const w = Math.floor(days / 7), d = days % 7; return 'You are ' + plural(w, 'week') + (d ? ' and ' + plural(d, 'day') : '') + ' out from surgery.'; }
+    const m = days / 30.44, whole = Math.floor(m), half = m - whole >= 0.5;
+    return 'You are about ' + whole + (half ? ' and a half' : '') + ' months out from surgery.';
+  }
+  function stageFor(days) {
+    const S = R.stages;
+    if (days < 0) return 0;
+    for (let i = 1; i < S.length; i++) if (days < S[i].end) return i;
+    return S.length - 1;
+  }
+  function nextText(i, days) {
+    const S = R.stages;
+    if (days < 0) return 'Coming up next: ' + S[1].num + ', ' + S[1].name + '. Read it ahead so you know what the first two weeks look like.';
+    if (i === S.length - 1) return days >= S[i].end
+      ? 'You are past the usual nine-month mark. Once you pass your sport test and we clear you, you\'re back with no restrictions. Keep wearing your functional brace for sports during your first year back.'
+      : 'This is the last stage. Your sport test with your physical therapist is what clears you to return.';
+    const n = S[i + 1];
+    return 'Coming up next: ' + n.num + ', ' + n.name + ' (' + n.timing.toLowerCase() + ').';
+  }
+
+  function clearMarks() {
+    details.forEach(d => d.classList.remove('now'));
+    segs.forEach(s => s.classList.remove('now', 'past'));
+    $('you').classList.remove('on');
+  }
+
+  function show(dateStr, opts) {
+    const d = parse(dateStr);
+    if (!d) return false;
+    const days = Math.round((d.getTime() - today().getTime()) / -DAY);
+    const i = stageFor(days), s = R.stages[i];
+    clearMarks();
+    segs.forEach((g, k) => { if (k < i) g.classList.add('past'); });
+    segs[i].classList.add('now');
+    details[i].classList.add('now');
+    if (!opts || !opts.keepOpen) details.forEach((x, k) => { x.open = k === i; });
+    // marker on the wide track: position inside the current segment
+    const span = s.end - s.start, frac = Math.max(0, Math.min(1, (days - s.start) / span));
+    const track = $('track'), g = segs[i];
+    const left = g.offsetLeft + g.offsetWidth * frac;
+    const you = $('you');
+    you.style.left = Math.max(40, Math.min(track.clientWidth - 40, left)) + 'px';
+    you.classList.add('on');
+    $('sx-where').textContent = describe(days);
+    $('sx-now').innerHTML = 'You are in <b>' + esc(s.num + ': ' + s.name) + '</b> (' + esc(s.timing.toLowerCase()) + '). <a href="#stage-' + s.id + '" id="sx-jump">Read this stage</a>';
+    $('sx-next').textContent = nextText(i, days);
+    $('sx-status').classList.add('on');
+    $('sx-clear').hidden = false;
+    $('sx-jump').addEventListener('click', e => { e.preventDefault(); details[i].open = true; details[i].scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    if (opts && opts.save) store.set(dateStr);
+    return true;
+  }
+
+  $('sx-go').addEventListener('click', () => {
+    if (!show(input.value, { save: true })) { input.focus(); return; }
+  });
+  input.addEventListener('change', () => { if (input.value) show(input.value, { save: true }); });
+  $('sx-clear').addEventListener('click', () => {
+    store.clear(); input.value = ''; clearMarks();
+    $('sx-status').classList.remove('on'); $('sx-clear').hidden = true;
+  });
+
+  segs.forEach((g, k) => g.addEventListener('click', () => {
+    details[k].open = true;
+    details[k].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+
+  const toggle = $('toggle-all');
+  const syncToggle = () => { toggle.textContent = details.every(d => d.open) ? 'Close all stages' : 'Open all stages'; };
+  toggle.addEventListener('click', () => { const open = !details.every(d => d.open); details.forEach(d => d.open = open); syncToggle(); });
+  details.forEach(d => d.addEventListener('toggle', syncToggle));
+
+  window.addEventListener('beforeprint', () => details.forEach(d => d.open = true));
+  window.addEventListener('resize', () => { if (input.value && $('you').classList.contains('on')) show(input.value, { keepOpen: true }); });
+
+  // deep links: /recovery/acl?date=YYYY-MM-DD (e.g. from a post-op email) or #stage-run
+  const qDate = new URLSearchParams(location.search).get('date');
+  const saved = qDate || store.get();
+  if (saved && parse(saved)) { input.value = saved; show(saved, { save: !!qDate }); }
+  else { details[0].open = false; }
+  if (location.hash && /^#stage-/.test(location.hash)) {
+    const el = document.querySelector(location.hash);
+    if (el) { el.open = true; setTimeout(() => el.scrollIntoView({ block: 'start' }), 50); }
+  }
+  syncToggle();
+})();
+</script>
+</body>
+</html>
