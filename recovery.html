@@ -78,6 +78,24 @@ h1 { font-size: clamp(26px, 5vw, 36px); line-height: 1.15; margin: 0 0 14px; col
 }
 .you-inline { display: none; margin-left: 8px; font-size: 11.5px; font-weight: 700; color: #fff; background: var(--tendon); border-radius: 999px; padding: 1px 8px; vertical-align: 2px; }
 
+/* ---------- meniscus ---------- */
+.men { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; margin: 6px 0 22px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.men h2 { font-size: 20px; margin: 0 0 6px; color: var(--navy); }
+.men > p { margin: 0 0 12px; font-size: 16px; }
+.men .hint { font-size: 14px; color: var(--ink-soft); margin: 0 0 10px; }
+.men-opts { display: grid; gap: 8px; }
+.men-opt { appearance: none; text-align: left; border: 1.5px solid var(--line); background: var(--paper); border-radius: 12px; padding: 11px 14px; cursor: pointer; display: grid; grid-template-columns: 22px 1fr; column-gap: 12px; align-items: start; }
+.men-opt .dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--done); margin-top: 3px; position: relative; }
+.men-opt .lbl { font-weight: 700; color: var(--navy); font-size: 16px; }
+.men-opt .sub { font-size: 13.5px; color: var(--ink-soft); display: block; }
+.men-opt .txt { font-size: 15px; margin-top: 4px; grid-column: 2; display: none; }
+.men-opt[aria-pressed="true"] { border-color: var(--tendon); background: #fff; box-shadow: 0 0 0 2px rgba(207, 85, 70, .15); }
+.men-opt[aria-pressed="true"] .dot { border-color: var(--tendon); }
+.men-opt[aria-pressed="true"] .dot::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--tendon); }
+.men-opt[aria-pressed="true"] .txt, .men.show-all .men-opt .txt { display: block; }
+.men .all { margin: 10px 0 0; }
+.var-note { display: inline-block; font-size: 12.5px; font-weight: 700; color: #fff; background: var(--navy); border-radius: 999px; padding: 2px 9px; margin: 4px 0 2px; }
+
 /* ---------- stages ---------- */
 .stages-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 0 10px; }
 .stages-h .section-h { margin: 0; }
@@ -144,6 +162,21 @@ html.embedded .wrap { padding-top: 16px; }
       "ACL reconstruction recovery is long, but it is active. You are working toward something the whole time. Most patients feel mostly normal at about three months and return to full sports at seven to nine months. This page walks through each stage: what you can do, what physical therapy is working on, what is normal, and what gets you to the next stage.",
       "Every recovery is a little different. Your physical therapist and our team will tell you when you're ready for each step. Strength and testing decide when you move on, not the calendar."
     ],
+    "meniscus": {
+      "h": "Your meniscus decides how you walk in the first six weeks",
+      "p": "Most of what makes one ACL recovery different from another is the meniscus. Whether it was torn, and what we did about it, changes how you put weight on the leg for the first six weeks. After that, the roadmap is the same for everyone. We tell you before surgery which one to expect, and your physical therapy protocol spells it out.",
+      "options": [
+        {"id": "none", "label": "No meniscus repair", "sub": "No tear, or a tear that was trimmed",
+         "text": "Full weight on the leg from day one. Crutches for balance for about 3 to 4 weeks, brace for about 3 to 4 weeks, walking normally by about week 6. A trimmed meniscus (a partial meniscectomy) does not change the ACL roadmap at all."},
+        {"id": "none", "label": "Meniscus repair, one or two stitches", "sub": "A small repair",
+         "text": "No change. Follow the roadmap as written: full weight from day one, crutches and brace for about 3 to 4 weeks."},
+        {"id": "repair", "label": "Meniscus repair, more than two stitches", "sub": "A larger repair",
+         "text": "Full weight on the leg, but with the brace locked straight for 6 weeks (you walk stiff-legged). Knee bending happens in therapy, limited to 90 degrees for the first 2 weeks. The brace stays on longer than the standard roadmap, and the rest of the recovery does not change much."},
+        {"id": "root", "label": "Meniscus root repair", "sub": "Uncommon, under 2 in 100 cases",
+         "text": "Toe-touch weight bearing on crutches for 6 weeks: the foot can rest on the floor for balance, but the leg carries no real weight. This is the only scenario with six weeks of protected weight bearing, and we flag it before surgery."}
+      ],
+      "hint": "Choose yours and the Protect and Walk stages below will show the matching instructions."
+    },
     "stages": [
       {
         "id": "prehab", "num": "Before surgery", "name": "Prehab", "timing": "About 3 weeks",
@@ -172,10 +205,17 @@ html.embedded .wrap { padding-top: 16px; }
         "body": [
           {"p": "<b>Surgery day.</b> ACL reconstruction is outpatient surgery: you go home the same day. You are asleep for the operation, and a nerve block plus numbing medicine keeps you comfortable when you wake up. Plan for someone to drive you home and stay with you the first night."},
           {"h": "Getting around"},
-          {"ul": [
-            "You can put your full weight on the leg from the start. The crutches are for balance, not because the knee can't take your weight.",
-            "Wear your brace whenever you are up and walking. Sleeping in it is optional, but it helps if you move around a lot at night."
-          ]},
+          {"var": {
+            "none": ["You can put your full weight on the leg from the start. The crutches are for balance, not because the knee can't take your weight.",
+                     "Wear your brace whenever you are up and walking. Sleeping in it is optional, but it helps if you move around a lot at night."],
+            "repair": ["You can put your full weight on the leg from the start, but you walk with the brace locked straight for the first 6 weeks to protect the meniscus repair. The crutches are for balance.",
+                       "You still bend the knee in physical therapy, limited to 90 degrees for the first 2 weeks, then working toward full motion.",
+                       "Keep the brace on whenever you are up and walking, and unlock it only in therapy."],
+            "root": ["Toe-touch weight bearing on crutches for the first 6 weeks: the foot rests on the ground for balance, but the leg carries no real weight. This protects the root repair.",
+                     "Wear your brace whenever you are up and walking.",
+                     "You still bend the knee in physical therapy, within the limits on your protocol."]
+          }},
+          {"p": "<a href=\"#meniscus\">Not sure which applies to you?</a> Your meniscus decides how you walk in the first 6 weeks."},
           {"h": "Swelling and pain"},
           {"ul": [
             "Ice and elevate several times a day.",
@@ -209,13 +249,17 @@ html.embedded .wrap { padding-top: 16px; }
       {
         "id": "walk", "num": "Stage 2", "name": "Walk", "timing": "Weeks 2 to 6",
         "start": 14, "end": 42,
-        "glance": "Crutches and brace off around weeks 3 to 4; walking normally by about week 6",
+        "glance": "Crutches and brace off around weeks 3 to 4 (6 weeks after a bigger meniscus repair); walking normally by about week 6",
         "body": [
           {"h": "Getting around"},
-          {"ul": [
-            "Most patients are done with the crutches and the brace around weeks 3 to 4.",
-            "Most people are walking normally by about week 6."
-          ]},
+          {"var": {
+            "none": ["Most patients are done with the crutches and the brace around weeks 3 to 4.",
+                     "Most people are walking normally by about week 6."],
+            "repair": ["Full weight on the leg, brace locked straight, through week 6. Most patients drop the crutches once they walk steadily in the brace.",
+                       "At 6 weeks the brace comes off and you start walking with a bending knee. Expect a week or two to find a normal stride again."],
+            "root": ["Toe-touch weight bearing on crutches through week 6.",
+                     "At 6 weeks you start putting weight through the leg and come off the crutches over the following week or two, as your therapist directs."]
+          }},
           {"h": "Physical therapy"},
           {"ul": ["Range of motion, quad strength and normal walking."]},
           {"h": "Daily life"},
@@ -297,15 +341,6 @@ html.embedded .wrap { padding-top: 16px; }
     ],
     "boxes": [
       {
-        "h": "If you also had a meniscus repair",
-        "p": "Meniscus repair changes mostly the first 6 weeks. The rest of the roadmap is the same.",
-        "ul": [
-          "<b>One or two stitches:</b> no change. Follow the roadmap as written.",
-          "<b>More stitches:</b> you still put full weight on the leg, but with the brace locked straight for 6 weeks, so the brace stays on longer than the standard roadmap. You still bend the knee in PT, limited to 90 degrees for the first 2 weeks.",
-          "<b>Meniscus root repair (uncommon):</b> toe-touch weight bearing on crutches for 6 weeks. We'll tell you ahead of time if we expect this."
-        ]
-      },
-      {
         "h": "If your graft is different",
         "ul": [
           "<b>Quadriceps tendon graft:</b> same roadmap. Quad strength often takes a little longer to come back, so the later stages may run a bit longer.",
@@ -347,6 +382,9 @@ html.embedded .wrap { padding-top: 16px; }
     if (b.h) return '<h3>' + b.h + '</h3>';
     if (b.ul) return list('ul', b.ul);
     if (b.ol) return list('ol', b.ol);
+    if (b.var) {
+      return Object.keys(b.var).map(k => '<div class="var" data-var="' + k + '" hidden>' + list('ul', b.var[k]) + '</div>').join('');
+    }
     if (b.why) {
       const w = b.why;
       return '<div class="why"><h3>' + w.h + '</h3><p>' + w.p + '</p>' + list('ul', w.ul) +
@@ -389,6 +427,10 @@ html.embedded .wrap { padding-top: 16px; }
     '<section class="glance" aria-labelledby="gl-h"><h2 id="gl-h">At a glance</h2>' +
       '<div class="track" id="track"><span class="you" id="you">You are here</span>' + R.stages.map(segHTML).join('') + '</div></section>' +
 
+    (R.meniscus ? '<section class="men" id="meniscus" aria-labelledby="men-h"><h2 id="men-h">' + R.meniscus.h + '</h2><p>' + R.meniscus.p + '</p>' +
+      '<p class="hint">' + esc(R.meniscus.hint) + '</p><div class="men-opts" role="group" aria-label="Meniscus">' +
+      R.meniscus.options.map((o, i) => '<button class="men-opt" type="button" data-var="' + o.id + '" data-i="' + i + '" aria-pressed="false"><span class="dot"></span><span><span class="lbl">' + esc(o.label) + '</span><span class="sub">' + esc(o.sub) + '</span></span><span class="txt">' + o.text + '</span></button>').join('') +
+      '</div><p class="all"><button class="btn link" type="button" id="men-all">Show all four</button></p></section>' : '') +
     '<div class="stages-h"><h2 class="section-h">Stage by stage</h2><button class="btn link" type="button" id="toggle-all">Open all stages</button></div>' +
     R.stages.map(stageHTML).join('') +
 
@@ -503,6 +545,23 @@ html.embedded .wrap { padding-top: 16px; }
     details[k].open = true;
     details[k].scrollIntoView({ behavior: 'smooth', block: 'start' });
   }));
+
+  // meniscus variant: which "Getting around" text shows in Protect and Walk
+  const VKEY = 'raynor-recovery-' + topic + '-meniscus';
+  const vstore = { get() { try { return localStorage.getItem(VKEY); } catch (e) { return null; } }, set(v) { try { localStorage.setItem(VKEY, v); } catch (e) {} } };
+  const opts = [...document.querySelectorAll('.men-opt')];
+  function applyVar(v, idx) {
+    document.querySelectorAll('.var').forEach(el => { el.hidden = el.dataset.var !== v; });
+    opts.forEach(o => o.setAttribute('aria-pressed', String(idx != null ? +o.dataset.i === idx : o.dataset.var === v)));
+  }
+  if (opts.length) {
+    const savedIdx = parseInt(vstore.get(), 10);
+    const startIdx = Number.isInteger(savedIdx) && opts[savedIdx] ? savedIdx : 0;
+    applyVar(opts[startIdx].dataset.var, startIdx);
+    opts.forEach(o => o.addEventListener('click', () => { const i = +o.dataset.i; applyVar(o.dataset.var, i); vstore.set(String(i)); document.getElementById('meniscus').classList.remove('show-all'); }));
+    const all = $('men-all');
+    all.addEventListener('click', () => { const m = document.getElementById('meniscus'); m.classList.toggle('show-all'); all.textContent = m.classList.contains('show-all') ? 'Show only mine' : 'Show all four'; });
+  }
 
   const toggle = $('toggle-all');
   const syncToggle = () => { toggle.textContent = details.every(d => d.open) ? 'Close all stages' : 'Open all stages'; };
