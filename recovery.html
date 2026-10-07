@@ -173,12 +173,14 @@ html.inapp .backbar { display: block; }
          "text": "Full weight on the leg from day one. Crutches for balance for about 3 to 4 weeks, brace for about 3 to 4 weeks, walking normally by about week 6. A trimmed meniscus (a partial meniscectomy) does not change the ACL roadmap at all."},
         {"id": "none", "label": "Meniscus repair, one or two stitches", "sub": "A small repair",
          "text": "No change. Follow the roadmap as written: full weight from day one, crutches and brace for about 3 to 4 weeks."},
-        {"id": "repair", "label": "Meniscus repair, more than two stitches", "sub": "A larger repair",
-         "text": "Full weight on the leg, but with the brace locked straight for 6 weeks (you walk stiff-legged). Knee bending happens in therapy, limited to 90 degrees for the first 2 weeks. The brace stays on longer than the standard roadmap, and the rest of the recovery does not change much."},
+        {"id": "repair", "label": "Meniscus repair, more than two stitches", "sub": "A larger repair, full weight",
+         "text": "Most of the time: full weight on the leg, but with the brace locked straight for 6 weeks (you walk stiff-legged). Knee bending happens in therapy, limited to 90 degrees for the first 2 weeks. The brace stays on longer than the standard roadmap, and the rest of the recovery does not change much."},
+        {"id": "pwb", "label": "Meniscus repair, more than two stitches, partial weight", "sub": "A larger repair that needs more protection; decided at surgery",
+         "text": "For some larger repairs, Dr. Raynor decides during surgery that the repair needs more protection: 50% partial weight bearing on crutches with the brace locked straight for the first 3 weeks, then full weight with the brace still locked straight for 3 more weeks. Knee bending happens in therapy, limited to 90 degrees for the first 2 weeks. Your post-op instructions will say which one applies to you."},
         {"id": "root", "label": "Meniscus root repair", "sub": "Uncommon, under 2 in 100 cases",
-         "text": "Toe-touch weight bearing on crutches for 6 weeks: the foot can rest on the floor for balance, but the leg carries no real weight. This is the only scenario with six weeks of protected weight bearing, and we flag it before surgery."}
+         "text": "Toe-touch weight bearing on crutches for 6 weeks: the foot can rest on the floor for balance, but the leg carries no real weight. We flag this one before surgery."}
       ],
-      "hint": "Choose yours and the Protect and Walk stages below will show the matching instructions."
+      "hint": "Choose yours and the Protect and Walk stages below will show the matching instructions. Not sure? Your post-op instructions say which one you are."
     },
     "stages": [
       {
@@ -214,6 +216,9 @@ html.inapp .backbar { display: block; }
             "repair": ["You can put your full weight on the leg from the start, but you walk with the brace locked straight for the first 6 weeks to protect the meniscus repair. The crutches are for balance.",
                        "You still bend the knee in physical therapy, limited to 90 degrees for the first 2 weeks, then working toward full motion.",
                        "Keep the brace on whenever you are up and walking, and unlock it only in therapy."],
+            "pwb": ["Half your weight on the leg (50% partial weight bearing) on crutches, with the brace locked straight, for the first 3 weeks. This protects a larger meniscus repair.",
+                    "You still bend the knee in physical therapy, limited to 90 degrees for the first 2 weeks, then working toward full motion.",
+                    "Keep the brace on whenever you are up and walking, and unlock it only in therapy."],
             "root": ["Toe-touch weight bearing on crutches for the first 6 weeks: the foot rests on the ground for balance, but the leg carries no real weight. This protects the root repair.",
                      "Wear your brace whenever you are up and walking.",
                      "You still bend the knee in physical therapy, within the limits on your protocol."]
@@ -260,6 +265,8 @@ html.inapp .backbar { display: block; }
                      "Most people are walking normally by about week 6."],
             "repair": ["Full weight on the leg, brace locked straight, through week 6. Most patients drop the crutches once they walk steadily in the brace.",
                        "At 6 weeks the brace comes off and you start walking with a bending knee. Expect a week or two to find a normal stride again."],
+            "pwb": ["At 3 weeks you move from half weight to full weight on the leg, still with the brace locked straight, through week 6. Most patients drop the crutches once they walk steadily in the brace.",
+                    "At 6 weeks the brace comes off and you start walking with a bending knee. Expect a week or two to find a normal stride again."],
             "root": ["Toe-touch weight bearing on crutches through week 6.",
                      "At 6 weeks you start putting weight through the leg and come off the crutches over the following week or two, as your therapist directs."]
           }},
@@ -440,7 +447,7 @@ html.inapp .backbar { display: block; }
     (R.meniscus ? '<section class="men" id="meniscus" aria-labelledby="men-h"><h2 id="men-h">' + R.meniscus.h + '</h2><p>' + R.meniscus.p + '</p>' +
       '<p class="hint">' + esc(R.meniscus.hint) + '</p><div class="men-opts" role="group" aria-label="Meniscus">' +
       R.meniscus.options.map((o, i) => '<button class="men-opt" type="button" data-var="' + o.id + '" data-i="' + i + '" aria-pressed="false"><span class="dot"></span><span><span class="lbl">' + esc(o.label) + '</span><span class="sub">' + esc(o.sub) + '</span></span><span class="txt">' + o.text + '</span></button>').join('') +
-      '</div><p class="all"><button class="btn link" type="button" id="men-all">Show all four</button></p></section>' : '') +
+      '</div><p class="all"><button class="btn link" type="button" id="men-all">Show all five</button></p></section>' : '') +
     '<div class="stages-h"><h2 class="section-h">Stage by stage</h2><button class="btn link" type="button" id="toggle-all">Open all stages</button></div>' +
     R.stages.map(stageHTML).join('') +
 
@@ -570,7 +577,7 @@ html.inapp .backbar { display: block; }
     applyVar(opts[startIdx].dataset.var, startIdx);
     opts.forEach(o => o.addEventListener('click', () => { const i = +o.dataset.i; applyVar(o.dataset.var, i); vstore.set(String(i)); document.getElementById('meniscus').classList.remove('show-all'); }));
     const all = $('men-all');
-    all.addEventListener('click', () => { const m = document.getElementById('meniscus'); m.classList.toggle('show-all'); all.textContent = m.classList.contains('show-all') ? 'Show only mine' : 'Show all four'; });
+    all.addEventListener('click', () => { const m = document.getElementById('meniscus'); m.classList.toggle('show-all'); all.textContent = m.classList.contains('show-all') ? 'Show only mine' : 'Show all five'; });
   }
 
   const toggle = $('toggle-all');
