@@ -351,6 +351,12 @@
   .pt-caption.in { animation: ptfade .35s ease; }
   @keyframes ptfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
   .pt-nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  /* v0.40 replay + main screen */
+  .pt-nav .pt-replay { flex: 0 0 auto; white-space: nowrap; }
+  html.explore.pt-phone .pt-nav.has-replay .pt-count { display: none; }
+  html.explore.pt-phone .pt-nav.has-replay .pt-replay { order: -1; flex-basis: 100%; min-height: 40px; font-size: 16px; }
+  html.explore.pt-phone .pt-nav.has-replay .js-pt-next { flex: 1; }
+  .pt-welcome .pt-mainbtn { margin-top: 14px; min-height: 48px; font-size: 17px; }
   .pt-count { flex: 1; text-align: center; color: var(--ink-soft); font-size: 15px; font-variant-numeric: tabular-nums; }
   .pt-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 60px; padding: 10px 26px;
             border: 2px solid var(--navy); border-radius: 16px; background: var(--chip-bg); color: var(--chip-fg);
@@ -2187,6 +2193,7 @@
     <div class="pt-nav">
       <button class="pt-btn js-pt-back">◀ Back</button>
       <span class="pt-count js-pt-count"></span>
+      <button class="pt-btn pt-replay js-pt-replay" hidden>↻ Replay animation</button>
       <button class="pt-btn ghost js-pt-skip" hidden>Skip to the end</button>
       <button class="pt-btn primary js-pt-next">Next ▶</button>
     </div>
@@ -2204,7 +2211,8 @@
           <button class="pt-btn primary js-pt-start" data-side="right"></button>
           <button class="pt-btn primary js-pt-start" data-side="left"></button>
         </div>
-        <p class="pt-fine">General education, not a diagnosis. Nothing you tap is saved. <button class="ptlink js-pt-topics">See other topics</button></p>
+        <button class="pt-btn pt-mainbtn js-pt-topics k-only">◀ Return to main screen</button>
+        <p class="pt-fine">General education, not a diagnosis. Nothing you tap is saved.</p>
         <div class="pt-brand js-pt-brand"></div>
       </div>
     </div>
@@ -7915,7 +7923,7 @@ three/build/three.module.js:
       v.insertBefore(bar, $('.js-stage', v)); v.appendChild(panel); v.appendChild(cover);
       const q = s => $(s, v);
       F.el = { cover, welcome: q('.js-pt-welcome'), end: q('.js-pt-end'), caption: q('.js-pt-caption'), chapter: q('.js-pt-chapter'),
-               fill: q('.js-pt-fill'), count: q('.js-pt-count'), next: q('.js-pt-next'), back: q('.js-pt-back'), skip: q('.js-pt-skip') };
+               fill: q('.js-pt-fill'), count: q('.js-pt-count'), next: q('.js-pt-next'), back: q('.js-pt-back'), skip: q('.js-pt-skip'), replay: q('.js-pt-replay') };
       const P = F.part, Cap = P[0].toUpperCase() + P.slice(1);
       F.title0 = F.title; copy(F);
       q('.js-pt-eyebrow').textContent = F.tile;
@@ -7935,6 +7943,7 @@ three/build/three.module.js:
 
       $$('.js-pt-start', v).forEach(b => b.addEventListener('click', () => { side(F, b.dataset.side === 'left'); F.skipped = false; screen(F, 0, true); idle(); }));
       F.el.next.addEventListener('click', () => { if (F.idx >= F.steps.length - 1) goEnd(F, false); else screen(F, F.idx + 1, true); idle(); });
+      F.el.replay.addEventListener('click', () => { replay(F); idle(); });
       F.el.back.addEventListener('click', () => { if (F.idx <= 0) { if (!embedded) goWelcome(F); } else screen(F, F.idx - 1, false); });
       F.el.skip.addEventListener('click', () => goEnd(F, true));
       q('.js-pt-endback').addEventListener('click', () => screen(F, F.skipped ? F.fork : F.steps.length - 1, false));
@@ -8000,7 +8009,16 @@ three/build/three.module.js:
       F.el.count.textContent = `${i + 1} of ${F.steps.length}`;
       F.el.back.style.visibility = embedded && i === 0 ? 'hidden' : '';
       F.el.skip.hidden = i !== F.fork; F.el.skip.parentElement.classList.toggle('has-skip', i === F.fork);
+      { const an = animated(p); F.el.replay.hidden = !an; F.el.replay.parentElement.classList.toggle('has-replay', an); }
       F.el.next.textContent = i === F.fork ? (formal ? FORMAL.forkBtn : 'If surgery comes up ▶') : i === F.steps.length - 1 ? 'Finish ▶' : 'Next ▶';
+    }
+    /* v0.40: a screen is animated when its recipe plays something once (the looping hip and knee motions keep going) */
+    function animated(p) { const t = {}; try { p.set(t); } catch (e) { return false; } return !!(t.play || t.injury === 'play'); }
+    function replay(F) {
+      const p = F.steps[F.idx]; if (!p || !animated(p)) return;
+      clearTimers(F); coverTo(F, null);
+      F.mod.apply(st => { p.set(st); if (st.injury === 'play') st.injury = Date.now(); });   /* a new token makes the 3D knee tear again */
+      requestAnimationFrame(() => focus(F, F.idx));
     }
     /* on a website (embedded) there is no welcome: it opens straight on the first screen, right side (v0.25) */
     function goStart(F) {
