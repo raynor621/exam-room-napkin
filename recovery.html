@@ -138,6 +138,9 @@ details.stage.now .now-tag { display: inline-block; }
 .foot .note { margin-top: 12px; font-size: 13px; }
 
 html.embedded .wrap { padding-top: 16px; }
+.backbar { display: none; margin: 0 0 14px; }
+.backbar a { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: var(--navy); text-decoration: none; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); min-height: 40px; }
+html.inapp .backbar { display: block; }
 
 @media print {
   body { background: #fff; font-size: 12pt; }
@@ -409,7 +412,14 @@ html.embedded .wrap { padding-top: 16px; }
 
   const boxHTML = b => '<section class="box"><h2>' + b.h + '</h2>' + (b.p ? '<p>' + b.p + '</p>' : '') + list('ul', b.ul) + '</section>';
 
+  // opened from the While You Wait app (same site, not inside a frame): offer a way back and reset after idling, like the app does
+  let backHref = null;
+  try { const ref = document.referrer ? new URL(document.referrer) : null; if (!embedded && ref && ref.origin === location.origin && /^\/(learn|explore)(\/|$)/.test(ref.pathname)) backHref = ref.pathname; } catch (e) {}
+  if (!backHref && !embedded && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) backHref = '/learn';
+  if (backHref) document.documentElement.classList.add('inapp');
+
   document.getElementById('app').innerHTML =
+    (backHref ? '<p class="backbar"><a href="' + esc(backHref) + '">◀ Back to While You Wait</a></p>' : '') +
     '<p class="kicker">' + esc(R.kicker) + '</p>' +
     '<h1>' + esc(R.title) + '</h1>' +
     R.lead.map(p => '<p class="lead">' + p + '</p>').join('') +
@@ -581,6 +591,14 @@ html.embedded .wrap { padding-top: 16px; }
     if (el) { el.open = true; setTimeout(() => el.scrollIntoView({ block: 'start' }), 50); }
   }
   syncToggle();
+
+  // kiosk idle reset (the app's own is 3 minutes): back to the app after 5 quiet minutes so the next patient starts fresh
+  if (backHref) {
+    let idleT = 0;
+    const arm = () => { clearTimeout(idleT); idleT = setTimeout(() => { location.href = backHref; }, 5 * 60 * 1000); };
+    ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(ev => window.addEventListener(ev, arm, { passive: true }));
+    arm();
+  }
 })();
 </script>
 </body>

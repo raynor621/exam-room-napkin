@@ -369,6 +369,10 @@
   .pt-sides { display: flex; gap: 14px; flex-wrap: wrap; }
   .pt-sides .pt-btn { flex: 1 1 220px; min-height: 70px; font-size: 22px; }
   .pt-fine { font-size: 14px; color: var(--ink-soft); margin: 18px 0 0; }
+  .pt-roadmap { background: var(--navy-soft, #e3edf8); border-radius: 14px; padding: 16px 18px; margin: 0 0 18px; }
+  .pt-roadmap h2 { margin: 0 0 4px; }
+  .pt-roadmap p { margin: 0 0 12px; }
+  .pt-roadmap .pt-btn { text-decoration: none; }
   .pt-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px; }
   .pt-cols > div { background: var(--paper-2); border: 2px solid color-mix(in srgb, var(--ink) 18%, transparent); border-radius: 18px; padding: 16px 22px; }
   .pt-cols h2 { font-size: 20px; margin: 0 0 8px; }
@@ -376,15 +380,6 @@
   .pt-cols li { font-size: 19px; line-height: 1.35; margin: 7px 0; }
   .pt-endnav { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
   .pt-call { font-size: 19px; font-weight: 700; margin: 18px 0 0; }
-  /* v0.36 surgery videos */
-  .pt-video { margin: 14px 0 22px; max-width: 720px; }
-  .pt-video[hidden] { display: none; }
-  .pt-video h2 { margin: 0 0 4px; }
-  .pt-video-sub { margin: 0 0 10px; font-size: 16px; color: var(--ink-soft); }
-  .pt-video-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #0e1a2e; border-radius: 14px; overflow: hidden;
-                    box-shadow: 0 6px 22px rgba(14, 26, 46, .22); }
-  .pt-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
-
   .ptlink { background: none; border: 0; padding: 4px 8px; color: var(--navy); font-size: 15px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
   @media (max-width: 760px) {
     .pt-welcome { grid-template-columns: 1fr; gap: 14px; justify-items: center; text-align: center; }
@@ -1860,7 +1855,7 @@
               <div class="mile"><b>7 to 9 months</b><span>Back to cutting, pivoting and twisting sports. Waiting until nine lowers the chance of tearing it again.</span></div>
             </div>
             <p class="kicker">You're not bored for seven to nine months. It's a long recovery, but it's a very active recovery. What takes that long? Your quad gets super puny, and you spend that time getting it back.</p>
-            <p class="roadmap-more"><span class="e-only"><a class="roadmap-link" href="/recovery/acl" target="_blank" rel="noopener">See the full recovery roadmap, stage by stage</a></span><span class="k-only">The full stage-by-stage recovery roadmap is on your take-home page at the end.</span></p>
+            <p class="roadmap-more"><a class="roadmap-link js-roadmap-link" href="/recovery/acl">See the full recovery roadmap, stage by stage ▶</a></p>
           </section>
 
           <section data-card="timing">
@@ -2207,9 +2202,13 @@
     <div class="pt-sheet js-pt-end" hidden>
       <p class="pt-eyebrow">All done</p>
       <h1 class="js-pt-handoff">Thanks for looking through it</h1>
-      <div class="pt-video js-pt-video" hidden><h2 class="js-pt-watch-label"></h2><p class="pt-video-sub js-pt-watch-sub"></p><div class="pt-video-frame js-pt-watch-frame"></div></div>
       <p class="pt-lead k-only">I’ll be in shortly. A few things to think about before I get there, so we can make the most of our time together:</p>
       <p class="pt-lead e-only">If you’re coming in to see me, a few things to think about before your visit, so we can make the most of our time together:</p>
+      <div class="pt-roadmap js-pt-roadmap" hidden>
+        <h2>Your recovery roadmap</h2>
+        <p>What the first nine months look like, stage by stage, and how a meniscus repair changes the first six weeks. Enter your surgery date and it shows you where you are.</p>
+        <a class="pt-btn primary js-roadmap-link js-pt-roadmap-link" href="/recovery/acl">See the full recovery roadmap ▶</a>
+      </div>
       <div class="pt-cols">
         <div><h2>Think about</h2><ul class="js-pt-think"></ul></div>
         <div><h2>Good questions to ask me</h2><ul class="js-pt-qs"></ul></div>
@@ -7402,8 +7401,8 @@ three/build/three.module.js:
         view: 'knee', part: 'knee', title: 'Your Knee: The ACL', tile: 'A torn ACL', tileSub: 'how it tears, the new ACL, recovery',
         whead: 'Your ACL, the way I explain it',
         about: 'how the knee works, what happens when the ACL tears, and how we make a new one, on the same 3D knee I use in the room',
-        video: { id: 'TqV-bYJJPpc', label: 'Watch how I do the surgery', sub: 'ACL reconstruction with a patellar tendon graft, narrated by Dr. Raynor (about 3 minutes)' },
         chapters: ['How your knee works', 'What happened', 'Making a new ACL', 'Recovery'],
+        roadmap: { href: '/recovery/acl', label: 'See the full ACL recovery roadmap ▶' },
         steps: [
           { ch: 0, doc: 0, set: s => { }, text: 'This is your knee, bent, with the kneecap lifted out of the way: the thigh bone on top, the shin bone below, and the little bone on the outside. You can spin it with your finger.' },
           { ch: 0, doc: 1, set: s => { s.ligaments = true; }, text: 'Four main ligaments hold it together: the MCL on the medial side of the knee, the LCL on the lateral side, and the ACL and PCL crossing in the middle.' },
@@ -7870,32 +7869,6 @@ three/build/three.module.js:
       Object.values(FLOWS).forEach(F => focus(F, F.idx < F.steps.length ? F.idx : -1, 0));
     });
 
-    /* v0.36 surgery videos */
-    /* the film on the end screen: loaded while it is on screen, unloaded (stopped) when it is not */
-    function ptVideo(F, box) {
-      const V = F.video;
-      const src = 'https://www.youtube-nocookie.com/embed/' + V.id + '?rel=0&playsinline=1&modestbranding=1';
-      const load = () => {
-        if (box.querySelector('iframe')) return;
-        const f = document.createElement('iframe');
-        f.title = V.sub || V.label; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
-        f.referrerPolicy = 'strict-origin-when-cross-origin'; f.src = src; box.appendChild(f);
-      };
-      const unload = () => { box.innerHTML = ''; if (window.__ptVideo) { window.__ptVideo = false; clearTimeout(ptVideoCap); idle(); } };
-      if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? load() : unload())).observe(box);
-      else load();
-    }
-    /* tapping into a player: hold off the kiosk reset while they watch (back on the next outside touch, 4 min at most) */
-    let ptVideoCap = 0;
-    window.addEventListener('blur', () => setTimeout(() => {
-      const a = document.activeElement;
-      if (a && a.tagName === 'IFRAME' && a.closest('.js-pt-watch-frame')) {
-        window.__ptVideo = true; clearTimeout(idleTimer); clearTimeout(ptVideoCap);
-        ptVideoCap = setTimeout(() => { window.__ptVideo = false; idle(); }, 240000);
-      }
-    }, 0));
-    window.addEventListener('pointerdown', () => { if (window.__ptVideo) { window.__ptVideo = false; clearTimeout(ptVideoCap); } }, true);
-
     /* ---------- build each flow's screens from the template ---------- */
     Object.entries(FLOWS).forEach(([key, F]) => {
       F.key = key; F.mod = modules[F.view]; F.viewEl = views[F.view]; F.idx = -1; F.skipped = false; F.timers = [];
@@ -7913,8 +7886,9 @@ three/build/three.module.js:
       $$('.js-pt-start', v).forEach(b => { b.textContent = (b.dataset.side === 'left' ? 'Left ' : 'Right ') + P; });
       q('.js-pt-think').innerHTML = F.think.map(t => '<li></li>').join(''); $$('.js-pt-think li', v).forEach((li, i) => li.textContent = F.think[i]);
       q('.js-pt-qs').innerHTML = F.ask.map(t => '<li></li>').join(''); $$('.js-pt-qs li', v).forEach((li, i) => li.textContent = F.ask[i]);
-      if (F.video) { q('.js-pt-video').hidden = false; q('.js-pt-watch-label').textContent = F.video.label;
-        q('.js-pt-watch-sub').textContent = F.video.sub || ''; ptVideo(F, q('.js-pt-watch-frame')); }
+      if (F.roadmap) { const rm = q('.js-pt-roadmap'); rm.hidden = false; const a = q('.js-pt-roadmap-link'); a.href = F.roadmap.href; a.textContent = F.roadmap.label; }
+      /* roadmap links: a new tab inside a website, the same tab in the app (the roadmap page has a way back) */
+      $$('.js-roadmap-link', v).forEach(a => { if (embedded) { a.target = '_blank'; a.rel = 'noopener'; } });
       /* Brett's bar gets a way back to the patient view (shown after a handoff) */
       const ptBtn = document.createElement('button'); ptBtn.className = 'btn on js-ptview'; ptBtn.hidden = true; ptBtn.textContent = 'Patient view ↺';
       const reset = $('.bar .js-reset', v); reset.parentNode.insertBefore(ptBtn, reset.nextSibling);
@@ -7947,6 +7921,12 @@ three/build/three.module.js:
       a.href = (/^\/explore\b/.test(location.pathname) ? '/explore' : '/learn') + '/arthritis'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
       const b = document.createElement('b'); b.textContent = 'Knee arthritis'; const sm = document.createElement('small'); sm.textContent = 'wear and tear, treatment options';
+      a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
+    /* Recovery roadmaps (v0.36) live on their own page; the picker tile is a link there (ACL first) */
+    { const src = $('.tile[data-go="knee"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'recovery';
+      a.href = '/recovery/acl'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
+      if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
+      const b = document.createElement('b'); b.textContent = 'Recovery after surgery'; const sm = document.createElement('small'); sm.textContent = 'ACL reconstruction: what the first nine months look like';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
     $$('.js-pt-handoff', views.explore).forEach(el => longPress(el, () => handoff(null)));
     /* the Raynor and TOA logos (one copy in the file) under the welcome, end and picker screens */
@@ -8036,7 +8016,7 @@ three/build/three.module.js:
     function atStart() { return entry === 'picker' ? !cur : (cur && cur.key === entry && cur.idx === -1); }
     function idle() {
       clearTimeout(idleTimer);
-      if (embedded || !active || window.__ptVideo) return;
+      if (embedded || !active) return;
       if (root.classList.contains('explore')) { if (!atStart()) idleTimer = setTimeout(() => enter(entry), 180000); }
       else if (root.classList.contains('handoff')) idleTimer = setTimeout(() => { if (root.classList.contains('handoff')) enter(entry); }, 600000);
     }
