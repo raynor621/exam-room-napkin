@@ -34,6 +34,11 @@ button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visibl
 h1 { font-size: clamp(26px, 5vw, 36px); line-height: 1.15; margin: 0 0 14px; color: var(--navy); letter-spacing: -.01em; text-wrap: balance; }
 .lead { font-size: 18px; margin: 0 0 10px; }
 .lead + .lead { color: var(--ink-soft); font-size: 16px; }
+.pick { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 12px; }
+.pick a { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; text-decoration: none; color: inherit; }
+.pick a:hover, .pick a:focus-visible { border-color: var(--navy); }
+.pick b { display: block; font-size: 19px; color: var(--navy); margin-bottom: 4px; }
+.pick span { color: var(--ink-soft); font-size: 15px; }
 
 /* ---------- where am I ---------- */
 .tracker { margin: 22px 0 18px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; box-shadow: var(--shadow); }
@@ -150,6 +155,7 @@ html.inapp .backbar { display: block; }
   "acl": {
     "kicker": "M. Brett Raynor, M.D. · Recovery roadmap",
     "title": "What Does Recovery Look Like After ACL Reconstruction Surgery?",
+    "menu": {"name": "ACL reconstruction", "blurb": "The first nine months: crutches and brace, walking, building strength, jogging at 3 months, back to sport at 7 to 9 months. Includes how a meniscus repair changes the first six weeks."},
     "lead": [
       "ACL reconstruction recovery is long, but it is active. You are working toward something the whole time. Most patients feel mostly normal at about three months and return to full sports at seven to nine months. This page walks through each stage: what you can do, what physical therapy is working on, what is normal, and what gets you to the next stage.",
       "Every recovery is a little different. The biggest difference in the first six weeks is your meniscus: if it was repaired, you protect it while it heals, and the Protect and Walk stages below spell that out. Your physical therapist and our team will tell you when you're ready for each step. Strength and testing decide when you move on, not the calendar."
@@ -346,6 +352,7 @@ html.inapp .backbar { display: block; }
   "meniscus": {
     "kicker": "M. Brett Raynor, M.D. · Recovery roadmap",
     "title": "What Does Recovery Look Like After Meniscus Repair Surgery?",
+    "menu": {"name": "Meniscus repair", "blurb": "How you walk for the first six weeks depends on the repair; then walking normally, jogging at 3 months, and sports at about 6."},
     "desc": "A stage-by-stage recovery roadmap after meniscus repair: weight bearing and brace rules by type of repair, physical therapy, driving, jogging at about 3 months, and return to sport at about 6 months. M. Brett Raynor, M.D., Texas Orthopaedic Associates, Dallas.",
     "lead": [
       "When a meniscus tear is repaired instead of trimmed, the goal is to keep your meniscus for life: it is the knee's shock absorber. The trade is a more protected first six weeks while the stitches hold the tear together and it heals. After that, recovery moves quickly. Most patients are walking normally by six to eight weeks, back in the gym and jogging at about three months, doing everything by four months, and back to cutting and pivoting sports at about six months.",
@@ -675,6 +682,7 @@ html.inapp .backbar { display: block; }
   "rotator-cuff": {
     "kicker": "M. Brett Raynor, M.D. · Recovery roadmap",
     "title": "What Does Recovery Look Like After Rotator Cuff Repair Surgery?",
+    "menu": {"name": "Rotator cuff repair", "blurb": "Six weeks in a sling, six weeks working the stiffness out, strengthening from 3 months, and a full recovery at about 6."},
     "desc": "A stage-by-stage recovery roadmap after rotator cuff repair: six weeks in a sling, working the stiffness out, strengthening from 3 months, driving, golf, and full recovery at about 6 months. M. Brett Raynor, M.D., Texas Orthopaedic Associates, Dallas.",
     "lead": [
       "Rotator cuff repair reattaches a torn tendon to the bone and holds it there so it can heal back in. The recovery follows a set rhythm, and the calendar comes from biology, not caution: six weeks in a sling while the tendon starts to heal, six weeks of working the stiffness out, strengthening from three months, and a full recovery at about six months. Most patients are doing everything they want to do by four months.",
@@ -1025,14 +1033,47 @@ html.inapp .backbar { display: block; }
 
   const ALL = JSON.parse(document.getElementById('roadmaps').textContent);
   const seg = location.pathname.split('/').filter(Boolean);
-  const topic = (seg[0] === 'recovery' && ALL[seg[1]]) ? seg[1] : (ALL[new URLSearchParams(location.search).get('topic')] ? new URLSearchParams(location.search).get('topic') : 'acl');
-  const R = ALL[topic];
+  const qTopic = new URLSearchParams(location.search).get('topic');
+  const topic = (seg[0] === 'recovery' && ALL[seg[1]]) ? seg[1] : (ALL[qTopic] ? qTopic : (seg[1] || qTopic ? 'acl' : null));
+  const R = topic ? ALL[topic] : null;
   const KEY = 'raynor-recovery-' + topic + '-date';
   const LINK_TARGET = embedded ? ' target="_blank" rel="noopener"' : '';
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // opened from the While You Wait app (same site, not inside a frame): offer a way back and reset after idling, like the app does
+  let backHref = null;
+  try { const ref = document.referrer ? new URL(document.referrer) : null; if (!embedded && ref && ref.origin === location.origin && /^\/(learn|explore)(\/|$)/.test(ref.pathname)) backHref = ref.pathname; } catch (e) {}
+  { const from = new URLSearchParams(location.search).get('from'); if (!backHref && !embedded && from && /^\/(learn|explore)(\/|$)/.test(from)) backHref = from; }  // handed on by the chooser
+  if (!backHref && !embedded && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) backHref = '/learn';
+  if (backHref) document.documentElement.classList.add('inapp');
+  const idleReset = () => {
+    // kiosk idle reset (the app's own is 3 minutes): back to the app after 5 quiet minutes so the next patient starts fresh
+    if (!backHref) return;
+    let idleT = 0;
+    const arm = () => { clearTimeout(idleT); idleT = setTimeout(() => { location.href = backHref; }, 5 * 60 * 1000); };
+    ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(ev => window.addEventListener(ev, arm, { passive: true }));
+    arm();
+  };
+
+  if (!R) {
+    // /recovery with no topic: the chooser
+    document.title = 'Recovery After Surgery · Dr. Raynor';
+    const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', 'Stage-by-stage recovery roadmaps after ACL reconstruction, meniscus repair and rotator cuff repair. M. Brett Raynor, M.D., Texas Orthopaedic Associates, Dallas.');
+    document.getElementById('app').innerHTML =
+      (backHref ? '<p class="backbar"><a href="' + esc(backHref) + '">◀ Back to While You Wait</a></p>' : '') +
+      '<p class="kicker">M. Brett Raynor, M.D. · Recovery roadmaps</p>' +
+      '<h1>What Does Recovery Look Like After Surgery?</h1>' +
+      '<p class="lead">Each roadmap walks through recovery stage by stage: what you can do, what physical therapy is working on, what is normal, and what gets you to the next stage. Enter your surgery date and it shows you where you are.</p>' +
+      '<p class="lead">Choose your surgery.</p>' +
+      '<ul class="pick">' + Object.keys(ALL).map(k => '<li><a href="/recovery/' + k + (embedded ? '?embed' : backHref ? '?from=' + encodeURIComponent(backHref) : '') + '"><b>' + esc(ALL[k].menu ? ALL[k].menu.name : ALL[k].title) + '</b><span>' + esc(ALL[k].menu ? ALL[k].menu.blurb : '') + '</span></a></li>').join('') + '</ul>' +
+      '<footer class="foot"><p class="sig">M. Brett Raynor, M.D.</p><p>Texas Orthopaedic Associates, a Division of OrthoLoneStar</p>' +
+      '<p>7115 Greenville Ave, Suite 310, Dallas, TX 75231 · <a href="' + TEL + '">' + PHONE + '</a></p></footer>';
+    idleReset();
+    return;
+  }
   document.title = R.title + ' · Dr. Raynor';
   if (R.desc) { const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', R.desc); }
 
-  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const list = (tag, items) => '<' + tag + '>' + items.map(i => '<li>' + i + '</li>').join('') + '</' + tag + '>';
   const block = b => {
     if (b.p) return '<p>' + b.p + '</p>';
@@ -1065,12 +1106,6 @@ html.inapp .backbar { display: block; }
       '<span class="tm">' + esc(s.timing) + '</span></button>';
 
   const boxHTML = b => '<section class="box"><h2>' + b.h + '</h2>' + (b.p ? '<p>' + b.p + '</p>' : '') + list('ul', b.ul) + '</section>';
-
-  // opened from the While You Wait app (same site, not inside a frame): offer a way back and reset after idling, like the app does
-  let backHref = null;
-  try { const ref = document.referrer ? new URL(document.referrer) : null; if (!embedded && ref && ref.origin === location.origin && /^\/(learn|explore)(\/|$)/.test(ref.pathname)) backHref = ref.pathname; } catch (e) {}
-  if (!backHref && !embedded && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) backHref = '/learn';
-  if (backHref) document.documentElement.classList.add('inapp');
 
   document.getElementById('app').innerHTML =
     (backHref ? '<p class="backbar"><a href="' + esc(backHref) + '">◀ Back to While You Wait</a></p>' : '') +
@@ -1228,13 +1263,7 @@ html.inapp .backbar { display: block; }
   }
   syncToggle();
 
-  // kiosk idle reset (the app's own is 3 minutes): back to the app after 5 quiet minutes so the next patient starts fresh
-  if (backHref) {
-    let idleT = 0;
-    const arm = () => { clearTimeout(idleT); idleT = setTimeout(() => { location.href = backHref; }, 5 * 60 * 1000); };
-    ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(ev => window.addEventListener(ev, arm, { passive: true }));
-    arm();
-  }
+  idleReset();
 })();
 </script>
 </body>

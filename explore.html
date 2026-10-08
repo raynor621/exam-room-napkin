@@ -889,6 +889,7 @@
               <div class="mile"><b>6 months</b><span>Doing the things you want to do, but still noticing it.</span></div>
               <div class="mile"><b>1 year</b><span>Full recovery. You don't think about your shoulder anymore.</span></div>
             </div>
+            <p class="roadmap-more"><a class="roadmap-link js-roadmap-link" href="/recovery/rotator-cuff">See the full recovery roadmap, stage by stage ▶</a></p>
           </section>
 
           <section data-card="home">
@@ -2223,8 +2224,8 @@
       <p class="pt-lead k-only">I’ll be in shortly. A few things to think about before I get there, so we can make the most of our time together:</p>
       <p class="pt-lead e-only">If you’re coming in to see me, a few things to think about before your visit, so we can make the most of our time together:</p>
       <div class="pt-roadmap js-pt-roadmap" hidden>
-        <h2>Your recovery roadmap</h2>
-        <p>What the first nine months look like, stage by stage, and how a meniscus repair changes the first six weeks. Enter your surgery date and it shows you where you are.</p>
+        <h2 class="js-pt-roadmap-h">Your recovery roadmap</h2>
+        <p class="js-pt-roadmap-sub">What the first nine months look like, stage by stage, and how a meniscus repair changes the first six weeks. Enter your surgery date and it shows you where you are.</p>
         <a class="pt-btn primary js-roadmap-link js-pt-roadmap-link" href="/recovery/acl">See the full recovery roadmap ▶</a>
       </div>
       <div class="pt-cols">
@@ -7339,6 +7340,8 @@ three/build/three.module.js:
         view: 'shoulder', part: 'shoulder', title: 'Your Shoulder', tile: 'Shoulder pain', tileSub: 'rotator cuff, bursitis, biceps',
         about: 'how the shoulder works, why it hurts, and what we can do about it',
         chapters: ['How your shoulder works', 'Why it hurts', 'What we can do about it', 'If surgery comes up'],
+        roadmap: { href: '/recovery/rotator-cuff', label: 'See the rotator cuff repair recovery roadmap ▶', h: 'If we repair the rotator cuff',
+          sub: 'What the six months after a rotator cuff repair look like, stage by stage: the sling, the stiff weeks, strengthening, and when you drive and golf again. Enter your surgery date and it shows you where you are.' },
         steps: [
           { ch: 0, doc: 0, set: s => { }, text: 'Your shoulder is a ball and socket joint. The ball is the top of your arm bone, and the socket is part of your shoulder blade.' },
           { ch: 0, doc: 1, set: s => { s.cuff = 1; }, text: 'Your rotator cuff is four tendons that wrap around that ball. There’s one up top…' },
@@ -7452,6 +7455,8 @@ three/build/three.module.js:
         view: 'kneepain', part: 'knee', title: 'Your Knee', tile: 'Knee pain', tileSub: 'when the X-rays look normal',
         about: 'what’s in your knee, the things that can hurt without showing up on an X-ray, and what helps, on the same 3D knee I use in the room',
         chapters: ['What’s in your knee', 'What can hurt', 'What helps'],
+        roadmap: { href: '/recovery/meniscus', label: 'See the meniscus repair recovery roadmap ▶', h: 'If we repair the meniscus',
+          sub: 'What recovery after a meniscus repair looks like: how you walk for the first six weeks depends on the repair, then jogging at three months and sports at about six. Enter your surgery date and it shows you where you are.' },
         steps: [
           { ch: 0, doc: 0, set: s => { }, text: 'A lot of knee pain comes from things that don’t show up on an X-ray. The space you see between the bones on an X-ray is your cartilage, and when that space looks good, the pain is coming from somewhere else.' },
           { ch: 0, doc: 2, set: s => { s.scene = 'inside'; s.ligaments = true; }, text: 'Four main ligaments hold the knee together: the MCL on the medial side, the LCL on the lateral side, and the ACL and PCL crossing in the middle. When I examine you, I check each one.' },
@@ -7933,7 +7938,8 @@ three/build/three.module.js:
       q('.js-pt-qs').innerHTML = F.ask.map(t => '<li></li>').join(''); $$('.js-pt-qs li', v).forEach((li, i) => li.textContent = F.ask[i]);
       if (F.video) { q('.js-pt-video').hidden = false; q('.js-pt-watch-label').textContent = F.video.label;
         q('.js-pt-watch-sub').textContent = F.video.sub || ''; ptVideo(F, q('.js-pt-watch-frame')); }
-      if (F.roadmap) { const rm = q('.js-pt-roadmap'); rm.hidden = false; const a = q('.js-pt-roadmap-link'); a.href = F.roadmap.href; a.textContent = F.roadmap.label; }
+      if (F.roadmap) { const rm = q('.js-pt-roadmap'); rm.hidden = false; const a = q('.js-pt-roadmap-link'); a.href = F.roadmap.href; a.textContent = F.roadmap.label;
+        if (F.roadmap.h) q('.js-pt-roadmap-h').textContent = F.roadmap.h; if (F.roadmap.sub) q('.js-pt-roadmap-sub').textContent = F.roadmap.sub; }
       /* roadmap links: a new tab inside a website, the same tab in the app (the roadmap page has a way back) */
       $$('.js-roadmap-link', v).forEach(a => { if (embedded) { a.target = '_blank'; a.rel = 'noopener'; } });
       /* Brett's bar gets a way back to the patient view (shown after a handoff) */
@@ -7970,11 +7976,11 @@ three/build/three.module.js:
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
       const b = document.createElement('b'); b.textContent = 'Knee arthritis'; const sm = document.createElement('small'); sm.textContent = 'wear and tear, treatment options';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
-    /* Recovery roadmaps (v0.36) live on their own page; the picker tile is a link there (ACL first) */
+    /* Recovery roadmaps (v0.36) live on their own page; the picker tile opens the chooser (v0.42: ACL, meniscus repair, rotator cuff repair) */
     { const src = $('.tile[data-go="knee"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'recovery';
-      a.href = '/recovery/acl'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
+      a.href = '/recovery'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
-      const b = document.createElement('b'); b.textContent = 'Recovery after surgery'; const sm = document.createElement('small'); sm.textContent = 'ACL reconstruction: what the first nine months look like';
+      const b = document.createElement('b'); b.textContent = 'Recovery after surgery'; const sm = document.createElement('small'); sm.textContent = 'ACL reconstruction, meniscus repair, rotator cuff repair';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
     $$('.js-pt-handoff', views.explore).forEach(el => longPress(el, () => handoff(null)));
     /* the Raynor and TOA logos (one copy in the file) under the welcome, end and picker screens */
