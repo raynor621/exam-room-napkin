@@ -1969,7 +1969,7 @@ html.inapp .backbar { display: block; }
       '<div class="row"><label for="sx-date">Surgery date</label>' +
         '<input id="sx-date" type="date">' +
         '<button class="btn solid" type="button" id="sx-go">Show me</button>' +
-        '<button class="btn link" type="button" id="sx-clear" hidden>Clear</button></div>' +
+        '<button class="btn link" type="button" id="sx-clear" hidden>Clear date</button></div>' +
       '<div class="status" id="sx-status" aria-live="polite"><p class="where" id="sx-where"></p><p class="stage-now" id="sx-now"></p><p class="next" id="sx-next"></p></div>' +
     '</section>' +
 
@@ -2087,6 +2087,13 @@ html.inapp .backbar { display: block; }
   $('sx-clear').addEventListener('click', () => {
     store.clear(); input.value = ''; clearMarks();
     $('sx-status').classList.remove('on'); $('sx-clear').hidden = true;
+    // forget the date in the address too, so a reload does not bring it back
+    try {
+      const u = new URL(location.href); u.searchParams.delete('date');
+      if (/^#date=/.test(u.hash)) u.hash = '';
+      history.replaceState(null, '', u.pathname + u.search + u.hash);
+    } catch (e) {}
+    input.focus();
   });
 
   segs.forEach((g, k) => g.addEventListener('click', () => {
@@ -2102,8 +2109,9 @@ html.inapp .backbar { display: block; }
   window.addEventListener('beforeprint', () => details.forEach(d => d.open = true));
   window.addEventListener('resize', () => { if (input.value && $('you').classList.contains('on')) show(input.value, { keepOpen: true }); });
 
-  // deep links: /recovery/acl?date=YYYY-MM-DD (e.g. from a post-op email) or #stage-run
-  const qDate = new URLSearchParams(location.search).get('date');
+  // deep links: /recovery/acl#date=YYYY-MM-DD (the post-op email; a fragment never reaches the server) or ?date=YYYY-MM-DD, or #stage-run
+  const hDate = (/^#date=(\d{4}-\d{2}-\d{2})$/.exec(location.hash) || [])[1];
+  const qDate = hDate || new URLSearchParams(location.search).get('date');
   const saved = qDate || store.get();
   if (saved && parse(saved)) { input.value = saved; show(saved, { save: !!qDate }); }
   else { details[0].open = false; }
