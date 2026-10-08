@@ -117,6 +117,15 @@ details.stage.now .now-tag { display: inline-block; }
 .cite { font-size: 13px; color: var(--ink-soft); }
 
 /* ---------- side boxes ---------- */
+/* dressing videos: tap to load */
+.vid { margin: 12px 0 8px; max-width: 560px; }
+.vid-btn, .vid iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 12px; overflow: hidden; background: #0f1d2e; }
+.vid-btn { position: relative; padding: 0; cursor: pointer; }
+.vid-btn img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .92; }
+.vid-play { position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px; border-radius: 50%; background: rgba(15, 29, 46, .82); box-shadow: 0 2px 10px rgba(0,0,0,.35); }
+.vid-play::after { content: ''; position: absolute; left: 29px; top: 22px; border-style: solid; border-width: 14px 0 14px 22px; border-color: transparent transparent transparent #fff; }
+.vid-btn:hover .vid-play, .vid-btn:focus-visible .vid-play { background: var(--navy, #1A2C46); }
+.vid figcaption { font-size: 15px; margin-top: 6px; color: inherit; }
 .box { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; margin: 10px 0; }
 .box h2 { font-size: 18px; margin: 0 0 6px; color: var(--navy); }
 .box p { margin: 0 0 8px; }
@@ -224,6 +233,7 @@ html.inapp .backbar { display: block; }
             "Do not soak the incisions in a bath, pool or hot tub until they are fully sealed, usually about 4 weeks.",
             "You have two small stitches. We remove them at your first post-op visit, about 7 to 10 days after surgery. Removing them doesn't hurt."
           ]},
+          {"video": {"id": "ut-PcELn5WQ", "label": "Watch: changing your dressing at home", "sub": "How to change the dressing and adjust the brace after knee ligament surgery."}},
           {"h": "Physical therapy"},
           {"ul": [
             "PT starts within the first few days: the sooner, the better.",
@@ -437,6 +447,7 @@ html.inapp .backbar { display: block; }
               "The two small external stitches come out at your first post-op visit, about 7 to 14 days after surgery. Any other stitches are under the skin and dissolve on their own."
             ]
           },
+          {"video": {"id": "ut-PcELn5WQ", "label": "Watch: changing your dressing at home", "sub": "How to change the dressing and adjust the brace after knee ligament surgery."}},
           {
             "h": "Physical therapy"
           },
@@ -760,6 +771,7 @@ html.inapp .backbar { display: block; }
               "Stitches come out at your first post-op visit, about 7 to 14 days after surgery."
             ]
           },
+          {"video": {"id": "N8k-LfKOc4E", "label": "Watch: changing your dressing at home", "sub": "How to change your dressing after shoulder surgery."}},
           {
             "h": "Physical therapy"
           },
@@ -1096,6 +1108,7 @@ html.inapp .backbar { display: block; }
               "Two small stitches come out at your first post-op visit, about 7 to 14 days after surgery. The others are under the skin and dissolve."
             ]
           },
+          {"video": {"id": "ut-PcELn5WQ", "label": "Watch: changing your dressing at home", "sub": "How to change the dressing and adjust the brace after knee ligament surgery."}},
           {
             "h": "Physical therapy"
           },
@@ -1423,6 +1436,7 @@ html.inapp .backbar { display: block; }
               "A few stitches come out at your first post-op visit, about 7 to 14 days after surgery."
             ]
           },
+          {"video": {"id": "AVHlvBPNl-A", "label": "Watch: changing your dressing at home", "sub": "How to change your dressing after hip arthroscopy."}},
           {
             "h": "Physical therapy"
           },
@@ -1702,6 +1716,7 @@ html.inapp .backbar { display: block; }
               "Two small stitches come out at your first post-op visit, about 7 to 14 days after surgery."
             ]
           },
+          {"video": {"id": "vzpPQlVwzrw", "label": "Watch: changing your dressing at home", "sub": "How to change your dressing after knee arthroscopy."}},
           {
             "h": "Physical therapy"
           },
@@ -1897,6 +1912,7 @@ html.inapp .backbar { display: block; }
   if (!backHref && !embedded && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) backHref = '/learn';
   if (backHref) document.documentElement.classList.add('inapp');
   const idleReset = () => {
+    document.querySelectorAll('.vid iframe').forEach(f => { const fig = f.closest('.vid'); f.remove(); fig.querySelector('.vid-btn').hidden = false; });
     // kiosk idle reset (the app's own is 3 minutes): back to the app after 5 quiet minutes so the next patient starts fresh
     if (!backHref) return;
     let idleT = 0;
@@ -1930,6 +1946,13 @@ html.inapp .backbar { display: block; }
     if (b.h) return '<h3>' + b.h + '</h3>';
     if (b.ul) return list('ul', b.ul);
     if (b.ol) return list('ol', b.ol);
+    /* dressing videos v1 */
+    if (b.video) {
+      const v = b.video;
+      return '<figure class="vid" data-yt="' + esc(v.id) + '"><button class="vid-btn" type="button" aria-label="Play the video: ' + esc(v.sub) + '">' +
+        '<img src="https://i.ytimg.com/vi/' + esc(v.id) + '/hqdefault.jpg" alt="" loading="lazy"><span class="vid-play" aria-hidden="true"></span></button>' +
+        '<figcaption><b>' + esc(v.label) + '</b> ' + esc(v.sub) + '</figcaption></figure>';
+    }
     if (b.var) {
       return '<div class="choices">' + Object.keys(b.var).map(k => '<div class="choice"><h4>' + esc((R.varLabels || {})[k] || k) + '</h4>' + list('ul', b.var[k]) + '</div>').join('') + '</div>';
     }
@@ -2096,6 +2119,18 @@ html.inapp .backbar { display: block; }
     input.focus();
   });
 
+  /* dressing videos (tap to load): the player replaces the thumbnail; closing the stage or the idle reset unloads it */
+  const vidReset = root => (root || document).querySelectorAll('.vid iframe').forEach(f => {
+    const fig = f.closest('.vid'); f.remove(); fig.querySelector('.vid-btn').hidden = false; });
+  document.getElementById('app').addEventListener('click', e => {
+    const btn = e.target.closest('.vid-btn'); if (!btn) return;
+    const fig = btn.closest('.vid'), id = fig.dataset.yt;
+    const f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&playsinline=1&modestbranding=1';
+    f.title = fig.querySelector('figcaption').textContent; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
+    btn.hidden = true; fig.insertBefore(f, btn);
+  });
+  document.querySelectorAll('#app details.stage').forEach(d => d.addEventListener('toggle', () => { if (!d.open) vidReset(d); }));
   segs.forEach((g, k) => g.addEventListener('click', () => {
     details[k].open = true;
     details[k].scrollIntoView({ behavior: 'smooth', block: 'start' });
