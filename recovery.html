@@ -1912,7 +1912,7 @@ html.inapp .backbar { display: block; }
   if (!backHref && !embedded && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) backHref = '/learn';
   if (backHref) document.documentElement.classList.add('inapp');
   const idleReset = () => {
-    document.querySelectorAll('.vid iframe').forEach(f => { const fig = f.closest('.vid'); f.remove(); fig.querySelector('.vid-btn').hidden = false; });
+    document.querySelectorAll('.vid iframe').forEach(f => f.replaceWith(f.cloneNode(true)));
     // kiosk idle reset (the app's own is 3 minutes): back to the app after 5 quiet minutes so the next patient starts fresh
     if (!backHref) return;
     let idleT = 0;
@@ -1949,8 +1949,9 @@ html.inapp .backbar { display: block; }
     /* dressing videos v1 */
     if (b.video) {
       const v = b.video;
-      return '<figure class="vid" data-yt="' + esc(v.id) + '"><button class="vid-btn" type="button" aria-label="Play the video: ' + esc(v.sub) + '">' +
-        '<img src="https://i.ytimg.com/vi/' + esc(v.id) + '/hqdefault.jpg" alt="" loading="lazy"><span class="vid-play" aria-hidden="true"></span></button>' +
+      /* dressing videos v2 */
+      return '<figure class="vid" data-yt="' + esc(v.id) + '"><iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(v.id) +
+        '?rel=0&playsinline=1&modestbranding=1" title="' + esc(v.sub) + '" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>' +
         '<figcaption><b>' + esc(v.label) + '</b> ' + esc(v.sub) + '</figcaption></figure>';
     }
     if (b.var) {
@@ -2120,16 +2121,7 @@ html.inapp .backbar { display: block; }
   });
 
   /* dressing videos (tap to load): the player replaces the thumbnail; closing the stage or the idle reset unloads it */
-  const vidReset = root => (root || document).querySelectorAll('.vid iframe').forEach(f => {
-    const fig = f.closest('.vid'); f.remove(); fig.querySelector('.vid-btn').hidden = false; });
-  document.getElementById('app').addEventListener('click', e => {
-    const btn = e.target.closest('.vid-btn'); if (!btn) return;
-    const fig = btn.closest('.vid'), id = fig.dataset.yt;
-    const f = document.createElement('iframe');
-    f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&playsinline=1&modestbranding=1';
-    f.title = fig.querySelector('figcaption').textContent; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
-    btn.hidden = true; fig.insertBefore(f, btn);
-  });
+  const vidReset = root => (root || document).querySelectorAll('.vid iframe').forEach(f => f.replaceWith(f.cloneNode(true)));
   document.querySelectorAll('#app details.stage').forEach(d => d.addEventListener('toggle', () => { if (!d.open) vidReset(d); }));
   segs.forEach((g, k) => g.addEventListener('click', () => {
     details[k].open = true;
