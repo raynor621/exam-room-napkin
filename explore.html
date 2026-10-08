@@ -414,6 +414,13 @@
   .pt-picker .pt-head { width: 150px; height: 150px; }
   .pt-picker .pt-lead { margin: 0 auto 10px; text-align: center; }
   .pt-picker .tile b { font-size: 24px; }
+  /* v0.47 two-level picker */
+  .js-pt-tiles > .tile[hidden] { display: none !important; }
+  .pt-crumb { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 0 0 6px; }
+  .pt-crumb[hidden] { display: none; }
+  .pt-crumb .pt-btn { flex: 0 0 auto; min-height: 48px; padding: 6px 18px; font-size: 17px; }
+  .pt-picker .tile.cat b { font-size: 28px; }
+  html.explore.pt-phone .pt-picker .tile.cat b, .pt-phone .pt-picker .tile.cat b { font-size: 20px; }
   .pt-fine .ptlink { font-size: 14px; padding: 0 0 0 6px; }
   /* landscape: some of the drawings hang their labels just past the edge of their viewBox (Brett's mode has room for
      them beside the shorter stage); give the taller patient stage the same side room */
@@ -2176,6 +2183,7 @@
     <h1>What brings you in?</h1>
     <p class="pt-lead k-only">Hi, I’m Dr. Raynor. I’ll be in shortly. Pick the one closest to why you’re here, and I’ll walk you through it with the same drawings I use in the room.</p>
     <p class="pt-lead e-only">Hi, I’m Dr. Raynor. Pick a topic, and I’ll walk you through it the way I explain it in the exam room, with the same drawings.</p>
+    <div class="pt-crumb js-pt-crumb" hidden><button class="pt-btn js-pt-up">◀ Main menu</button></div>
     <div class="tiles js-pt-tiles"></div>
     <p class="pt-fine">General education, not a diagnosis. Nothing you tap is saved.</p>
     <div class="pt-brand js-pt-brand"></div>
@@ -7991,6 +7999,68 @@ three/build/three.module.js:
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
       const b = document.createElement('b'); b.textContent = 'Recovery after surgery'; const sm = document.createElement('small'); sm.textContent = 'ACL, meniscus repair, rotator cuff, MPFL, hip scope, knee scope';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
+    /* v0.47 (Brett, 10/8/2026): two levels. Knee, Hip, Shoulder, Post-op on top; the topics underneath. */
+    const pickerNav = (() => {
+      const crumb = $('.js-pt-crumb', views.explore), h1 = $('h1', views.explore);
+      const old = $('.tile[data-pt="recovery"]', tiles); if (old) old.remove();   /* replaced by the Post-op group */
+      const icon = go => { const sv = $(`.tile[data-go="${go}"] svg`, views.home); return sv ? sv.cloneNode(true) : null; };
+      const POSTOP_SVG = '<svg viewBox="0 0 120 100" aria-hidden="true"><rect x="22" y="16" width="76" height="72" rx="10" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>'
+        + '<path d="M22 36 H98 M42 8 V24 M78 8 V24" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>'
+        + '<path d="M44 62 l11 11 l22 -24" fill="none" stroke="var(--bursa)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      const ROADMAPS = [  /* recovery.html topics; icon = the joint it belongs to */
+        ['acl', 'ACL reconstruction', 'the first nine months, stage by stage', 'knee'],
+        ['meniscus', 'Meniscus repair', 'protecting the repair, then back to sport', 'knee'],
+        ['knee-scope', 'Knee arthroscopy', 'trimming and cleanup scopes', 'kneepain'],
+        ['mpfl', 'Kneecap stabilization', 'MPFL reconstruction', 'knee'],
+        ['hip', 'Hip arthroscopy', 'labral repair and the bumps', 'hip'],
+        ['rotator-cuff', 'Rotator cuff repair', 'sling, motion, then strength', 'shoulder']];
+      const GROUPS = [
+        { key: 'knee', name: 'Knee', sub: 'pain, ACL tears, arthritis', icon: 'knee', items: ['knee', 'acl', 'arthritis'] },
+        { key: 'hip', name: 'Hip', sub: 'hip and groin pain, the labrum', icon: 'hip', items: ['hip'] },
+        { key: 'shoulder', name: 'Shoulder', sub: 'pain, rotator cuff, dislocations', icon: 'shoulder', items: ['shoulder', 'instability'] },
+        { key: 'postop', name: 'Post-op', sub: 'recovery after surgery', icon: null, items: ROADMAPS.map(r => 'road-' + r[0]) }];
+      const RENAME = { acl: 'ACL tear' };
+      const mk = (tag, cls) => { const e = document.createElement(tag); e.className = cls; return e; };
+      const label = (t, name, sub) => { const b = document.createElement('b'); b.textContent = name; const sm = document.createElement('small'); sm.textContent = sub; t.appendChild(b); t.appendChild(sm); };
+      /* the Post-op roadmap tiles: links to the recovery page */
+      ROADMAPS.forEach(([slug, name, sub, ic]) => {
+        const a = mk('a', 'tile'); a.dataset.pt = 'road-' + slug; a.href = '/recovery/' + slug; a.style.color = 'inherit'; a.style.textDecoration = 'none';
+        const sv = icon(ic); if (sv) a.appendChild(sv); label(a, name, sub); tiles.appendChild(a);
+      });
+      Object.entries(RENAME).forEach(([k, name]) => { const b = $(`.tile[data-pt="${k}"] b`, tiles); if (b) b.textContent = name; });
+      /* the four category tiles go first */
+      const cats = GROUPS.map(g => {
+        const t = mk('div', 'tile cat'); t.setAttribute('role', 'button'); t.tabIndex = 0; t.dataset.cat = g.key;
+        if (g.icon) { const sv = icon(g.icon); if (sv) t.appendChild(sv); } else t.insertAdjacentHTML('beforeend', POSTOP_SVG);
+        label(t, g.name, g.sub);
+        const go = () => {
+          const live = g.items.filter(k => $(`.tile[data-pt="${k}"]`, tiles));
+          if (live.length === 1) { $(`.tile[data-pt="${live[0]}"]`, tiles).click(); return; }   /* one topic: straight in */
+          show2(g); if (typeof idle === 'function') idle();
+        };
+        t.addEventListener('click', go); t.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+        return t;
+      });
+      tiles.prepend(...cats);
+      let topH = null;
+      function top() {
+        $$(':scope > .tile', tiles).forEach(t => { t.hidden = !t.dataset.cat; });
+        crumb.hidden = true; tiles.dataset.level = 'top';
+        if (topH !== null) { h1.textContent = topH; topH = null; }
+      }
+      function show2(g) {
+        if (topH === null) topH = h1.textContent;
+        const order = g.items;
+        $$(':scope > .tile', tiles).forEach(t => { t.hidden = t.dataset.cat !== undefined || !order.includes(t.dataset.pt); });
+        order.forEach(k => { const t = $(`.tile[data-pt="${k}"]`, tiles); if (t) tiles.appendChild(t); });   /* in the group's order */
+        crumb.hidden = false; tiles.dataset.level = g.key;
+        h1.textContent = g.key === 'postop' ? 'Recovery after surgery' : g.name;
+        views.explore.scrollTop = 0;
+      }
+      $('.js-pt-up', crumb).addEventListener('click', () => { top(); if (typeof idle === 'function') idle(); });
+      top();
+      return { top };
+    })();
     $$('.js-pt-handoff', views.explore).forEach(el => longPress(el, () => handoff(null)));
     /* the Raynor and TOA logos (one copy in the file) under the welcome, end and picker screens */
     const logos = $('#pt-logos');
@@ -8052,7 +8122,7 @@ three/build/three.module.js:
     }
     function showPicker() {
       if (cur) clearTimers(cur);
-      cur = null; show('explore'); keepAwake();
+      cur = null; pickerNav.top(); show('explore'); keepAwake();
       document.title = 'While you wait · Dr. Raynor';
     }
     function enter(where) {
