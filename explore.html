@@ -379,6 +379,8 @@
   .pt-roadmap h2 { margin: 0 0 4px; }
   .pt-roadmap p { margin: 0 0 12px; }
   .pt-roadmap .pt-btn { text-decoration: none; }
+  .pt-roadmap-more:empty { display: none; }
+  .pt-roadmap-more { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
   .pt-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px; }
   .pt-cols > div { background: var(--paper-2); border: 2px solid color-mix(in srgb, var(--ink) 18%, transparent); border-radius: 18px; padding: 16px 22px; }
   .pt-cols h2 { font-size: 20px; margin: 0 0 8px; }
@@ -1276,6 +1278,7 @@
               <div class="mile"><b>6 weeks</b><span>Feeling okay. Pretty good at three months.</span></div>
               <div class="mile"><b>6 months</b><span>Full recovery.</span></div>
             </div>
+            <p class="roadmap-more"><a class="roadmap-link js-roadmap-link" href="/recovery/hip">See the full recovery roadmap, stage by stage ▶</a></p>
           </section>
 
           <section data-card="depth">
@@ -2227,6 +2230,7 @@
         <h2 class="js-pt-roadmap-h">Your recovery roadmap</h2>
         <p class="js-pt-roadmap-sub">What the first nine months look like, stage by stage, and how a meniscus repair changes the first six weeks. Enter your surgery date and it shows you where you are.</p>
         <a class="pt-btn primary js-roadmap-link js-pt-roadmap-link" href="/recovery/acl">See the full recovery roadmap ▶</a>
+        <div class="pt-roadmap-more js-pt-roadmap-more"></div>
       </div>
       <div class="pt-cols">
         <div><h2>Think about</h2><ul class="js-pt-think"></ul></div>
@@ -7395,6 +7399,8 @@ three/build/three.module.js:
         view: 'hip', part: 'hip', title: 'Your Hip', tile: 'Hip pain', tileSub: 'the labrum, the bumps, the outside of the hip',
         about: 'how the hip works, why it hurts, and what we can do about it',
         chapters: ['How your hip works', 'Why it hurts', 'What we can do about it', 'If surgery comes up'],
+        roadmap: { href: '/recovery/hip', label: 'See the hip arthroscopy recovery roadmap ▶', h: 'If we scope the hip',
+          sub: 'What the six months after a hip arthroscopy look like, stage by stage: the overnight stay, crutches, the brace and the capsule precautions, physical therapy, driving, and when you run again. Enter your surgery date and it shows you where you are.' },
         steps: [
           { ch: 0, doc: 0, set: s => { }, text: 'Your hip is a ball and socket. The ball is the top of your thigh bone, and the socket is part of your pelvis.' },
           { ch: 0, doc: 1, set: s => { s.cartilage = true; }, text: 'The ball and socket are lined with smooth cartilage. When that wears away, that’s arthritis.' },
@@ -7455,8 +7461,9 @@ three/build/three.module.js:
         view: 'kneepain', part: 'knee', title: 'Your Knee', tile: 'Knee pain', tileSub: 'when the X-rays look normal',
         about: 'what’s in your knee, the things that can hurt without showing up on an X-ray, and what helps, on the same 3D knee I use in the room',
         chapters: ['What’s in your knee', 'What can hurt', 'What helps'],
-        roadmap: { href: '/recovery/meniscus', label: 'See the meniscus repair recovery roadmap ▶', h: 'If we repair the meniscus',
-          sub: 'What recovery after a meniscus repair looks like: how you walk for the first six weeks depends on the repair, then jogging at three months and sports at about six. Enter your surgery date and it shows you where you are.' },
+        roadmap: { href: '/recovery/meniscus', label: 'See the meniscus repair recovery roadmap ▶', h: 'If surgery comes up',
+          sub: 'A meniscus repair is protected for the first six weeks; a knee arthroscopy (a trim or a cleanup) has no restrictions and you walk on it the same day. Each roadmap walks through recovery stage by stage. Enter your surgery date and it shows you where you are.',
+          more: [{ href: '/recovery/knee-scope', label: 'See the knee arthroscopy recovery roadmap ▶' }] },
         steps: [
           { ch: 0, doc: 0, set: s => { }, text: 'A lot of knee pain comes from things that don’t show up on an X-ray. The space you see between the bones on an X-ray is your cartilage, and when that space looks good, the pain is coming from somewhere else.' },
           { ch: 0, doc: 2, set: s => { s.scene = 'inside'; s.ligaments = true; }, text: 'Four main ligaments hold the knee together: the MCL on the medial side, the LCL on the lateral side, and the ACL and PCL crossing in the middle. When I examine you, I check each one.' },
@@ -7939,7 +7946,9 @@ three/build/three.module.js:
       if (F.video) { q('.js-pt-video').hidden = false; q('.js-pt-watch-label').textContent = F.video.label;
         q('.js-pt-watch-sub').textContent = F.video.sub || ''; ptVideo(F, q('.js-pt-watch-frame')); }
       if (F.roadmap) { const rm = q('.js-pt-roadmap'); rm.hidden = false; const a = q('.js-pt-roadmap-link'); a.href = F.roadmap.href; a.textContent = F.roadmap.label;
-        if (F.roadmap.h) q('.js-pt-roadmap-h').textContent = F.roadmap.h; if (F.roadmap.sub) q('.js-pt-roadmap-sub').textContent = F.roadmap.sub; }
+        if (F.roadmap.h) q('.js-pt-roadmap-h').textContent = F.roadmap.h; if (F.roadmap.sub) q('.js-pt-roadmap-sub').textContent = F.roadmap.sub;
+        const mo = q('.js-pt-roadmap-more'); mo.textContent = '';
+        (F.roadmap.more || []).forEach(x => { const b = document.createElement('a'); b.className = 'pt-btn js-roadmap-link'; b.href = x.href; b.textContent = x.label; mo.appendChild(b); }); }
       /* roadmap links: a new tab inside a website, the same tab in the app (the roadmap page has a way back) */
       $$('.js-roadmap-link', v).forEach(a => { if (embedded) { a.target = '_blank'; a.rel = 'noopener'; } });
       /* Brett's bar gets a way back to the patient view (shown after a handoff) */
@@ -7980,7 +7989,7 @@ three/build/three.module.js:
     { const src = $('.tile[data-go="knee"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'recovery';
       a.href = '/recovery'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
-      const b = document.createElement('b'); b.textContent = 'Recovery after surgery'; const sm = document.createElement('small'); sm.textContent = 'ACL reconstruction, meniscus repair, rotator cuff repair';
+      const b = document.createElement('b'); b.textContent = 'Recovery after surgery'; const sm = document.createElement('small'); sm.textContent = 'ACL, meniscus repair, rotator cuff, MPFL, hip scope, knee scope';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
     $$('.js-pt-handoff', views.explore).forEach(el => longPress(el, () => handoff(null)));
     /* the Raynor and TOA logos (one copy in the file) under the welcome, end and picker screens */
