@@ -1733,6 +1733,7 @@
               <div class="mile"><b>5 months</b><span>Throwing program. Skiing.</span></div>
               <div class="mile"><b>6 months</b><span>Contact sports.</span></div>
             </div>
+            <p class="roadmap-more"><a class="roadmap-link js-roadmap-link" href="/recovery/shoulder-instability">See the full recovery roadmap, stage by stage ▶</a></p>
           </section>
 
           <section data-card="home">
@@ -7382,6 +7383,8 @@ three/build/three.module.js:
         whead: 'Shoulder dislocations, the way I explain them',
         about: 'what holds your shoulder in, what happens when it comes out, and what we can do about it',
         chapters: ['What holds it in', 'When it comes out', 'What we can do about it', 'If surgery comes up'],
+        roadmap: { href: '/recovery/shoulder-instability', label: 'See the shoulder stabilization recovery roadmap ▶', h: 'If we repair the labrum',
+          sub: 'What the six months after a labral (Bankart) repair look like, stage by stage: six weeks in a sling, getting the motion back, strengthening at three months, and sports at four to six months, with the Latarjet differences. Enter your surgery date and it shows you where you are.' },
         steps: [
           { ch: 0, doc: 0, set: s => { s.golf = true; }, text: 'Your shoulder is like a golf ball sitting on a tee. This picture looks straight down on it from above. A shallow tee is what lets your shoulder move so much, and it’s also why it can come out.' },
           { ch: 0, doc: 1, set: s => { s.golf = true; s.labrum = true; }, text: 'A few things hold the ball on the tee. The labrum is a little bumper on the edge of the socket. It goes all the way around.' },
@@ -7997,7 +8000,7 @@ three/build/three.module.js:
     { const src = $('.tile[data-go="knee"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'recovery';
       a.href = '/recovery'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
-      const b = document.createElement('b'); b.textContent = 'Recovery after surgery'; const sm = document.createElement('small'); sm.textContent = 'ACL, meniscus repair, rotator cuff, MPFL, hip scope, knee scope';
+      const b = document.createElement('b'); b.textContent = 'Recovery after surgery'; const sm = document.createElement('small'); sm.textContent = 'ACL, meniscus repair, rotator cuff, MPFL, hip scope, knee scope, shoulder stabilization';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
     /* v0.47 (Brett, 10/8/2026): two levels. Knee, Hip, Shoulder, Post-op on top; the topics underneath. */
     const pickerNav = (() => {
@@ -8013,7 +8016,8 @@ three/build/three.module.js:
         ['knee-scope', 'Knee arthroscopy', 'trimming and cleanup scopes', 'kneepain'],
         ['mpfl', 'Kneecap stabilization', 'MPFL reconstruction', 'knee'],
         ['hip', 'Hip arthroscopy', 'labral repair and the bumps', 'hip'],
-        ['rotator-cuff', 'Rotator cuff repair', 'sling, motion, then strength', 'shoulder']];
+        ['rotator-cuff', 'Rotator cuff repair', 'sling, motion, then strength', 'shoulder'],
+        ['shoulder-instability', 'Shoulder stabilization', 'labral repair after a dislocation', 'instab']];
       const GROUPS = [
         { key: 'knee', name: 'Knee', sub: 'pain, ACL tears, arthritis', icon: 'knee', items: ['knee', 'acl', 'arthritis'] },
         { key: 'hip', name: 'Hip', sub: 'hip and groin pain, the labrum', icon: 'hip', items: ['hip'] },
