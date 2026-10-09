@@ -25,6 +25,10 @@
   ],
   "rewrites": [
     {
+      "source": "/grafts",
+      "destination": "/grafts.html"
+    },
+    {
       "source": "/recovery",
       "destination": "/recovery.html"
     },
