@@ -2233,6 +2233,7 @@
       <p class="pt-eyebrow">All done</p>
       <h1 class="js-pt-handoff">Thanks for looking through it</h1>
       <div class="pt-video js-pt-video" hidden><h2 class="js-pt-watch-label"></h2><p class="pt-video-sub js-pt-watch-sub"></p><div class="pt-video-frame js-pt-watch-frame"></div></div>
+      <div class="pt-video js-pt-video2" hidden><h2 class="js-pt-watch-label2"></h2><p class="pt-video-sub js-pt-watch-sub2"></p><div class="pt-video-frame js-pt-watch-frame js-pt-watch-frame2"></div></div>
       <p class="pt-lead k-only">I’ll be in shortly. A few things to think about before I get there, so we can make the most of our time together:</p>
       <p class="pt-lead e-only">If you’re coming in to see me, a few things to think about before your visit, so we can make the most of our time together:</p>
       <div class="pt-roadmap js-pt-roadmap" hidden>
@@ -7442,6 +7443,7 @@ three/build/three.module.js:
         chapters: ['How your knee works', 'What happened', 'Making a new ACL', 'Recovery'],
         roadmap: { href: '/recovery/acl', label: 'See the full ACL recovery roadmap ▶' },
         video: { id: 'TqV-bYJJPpc', label: 'Watch how I do the surgery', sub: 'ACL reconstruction with a patellar tendon graft, narrated by Dr. Raynor (about 3 minutes)' },
+        video2: { id: 'aNruhj_pRZ4', label: 'The same surgery with a quadriceps tendon graft', sub: 'ACL reconstruction with a quadriceps tendon graft, narrated by Dr. Raynor (about 3 minutes)' },
         steps: [
           { ch: 0, doc: 0, set: s => { }, text: 'This is your knee, bent, with the kneecap lifted out of the way: the thigh bone on top, the shin bone below, and the little bone on the outside. You can spin it with your finger.' },
           { ch: 0, doc: 1, set: s => { s.ligaments = true; }, text: 'Four main ligaments hold it together: the MCL on the medial side of the knee, the LCL on the lateral side, and the ACL and PCL crossing in the middle.' },
@@ -7913,8 +7915,8 @@ three/build/three.module.js:
 
     /* v0.36 surgery videos */
     /* the film on the end screen: loaded while it is on screen, unloaded (stopped) when it is not */
-    function ptVideo(F, box) {
-      const V = F.video;
+    function ptVideo(F, box, V0) {  /* v0.58 second surgery video */
+      const V = V0 || F.video;
       const src = 'https://www.youtube-nocookie.com/embed/' + V.id + '?rel=0&playsinline=1&modestbranding=1';
       const load = () => {
         if (box.querySelector('iframe')) return;
@@ -7956,6 +7958,8 @@ three/build/three.module.js:
       q('.js-pt-qs').innerHTML = F.ask.map(t => '<li></li>').join(''); $$('.js-pt-qs li', v).forEach((li, i) => li.textContent = F.ask[i]);
       if (F.video) { q('.js-pt-video').hidden = false; q('.js-pt-watch-label').textContent = F.video.label;
         q('.js-pt-watch-sub').textContent = F.video.sub || ''; ptVideo(F, q('.js-pt-watch-frame')); }
+      if (F.video2) { q('.js-pt-video2').hidden = false; q('.js-pt-watch-label2').textContent = F.video2.label;
+        q('.js-pt-watch-sub2').textContent = F.video2.sub || ''; ptVideo(F, q('.js-pt-watch-frame2'), F.video2); }
       if (F.roadmap) { const rm = q('.js-pt-roadmap'); rm.hidden = false; const a = q('.js-pt-roadmap-link'); a.href = F.roadmap.href; a.textContent = F.roadmap.label;
         if (F.roadmap.h) q('.js-pt-roadmap-h').textContent = F.roadmap.h; if (F.roadmap.sub) q('.js-pt-roadmap-sub').textContent = F.roadmap.sub;
         const mo = q('.js-pt-roadmap-more'); mo.textContent = '';
