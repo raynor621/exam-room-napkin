@@ -73,6 +73,7 @@ html:not(.left) .stage video { transform: scaleX(-1); }   /* the films show the 
   background: rgba(214,58,47,.85); padding: 4px 10px; border-radius: 999px; pointer-events: none; z-index: 6; }
 .tag { position: absolute; left: 14px; top: 12px; z-index: 4; display: flex; align-items: center; gap: 10px; background: #14325c; border: 2px solid var(--sky);
   color: #fff; border-radius: 10px; padding: 6px 14px 6px 8px; font-size: 18px; font-weight: 600; pointer-events: none; }
+.tag[hidden] { display: none; }
 .tag b { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; padding: 0 6px; box-sizing: border-box;
   border-radius: 999px; background: var(--sky); color: #14325c; font-size: 15px; }
 .tag b:empty { display: none; }
