@@ -12,6 +12,7 @@
 <link rel="icon" type="image/png" href="/apple-touch-icon.png">
 <title>ACL reconstruction, step by step · Clinic Diagrams</title>
 <!--
+  v0.61: the films show a LEFT knee (the Open Knee(s) scan as is), so Right mirrors the clips and Left plays them as rendered.
   v0.60 (Brett, 10/9/2026): his canonical ACL surgery talk, step by step, on short silent loops cut from the Blender
   ACL films, for his exam-room mode only (not While You Wait, not the default Knee view). Opened from the Knee view's
   "Surgery steps" chip (overlay iframe, ?embed) or on its own at /acl-steps. ?g=allo|btb|quad, ?side=L, ?step=N.
@@ -64,7 +65,7 @@ html.embedded .js-home { display: none; }
   background: radial-gradient(ellipse at 50% 48%, #1d2f4b 0%, #16263f 62%, #121f35 100%); }
 .stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
 .stage.optmode video { width: calc(100% - min(40%, 380px) - 28px); }   /* the graft cards sit on the right */
-html.left .stage video { transform: scaleX(-1); }
+html:not(.left) .stage video { transform: scaleX(-1); }   /* the films show the scan's LEFT knee, so a right knee is the mirror (v0.61) */
 .stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .stage canvas.ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; touch-action: none; z-index: 5; }
 .stage.drawing-mode canvas.ink { pointer-events: auto; cursor: crosshair; }
