@@ -334,6 +334,8 @@
   .grafts3d-ov[hidden] { display: none; }
   .grafts3d-ov iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   html.explore .js-grafts3d, html.explore .grafts3d-ov { display: none !important; }
+  /* v0.60 ACL surgery steps */
+  html.explore .js-aclsteps { display: none !important; }
   html.explore .view { position: relative; }
   html.explore .view > .bar, html.explore .view > .chips,
   html.explore .view .cue, html.explore .view .js-card-close { display: none; }
@@ -1999,6 +2001,7 @@
         <button class="chip card-chip" data-card="recovery">Recovery</button>
         <button class="chip card-chip" data-card="timing">Timing</button>
         <button class="chip card-chip" data-card="favorite">Favorite</button>
+        <button class="chip js-aclsteps" type="button">Surgery steps ▶</button>
         <button class="chip js-grafts3d" type="button">New ACL in 3D</button>
         <button class="chip card-chip" data-card="meniscus">Meniscus</button>
         <button class="chip card-chip" data-card="home">Take home</button>
@@ -7342,6 +7345,12 @@ three/build/three.module.js:
       if (document.documentElement.classList.contains('explore')) return;
       const left = kv.querySelector('.js-side-left')?.classList.contains('on');
       fr.src = '/grafts?embed' + (left ? '&side=L' : '');
+      ov.hidden = false;
+    }));
+    kv.querySelectorAll('.js-aclsteps').forEach(b => b.addEventListener('click', () => {  /* v0.60 */
+      if (document.documentElement.classList.contains('explore')) return;
+      const left = kv.querySelector('.js-side-left')?.classList.contains('on');
+      fr.src = '/acl-steps?embed' + (left ? '&side=L' : '');
       ov.hidden = false;
     }));
     window.addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.napkin === 'grafts-close') close(); });

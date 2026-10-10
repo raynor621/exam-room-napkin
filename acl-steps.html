@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fbf9f3">
+<meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/apple-touch-icon.png">
+<title>ACL reconstruction, step by step · Clinic Diagrams</title>
+<!--
+  v0.60 (Brett, 10/9/2026): his canonical ACL surgery talk, step by step, on short silent loops cut from the Blender
+  ACL films, for his exam-room mode only (not While You Wait, not the default Knee view). Opened from the Knee view's
+  "Surgery steps" chip (overlay iframe, ?embed) or on its own at /acl-steps. ?g=allo|btb|quad, ?side=L, ?step=N.
+  Allograft is a BTB allograft (Brett: looks exactly like the patellar tendon autograft, no harvest), so it plays the
+  BTB clips. Hamstrings is on the graft options card only (he rarely uses them now; no film).
+  Clips: /clips/acl/*.mp4 (+ .jpg posters), made by tools/acl-steps/make_clips.sh from the films' navy clips.
+-->
+<style>
+:root {
+  --paper: #fbf9f3; --paper-2: #f2eee3; --ink: #1e2a44; --ink-soft: #5b6478;
+  --tendon: #cf5546; --navy: #14325c; --sky: #8fc1ee;
+  --chip-bg: #ffffff; --chip-fg: #14325c; --chip-on-bg: #14325c; --chip-on-fg: #ffffff;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --tendon: #e2705f; --navy: #9cc4ee;
+    --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --tendon: #e2705f; --navy: #9cc4ee;
+  --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b; color-scheme: dark;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 17px; line-height: 1.35;
+  overflow: hidden; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+button { font: inherit; color: inherit; }
+button:focus-visible { outline: 3px solid #4f8fc9; outline-offset: 2px; }
+.app { height: 100%; display: flex; flex-direction: column; padding-inline: 16px; box-sizing: border-box; }
+
+.bar { display: flex; align-items: center; gap: 8px; padding-block: 8px; flex-wrap: wrap; }
+.bar h1 { font-weight: 700; font-size: 24px; margin: 0; line-height: 1; letter-spacing: -.2px; }
+.spacer { flex: 1; }
+.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 14px; border: 2px solid var(--navy); border-radius: 999px;
+  background: var(--chip-bg); color: var(--chip-fg); font-weight: 600; font-size: 16px; cursor: pointer; user-select: none; -webkit-user-select: none;
+  touch-action: manipulation; text-decoration: none; box-sizing: border-box; }
+.btn.on { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.btn.ghost { border-color: transparent; background: transparent; color: var(--ink-soft); padding-inline: 8px; }
+.btn.ghost[aria-pressed="false"] { opacity: .55; }
+.btn svg { width: 20px; height: 20px; }
+.seg { display: inline-flex; border: 2px solid var(--navy); border-radius: 999px; overflow: hidden; }
+.seg .btn { border: 0; border-radius: 0; min-height: 40px; padding: 4px 12px; font-size: 15px; }
+.seg .btn + .btn { border-left: 2px solid var(--navy); }
+.js-close { display: none; }
+html.embedded .js-close { display: inline-flex; }
+html.embedded .js-home { display: none; }
+
+.stage { position: relative; flex: 1; min-height: 0; border-radius: 18px; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 48%, #1d2f4b 0%, #16263f 62%, #121f35 100%); }
+.stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+.stage.optmode video { width: calc(100% - min(40%, 380px) - 28px); }   /* the graft cards sit on the right */
+html.left .stage video { transform: scaleX(-1); }
+.stage iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.stage canvas.ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; touch-action: none; z-index: 5; }
+.stage.drawing-mode canvas.ink { pointer-events: auto; cursor: crosshair; }
+.stage.drawing-mode::after { content: 'Drawing on. Tap Draw again to turn it off.'; position: absolute; right: 12px; top: 12px; font-size: 13px; color: #fff;
+  background: rgba(214,58,47,.85); padding: 4px 10px; border-radius: 999px; pointer-events: none; z-index: 6; }
+.tag { position: absolute; left: 14px; top: 12px; z-index: 4; display: flex; align-items: center; gap: 10px; background: #14325c; border: 2px solid var(--sky);
+  color: #fff; border-radius: 10px; padding: 6px 14px 6px 8px; font-size: 18px; font-weight: 600; pointer-events: none; }
+.tag b { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; padding: 0 6px; box-sizing: border-box;
+  border-radius: 999px; background: var(--sky); color: #14325c; font-size: 15px; }
+.tag b:empty { display: none; }
+.paused { position: absolute; right: 14px; top: 12px; z-index: 4; font-size: 13px; color: #e3e9f5; background: rgba(12,21,38,.6); padding: 4px 10px; border-radius: 999px; pointer-events: none; }
+.paused[hidden] { display: none; }
+.cue { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; padding: 12px 16px; text-align: center; pointer-events: none; font-size: 19px; color: #e3e9f5;
+  line-height: 1.3; text-wrap: balance; background: linear-gradient(to top, rgba(12,21,38,.94) 55%, transparent); }
+.cue:empty, html.nocues .cue { display: none; }
+
+/* graft options: four cards over the stage, the clip (or a note) behind */
+.opts { position: absolute; right: 14px; top: 60px; bottom: 64px; width: min(40%, 380px); z-index: 4; display: flex; flex-direction: column; gap: 10px; }
+.opts[hidden] { display: none; }
+.opt { flex: 1; min-height: 0; text-align: left; border: 2px solid rgba(255,255,255,.45); border-radius: 14px; background: rgba(12,21,38,.72); color: #e3e9f5;
+  padding: 10px 14px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.opt .t { font-size: 19px; font-weight: 700; color: #fff; }
+.opt .d { font-size: 15px; line-height: 1.3; }
+.opt.on { background: #f4f1e8; border-color: #f4f1e8; color: #1e2a44; }
+.opt.on .t { color: #14325c; }
+.note { position: absolute; left: 14px; right: calc(min(40%, 380px) + 28px); top: 60px; bottom: 64px; z-index: 3; display: grid; place-items: center;
+  text-align: center; color: #e3e9f5; font-size: 22px; line-height: 1.35; padding: 0 24px; }
+.note[hidden] { display: none; }
+.note .big { display: block; font-size: 30px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+
+.chips { display: flex; flex-direction: column; gap: 8px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { display: inline-flex; align-items: center; gap: 7px; min-height: 48px; padding: 6px 14px; border: 2px solid var(--navy); border-radius: 999px;
+  background: var(--chip-bg); color: var(--chip-fg); font-weight: 600; font-size: 16px; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.chip.on { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.chip .n { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 999px; background: var(--navy); color: var(--paper); font-size: 14px; }
+.chip.on .n { background: var(--chip-on-fg); color: var(--chip-on-bg); }
+.chip.primary { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.nav { margin-left: auto; display: flex; gap: 8px; }
+@media (max-width: 900px) { .chip { min-height: 46px; padding: 6px 12px; font-size: 15px; } .bar h1 { font-size: 20px; } .opts { width: 46%; } .note { right: calc(46% + 28px); font-size: 18px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar">
+    <a class="btn ghost js-home" href="/" aria-label="Back to joints">‹ Joints</a>
+    <h1>ACL surgery</h1>
+    <span class="seg" role="group" aria-label="Graft">
+      <button class="btn js-graft" data-g="allo">Allograft</button>
+      <button class="btn js-graft" data-g="btb">Patellar tendon</button>
+      <button class="btn js-graft" data-g="quad">Quad tendon</button>
+    </span>
+    <span class="seg" role="group" aria-label="Which knee">
+      <button class="btn js-side" data-side="R">Right</button>
+      <button class="btn js-side" data-side="L">Left</button>
+    </span>
+    <span class="spacer"></span>
+    <button class="btn js-draw" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Draw</button>
+    <button class="btn ghost js-undo">Undo</button>
+    <button class="btn ghost js-clear">Clear</button>
+    <button class="btn ghost js-cues" aria-pressed="true">Cues</button>
+    <button class="btn ghost js-close" aria-label="Close and go back to the knee">✕ Close</button>
+  </div>
+
+  <div class="stage js-stage">
+    <video class="js-video" muted playsinline loop autoplay preload="auto" aria-label="Animation of this step of the surgery"></video>
+    <div class="note js-note" hidden></div>
+    <div class="opts js-opts" hidden>
+      <button class="opt js-opt" data-o="allo"><span class="t">Allograft</span><span class="d">A donor patellar tendon, with bone on each end. Same tunnels and screws, nothing taken from your knee.</span></button>
+      <button class="opt js-opt" data-o="btb"><span class="t">Patellar tendon</span><span class="d">The middle third of your own patellar tendon, with a block of bone on each end.</span></button>
+      <button class="opt js-opt" data-o="quad"><span class="t">Quad tendon</span><span class="d">A strip from the middle of your own quad tendon, all soft tissue, no bone.</span></button>
+      <button class="opt js-opt" data-o="ham"><span class="t">Hamstrings</span><span class="d">Hamstring tendons from the back of the thigh. I rarely use them now.</span></button>
+    </div>
+    <div class="tag js-tag"><b class="js-tagn"></b><span class="js-tagt"></span></div>
+    <div class="paused js-paused" hidden>Paused · tap to play</div>
+    <canvas class="ink js-ink" aria-label="Your drawing on top of the animation"></canvas>
+    <div class="cue js-cue"></div>
+  </div>
+
+  <div class="chips">
+    <div class="row js-steps">
+      <span class="nav">
+        <button class="chip js-back">◀ Back</button>
+        <button class="chip primary js-next">Next ▶</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const root = document.documentElement;
+  const qs = new URLSearchParams(location.search);
+  let embedded = qs.has('embed');
+  try { if (window.self !== window.top) embedded = true; } catch (e) { embedded = true; }
+  if (embedded) root.classList.add('embedded');
+
+  const CLIP = (n) => '/clips/acl/' + n + '.mp4';
+  const POSTER = (n) => '/clips/acl/' + n + '.jpg';
+  const fam = (g) => (g === 'quad' ? 'quad' : 'btb');           // the allograft is a BTB allograft: same clips as the BTB autograft
+  // Brett's canonical talk (10/9/2026), in his words
+  const STEPS = [
+    { label: 'Reconstruction', n: '', title: 'ACL reconstruction', clip: () => 'intro',
+      cue: 'When we do surgery for this, what we do is a reconstruction.' },
+    { label: 'Poke holes', n: '1', title: 'Two little poke holes', clip: () => 'portals',
+      cue: 'I go in through two little poke holes.' },
+    { label: 'Old ACL out', n: '2', title: 'Take out your old ACL', clip: () => 'clean-out',
+      cue: 'We take out your old ACL.' },
+    { label: 'Femur tunnel', n: '3', title: 'A tunnel in the femur', clip: (g) => 'femur-' + fam(g),
+      cue: 'We drill a tunnel right here in the femur, where it’s supposed to go.' },
+    { label: 'Tibia tunnel', n: '4', title: 'A tunnel in the tibia', clip: (g) => 'tibia-' + fam(g),
+      cue: 'We drill a tunnel right here in the tibia, where it’s supposed to go.' },
+    { label: 'Graft in', n: '5', title: 'Graft in and fixed', clip: (g) => 'graft-' + fam(g),
+      cue: 'We put your graft in and fix it in place.' },
+    { label: 'Graft options', n: '', title: 'What do we make your graft out of?', kind: 'options',
+      cue: 'Now what do we make your graft out of? We have four options.' },
+    { label: 'Finished knee', n: '3D', title: 'The finished knee', kind: '3d', cue: '' },
+  ];
+  const S = { step: 0, graft: 'btb', opt: 'btb', side: 'R', cues: true };
+  const g0 = qs.get('g'); if (['allo', 'btb', 'quad'].includes(g0)) { S.graft = g0; S.opt = g0; }
+  if (qs.get('side') === 'L') S.side = 'L';
+  const st0 = parseInt(qs.get('step'), 10); if (st0 >= 0 && st0 < STEPS.length) S.step = st0;
+
+  // step chips
+  const row = $('.js-steps'), nav = $('.nav', row);
+  STEPS.forEach((s, i) => {
+    const b = document.createElement('button'); b.className = 'chip js-step'; b.dataset.i = i;
+    b.innerHTML = (s.n ? '<span class="n"></span>' : '') + '<span class="l"></span>';
+    if (s.n) b.querySelector('.n').textContent = s.n;
+    b.querySelector('.l').textContent = s.label;
+    row.insertBefore(b, nav);
+    b.addEventListener('click', () => go(i));
+  });
+
+  const stage = $('.js-stage'), video = $('.js-video'), note = $('.js-note'), opts = $('.js-opts');
+  let frame = null;            // the 3D viewer iframe, only while that step shows
+  let paused = false;
+
+  function setClip(name) {
+    if (!name) { video.removeAttribute('src'); video.removeAttribute('poster'); video.load(); video.hidden = true; return; }
+    video.hidden = false;
+    const src = CLIP(name);
+    if (video.getAttribute('src') !== src) {
+      video.setAttribute('poster', POSTER(name)); video.src = src;
+      video.muted = true; video.defaultMuted = true;
+    }
+    paused = false; $('.js-paused').hidden = true;
+    const p = video.play(); if (p && p.catch) p.catch(() => {});
+  }
+  function render() {
+    const s = STEPS[S.step];
+    root.classList.toggle('left', S.side === 'L');
+    root.classList.toggle('nocues', !S.cues);
+    $('.js-tagn').textContent = s.n || '';
+    $('.js-tagt').textContent = s.title;
+    $('.js-cue').textContent = s.cue;
+    $('.js-tag').hidden = s.kind === '3d';
+    // the stage
+    opts.hidden = s.kind !== 'options'; stage.classList.toggle('optmode', s.kind === 'options');
+    note.hidden = true;
+    if (s.kind === 'options') {
+      $$('.js-opt').forEach((o) => o.classList.toggle('on', o.dataset.o === S.opt));
+      if (S.opt === 'btb' || S.opt === 'quad') setClip('harvest-' + S.opt);
+      else {
+        setClip(null); note.hidden = false;
+        note.innerHTML = S.opt === 'allo'
+          ? '<span><span class="big">Allograft</span>From a donor. It looks exactly like a patellar tendon graft and goes in the same way, with no harvest from your knee.</span>'
+          : '<span><span class="big">Hamstrings</span>Tendons from the back of the thigh. I rarely use them now.</span>';
+      }
+    } else if (s.kind === '3d') {
+      setClip(null);
+    } else {
+      setClip(s.clip(S.graft));
+    }
+    if (s.kind === '3d') {
+      const src = '/grafts?embed&g=' + fam(S.graft) + (S.side === 'L' ? '&side=L' : '');
+      if (!frame) { frame = document.createElement('iframe'); frame.title = 'The finished knee in 3D'; frame.allow = 'fullscreen'; stage.insertBefore(frame, $('.js-tag')); }
+      if (frame.dataset.src !== src) { frame.dataset.src = src; frame.src = src; }
+    } else if (frame) { frame.remove(); frame = null; }
+    // chips and bar
+    $$('.js-step').forEach((b) => b.classList.toggle('on', +b.dataset.i === S.step));
+    $$('.js-graft').forEach((b) => { const on = b.dataset.g === S.graft; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    $$('.js-side').forEach((b) => { const on = b.dataset.side === S.side; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    $('.js-cues').setAttribute('aria-pressed', S.cues);
+    $('.js-next').textContent = S.step === STEPS.length - 1 ? 'Done ✓' : 'Next ▶';
+    warmNext();
+  }
+  // fetch the next step's clip ahead so it starts at once (the service worker keeps it for offline)
+  const warmed = new Set();
+  function warmNext() {
+    const nx = STEPS[S.step + 1]; if (!nx) return;
+    const name = nx.kind === 'options' ? (S.graft === 'allo' ? null : 'harvest-' + fam(S.graft)) : nx.kind === '3d' ? null : nx.clip(S.graft);
+    if (!name || warmed.has(name)) return; warmed.add(name);
+    try { fetch(CLIP(name)).catch(() => {}); } catch (e) {}
+  }
+  function go(i) { S.step = Math.max(0, Math.min(STEPS.length - 1, i)); clearInk(); render(); }
+
+  $('.js-next').addEventListener('click', () => go(S.step === STEPS.length - 1 ? 0 : S.step + 1));
+  $('.js-back').addEventListener('click', () => go(S.step - 1));
+  $$('.js-graft').forEach((b) => b.addEventListener('click', () => { S.graft = b.dataset.g; S.opt = S.graft; clearInk(); render(); }));
+  $$('.js-opt').forEach((o) => o.addEventListener('click', () => { S.opt = o.dataset.o; if (S.opt !== 'ham') S.graft = S.opt; render(); }));
+  $$('.js-side').forEach((b) => b.addEventListener('click', () => { S.side = b.dataset.side; clearInk(); render(); }));
+  $('.js-cues').addEventListener('click', () => { S.cues = !S.cues; render(); });
+  $('.js-close').addEventListener('click', () => { try { window.parent.postMessage({ napkin: 'grafts-close' }, location.origin); } catch (e) {} });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') go(S.step + 1);
+    else if (e.key === 'ArrowLeft') go(S.step - 1);
+    else if (e.key === 'Escape') $('.js-close').click();
+  });
+  // the 3D viewer's own Close goes back one step here
+  window.addEventListener('message', (e) => { if (e.origin === location.origin && e.data && e.data.napkin === 'grafts-close' && frame && e.source === frame.contentWindow) go(STEPS.length - 2); });
+  // tap the animation to pause or play it
+  stage.addEventListener('click', (e) => {
+    if (drawing || video.hidden || e.target.closest('.opt')) return;
+    if (video.paused) { video.play().catch(() => {}); paused = false; } else { video.pause(); paused = true; }
+    $('.js-paused').hidden = !paused;
+  });
+
+  // ---------- ink ----------
+  const ink = $('.js-ink'); const ctx = ink.getContext('2d');
+  let strokes = [], cur = null, drawing = false;
+  function sizeInk() { const r = ink.getBoundingClientRect(); const d = Math.min(devicePixelRatio || 1, 2); ink.width = r.width * d; ink.height = r.height * d; redraw(); }
+  function redraw() {
+    const d = ink.width / (ink.getBoundingClientRect().width || 1);
+    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, ink.width, ink.height);
+    ctx.strokeStyle = '#ff5a4a'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const s of strokes) { ctx.lineWidth = 4; ctx.beginPath(); s.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke(); }
+  }
+  function clearInk() { strokes = []; redraw(); }
+  new ResizeObserver(sizeInk).observe(ink);
+  ink.addEventListener('pointerdown', (e) => { if (!drawing) return; const r = ink.getBoundingClientRect(); cur = [[e.clientX - r.left, e.clientY - r.top]]; strokes.push(cur); ink.setPointerCapture(e.pointerId); });
+  ink.addEventListener('pointermove', (e) => { if (!cur) return; const r = ink.getBoundingClientRect(); cur.push([e.clientX - r.left, e.clientY - r.top]); redraw(); });
+  ['pointerup', 'pointercancel'].forEach((ev) => ink.addEventListener(ev, () => { cur = null; }));
+  $('.js-draw').addEventListener('click', (e) => { drawing = !drawing; e.currentTarget.classList.toggle('on', drawing); e.currentTarget.setAttribute('aria-pressed', drawing); stage.classList.toggle('drawing-mode', drawing); });
+  $('.js-undo').addEventListener('click', () => { strokes.pop(); redraw(); });
+  $('.js-clear').addEventListener('click', clearInk);
+
+  render();
+  window.ACLSTEPS = { S, go, STEPS };
+  window.READY = true;
+})();
+</script>
+<script>if ('serviceWorker' in navigator && location.protocol === 'https:') { navigator.serviceWorker.register('/sw.js').catch(() => {}); }</script>
+</body>
+</html>

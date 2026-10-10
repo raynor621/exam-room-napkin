@@ -29,6 +29,10 @@
       "destination": "/grafts.html"
     },
     {
+      "source": "/acl-steps",
+      "destination": "/acl-steps.html"
+    },
+    {
       "source": "/recovery",
       "destination": "/recovery.html"
     },
