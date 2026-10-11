@@ -154,6 +154,8 @@ html.inapp .backbar { display: block; }
   details.stage > summary::after { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+.urgent { margin-top: 14px; border: 1px solid #e3b9b9; background: #fff5f5; border-radius: 10px; padding: 4px 14px 10px; }
+.urgent h3 { margin: 10px 0 4px; font-size: 16px; }
 </style>
 </head>
 <body>
@@ -1979,16 +1981,6 @@ html.inapp .backbar { display: block; }
               "A sore shoulder for a couple of weeks, worse at night.",
               "The muscles around the shoulder blade and neck getting tired and achy from guarding the arm."
             ]
-          },
-          {
-            "h": "Call us if"
-          },
-          {
-            "ul": [
-              "Fever over 101.4, or increasing redness or pus at an incision (some clear drainage in the first few days is normal).",
-              "Calf swelling or pain, chest pain or trouble breathing.",
-              "Pain that is getting worse instead of better after the first few days."
-            ]
           }
         ],
         "ready": "the block has worn off, the pain is under control with what you have at home, and you have had your first post-op visit.",
@@ -2341,12 +2333,16 @@ html.inapp .backbar { display: block; }
     return '';
   };
 
+  const URGENT = '<div class="urgent"><h3>Call 911 or go to the nearest emergency room if you have</h3>' +
+    list('ul', ['Chest pain, trouble breathing, or coughing up blood. These can be signs of a blood clot in the lung and should not wait for a call back.']) +
+    '<h3>Call us at <a href="' + TEL + '">' + PHONE + '</a> if you have</h3>' +
+    list('ul', ['Fever over 101.4, or increasing redness or pus at an incision (some clear drainage in the first few days is normal).', 'Calf swelling or calf pain.', 'Pain that is getting worse instead of better after the first few days.', 'Numbness or tingling that is new or getting worse.']) + '</div>';
   const stageHTML = (s, i) =>
     '<details class="stage" id="stage-' + s.id + '" data-i="' + i + '">' +
       '<summary><span class="s-top"><span class="s-num">' + esc(s.num) + '</span><span class="s-time">' + esc(s.timing) + '</span><span class="now-tag">You are here</span></span>' +
       '<span class="s-title">' + esc(s.name) + '</span>' +
       '<span class="s-glance">' + esc(s.glance) + '</span></summary>' +
-      '<div class="s-body">' + s.body.map(block).join('') +
+      '<div class="s-body">' + s.body.map(block).join('') + (i === 0 ? URGENT : '') +
       (s.ready ? '<div class="ready"><b>' + (s.readyLabel || 'Ready for the next stage when:') + '</b> ' + s.ready + '</div>' : '') +
       '</div></details>';
 
@@ -2381,17 +2377,17 @@ html.inapp .backbar { display: block; }
 
     R.boxes.map(boxHTML).join('') +
 
-    '<section class="box call"><h2>When to call us</h2>' +
+    '<section class="box call"><h2>When to get help</h2>' +
+      '<p><b>Call 911 or go to the nearest emergency room</b> for chest pain, trouble breathing, or coughing up blood. These can be signs of a blood clot in the lung and should not wait for a call back.</p>' +
       '<p>Call the office at <a class="phone" href="' + TEL + '">' + PHONE + '</a> if you have:</p>' +
       list('ul', [
         'Pain that isn\'t controlled with your medication',
         'Significant new swelling, or drainage from an incision',
-        'Fever over 101.5°F',
+        'Fever over 101.4',
         'Calf pain or swelling',
         'Numbness or tingling that is new or getting worse',
         'Anything else that worries you. That\'s what we\'re here for.'
-      ]) +
-      '<p style="margin-top:8px"><b>If you have chest pain or trouble breathing, call 911.</b></p></section>' +
+      ]) + '</section>' +
 
     '<section class="box resources"><h2>More resources</h2>' +
       list('ul', R.resources.map(r => '<a href="' + r[1] + '"' + LINK_TARGET + '>' + esc(r[0]) + '</a>')) + '</section>' +
