@@ -224,7 +224,8 @@
   video.js-preload { display: none !important; }
   .js-speed { font-variant-numeric: tabular-nums; min-width: 58px; justify-content: center; }
   html.explore .js-kfilm, html.explore .js-speed, html.explore .film-tag { display: none !important; }
-  @media (max-width: 1200px) { #view-knee .bar { gap: 6px; } #view-knee .bar .seg .btn { padding-inline: 10px; } #view-knee .bar .btn.ghost { padding-inline: 6px; } #view-knee .js-speed { min-width: 50px; } }   /* the ACL bar carries the 3D | Film switch and Speed too; this keeps it on one row at 1180 */
+  @media (max-width: 1200px) { #view-knee .bar, #view-kneepain .bar { gap: 6px; } #view-knee .bar .seg .btn, #view-kneepain .bar .seg .btn { padding-inline: 10px; } #view-knee .bar .btn.ghost, #view-kneepain .bar .btn.ghost { padding-inline: 6px; } #view-knee .js-speed, #view-kneepain .js-speed { min-width: 50px; } }
+  html.explore .film-chip, html.explore .js-filmrow { display: none !important; }   /* v0.71: the On film chips are Brett's mode only */   /* the ACL bar carries the 3D | Film switch and Speed too; this keeps it on one row at 1180 */
   .k3d-loading { position: absolute; inset: 0; display: grid; place-items: center; color: #e3e9f5; font: 600 18px var(--font-ui); background: rgba(12,21,38,.55); z-index: 2; }
   .k3d-loading[hidden] { display: none; }
   /* the scene rows: only the active scene's row shows (both knee talks) */
@@ -2063,16 +2064,21 @@
         <button class="btn on js-side-right" aria-pressed="true">Right</button>
         <button class="btn js-side-left" aria-pressed="false">Left</button>
       </span>
+      <span class="seg js-kfilm" role="group" aria-label="The 3D knee or the film">
+        <button class="btn on js-kmode" data-m="3d" aria-pressed="true">3D</button>
+        <button class="btn js-kmode" data-m="film" aria-pressed="false">Film</button>
+      </span>
       <span class="spacer"></span>
       <button class="btn js-draw" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
         Draw
       </button>
       <button class="btn ghost js-undo">Undo</button>
-      <button class="btn ghost js-clear">Clear ink</button>
+      <button class="btn ghost js-clear">Clear</button>
       <button class="btn ghost js-labels" aria-pressed="true">Labels</button>
       <button class="btn ghost js-cues" aria-pressed="true">Cues</button>
-      <button class="btn ghost js-reset">↺ Start over</button>
+      <button class="btn ghost js-speed" aria-label="Playback speed" title="Playback speed: 1.5x, 2x or real time">1.5x</button>
+      <button class="btn ghost js-reset">↺ Restart</button>
     </div>
 
     <div class="stage js-stage k3d">
@@ -2080,6 +2086,9 @@
       <svg class="drawing" viewBox="0 0 1000 640" aria-hidden="true"></svg>
       <div class="k3d-hint js-hint">Drag to spin · pinch to zoom</div>
       <div class="k3d-loading js-loading">Building the knee…</div>
+      <video class="js-film" muted playsinline loop autoplay preload="auto" aria-label="The film of this step"></video>
+      <video class="js-preload" muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+      <div class="film-tag js-film-tag">3D · no film for this beat</div>
 
       <canvas class="js-ink" aria-label="Your drawing on top of the model"></canvas>
       <div class="cue js-cue"></div>
@@ -2204,6 +2213,13 @@
         <button class="chip" data-toggle="tear-bucket">Bucket handle</button>
         <button class="chip" data-toggle="tear-root">Root tear</button>
         <button class="chip" data-toggle="ligaments">Ligaments</button>
+      </div>
+      <div class="row scene-above js-filmrow">
+        <span class="k">On film</span>
+        <button class="chip action film-chip" data-toggle="treat-zones">Blood supply ▶</button>
+        <button class="chip action film-chip" data-toggle="treat-trim">Trim it ▶</button>
+        <button class="chip action film-chip" data-toggle="treat-repair">Stitch it ▶</button>
+        <button class="chip action film-chip" data-toggle="treat-root">Root repair ▶</button>
       </div>
       <div class="row scene-side">
         <span class="k">Side</span>
@@ -7332,10 +7348,26 @@ three/build/three.module.js:
      options. Cue lines: Brett's words from the chondromalacia (7/29), meniscus (4/13) and root tear (7/31) canonical
      scripts and the two fullest clinic deliveries; the bucket handle line and the fissures line are placeholders.
      ====================================================================== */
+  /* which meniscus film loop goes with the knee pain talk's state (null = no film for this beat, show the 3D) */
+  function meniscusClipFor(s) {
+    if (s.treat === 'zones') return ['zones'];
+    if (s.treat === 'trim') return ['trim'];
+    if (s.treat === 'repair') return s.tear === 'bucket' ? ['insideout-a', 'insideout-b'] : ['fiberstitch-a', 'fiberstitch-b'];
+    if (s.treat === 'root') return ['root_repair-a', 'root_repair-b', 'root_repair-c'];
+    if (s.scene === 'above') {
+      const T = { vertical: 'vertical', flap: 'flap', horizontal: 'horizontal', radialComplete: 'radial_full', bucket: 'bucket', root: 'root' };
+      return [T[s.tear] || 'normal'];
+    }
+    if (s.scene === 'inside') return ['orbit'];
+    return null;   /* the front and the side (the kneecap, chondromalacia, fat pad, plica): the 3D's own */
+  }
+  meniscusClipFor.next = list => ({ orbit: 'normal', normal: 'vertical', vertical: 'flap', flap: 'horizontal', horizontal: 'radial_full', radial_full: 'bucket', bucket: 'root', root: 'zones',
+                                    zones: 'trim', trim: 'fiberstitch-a', 'fiberstitch-a': 'fiberstitch-b', 'insideout-a': 'insideout-b', 'root_repair-a': 'root_repair-b', 'root_repair-b': 'root_repair-c' })[list[list.length - 1]] || null;
+
   modules.kneepain = makeModule({
     view: views.kneepain,
     SKELETON: () => ({ scene: 'front', kneecap: true, flip: false, cartilage: true, chondro: 0, fatpad: false, plica: false,
-                       ligaments: false, menisci: false, tear: null, bend: false, card: null }),
+                       ligaments: false, menisci: false, tear: null, bend: false, treat: null, card: null }),
     CUES: {
       xray: 'Your X-rays look great. You have good space between your bones, and that space is your cartilage. It’s like the rubber on your tire: when it wears down, you start riding on the rims. Now, obviously it doesn’t feel normal.',
       frontScene: 'Here’s the front of your knee, kneecap in the middle. Your X-rays look great, but obviously it doesn’t feel normal.',
@@ -7368,13 +7400,20 @@ three/build/three.module.js:
       options: 'The question is, what are we going to do about you? What’s our plan? And we have options.',
       reset: 'Your knee has looked like this for five years, but it just got angry recently. If we can get it un-angry, it goes back to normal. It’s not a Band-Aid, it’s a reset button.',
       active: 'I’m not going to tell you to stop. The best thing you can do for your knees is to stay active and moving. The worst thing you can do is just sit on a couch all day long.',
-      home: 'That’s the bat phone. If it’s not doing well, you call Jodie. Now if it’s doing awesome, don’t come back and brag about it.'
+      home: 'That’s the bat phone. If it’s not doing well, you call Jodie. Now if it’s doing awesome, don’t come back and brag about it.',
+      /* the On film chips (v0.71): his lines from the meniscus films (storyboard 10/4/2026) */
+      'treat-zones': 'Only the outer edge has a good blood supply. We call that the red zone, and tears out there can heal if I put stitches in them. The inner white zone has no blood supply, so tears in there don’t heal.',
+      'treat-trim': 'If the tear is in the white zone, I take out just the torn part with a tiny biter, then smooth the edge so there are no loose pieces left. I leave as much good meniscus as I can.',
+      'treat-repair': 'First I roughen up the edges so they’re ready to heal. A thin needle passes through the meniscus and sets two tiny anchors, made of suture, on the outside of the joint lining. Pulling the stitch snug closes the tear. For a small tear, one or two of these is all it takes.',
+      'treat-repair-bucket': 'For a bucket handle tear, I flip the torn piece back where it belongs, then pass a row of stitches from the inside of the knee to the outside. They’re tied on the outside of the joint through a small incision, which spot welds the meniscus in place.',
+      'treat-root': 'It’s all done with a camera, through two little poke holes and a third small one. I roughen up the bone where the root attached, so it has a spot to heal. Then I drill a small tunnel that comes out right in the middle of that spot. Two stitches go through the root and down the tunnel, and a little all-suture anchor tacks it down and holds it right up against the bone.'
     },
-    init(api) { kneeTalkInit(api); },
+    init(api) { kneeTalkInit(api); kneeFilmInit(api, meniscusClipFor, '/clips/meniscus/'); },
     render(state, api) {
       api.chipsEl.dataset.scene = state.scene;
       const set = (k, v) => $$('.chip[data-toggle="' + k + '"]', api.view).forEach(c => c.classList.toggle('on', !!v));
       ['kneecap', 'flip', 'cartilage', 'fatpad', 'plica', 'ligaments', 'menisci', 'bend'].forEach(k => set(k, state[k]));
+      $$('.chip[data-toggle^="treat-"]', api.view).forEach(c => c.classList.toggle('on', c.dataset.toggle === 'treat-' + state.treat));
       set('chondro', state.chondro > 0);
       $$('.chip[data-toggle="chondro"] .dots i', api.view).forEach((d, i) => d.classList.toggle('f', i < state.chondro));
       $$('.chip[data-toggle^="tear-"]', api.view).forEach(c => c.classList.toggle('on', c.dataset.toggle === 'tear-' + state.tear));
@@ -7398,10 +7437,18 @@ three/build/three.module.js:
         });
       };
       api.lastPush = push; push();
+      if (state.treat && api.film && api.film.mode !== 'film') api.film.setMode('film');   /* an On film chip brings the film up */
+      if (api.film) api.film.update(state);
     },
     toggle(state, k) {
       let cue = k;
-      if (k.startsWith('tear-')) { const p = k.slice(5); state.tear = state.tear === p ? null : p; state.menisci = true; if (!state.tear) cue = null; return cue; }
+      if (k.startsWith('treat-')) {   /* the On film chips: a treatment on the meniscus films; they bring the meniscus view and a fitting tear with them */
+        const p = k.slice(6); state.treat = state.treat === p ? null : p;
+        if (state.treat) { state.menisci = true; state.scene = 'above'; if (p === 'root' && state.tear !== 'root') state.tear = 'root'; if (p === 'repair' && !(state.tear === 'vertical' || state.tear === 'bucket')) state.tear = 'vertical'; if (p === 'trim' && !state.tear) state.tear = 'flap'; if (p === 'repair' && state.tear === 'bucket') cue = 'treat-repair-bucket'; }
+        else cue = null;
+        return cue;
+      }
+      if (k.startsWith('tear-')) { const p = k.slice(5); state.tear = state.tear === p ? null : p; state.menisci = true; state.treat = null; if (!state.tear) cue = null; return cue; }
       switch (k) {
         case 'kneecap': state.kneecap = !state.kneecap; if (!state.kneecap) state.flip = false; break;
         case 'flip': state.flip = !state.flip; if (state.flip) { state.kneecap = true; if (!state.chondro) state.chondro = 1; } else cue = 'unflip'; break;
@@ -7416,7 +7463,7 @@ three/build/three.module.js:
       return cue;
     },
     onScene(state, scene) {
-      state.scene = scene; state.bend = false; state.flip = false;
+      state.scene = scene; state.bend = false; state.flip = false; state.treat = null;
       return scene === 'side' ? 'sideScene' : scene === 'front' ? 'frontScene' : scene === 'above' ? 'aboveScene' : 'insideScene';
     },
     /* Brett's 10/3/2026 walkthrough: no cards in the Next flow ("I don't need these pop-ups, I can click through those"). */
