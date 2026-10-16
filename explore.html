@@ -213,6 +213,18 @@
                padding: 3px 9px; border-radius: 999px; transition: opacity .25s; will-change: transform; }
   .k3d-hint { position: absolute; right: 12px; top: 10px; font-size: 13px; color: #c7d0e4; background: rgba(12,21,38,.55); padding: 4px 10px; border-radius: 999px; pointer-events: none; transition: opacity .6s; }
   .k3d-hint.gone { opacity: 0; }
+  /* v0.70: the Film side of the knee talks (Brett's mode only): a silent loop from the Blender films over the 3D stage */
+  .stage.k3d video.js-film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: none; z-index: 2; pointer-events: none;
+                             background: radial-gradient(ellipse at 50% 48%, #1d2f4b 0%, #16263f 62%, #121f35 100%); }
+  .stage.k3d.film-on video.js-film { display: block; pointer-events: auto; }
+  .stage.k3d.film-on canvas.js-3d, .stage.k3d.film-on .k3d-labels, .stage.k3d.film-on .k3d-hint { visibility: hidden; }
+  .stage.k3d.film-on.film-mirror video.js-film { transform: scaleX(-1); }   /* the films show a LEFT knee; Right mirrors them (no text in the loops) */
+  .film-tag { position: absolute; left: 12px; top: 10px; z-index: 3; font-size: 13px; color: #c7d0e4; background: rgba(12,21,38,.55); padding: 4px 10px; border-radius: 999px; pointer-events: none; display: none; }
+  .stage.k3d.film-3d .film-tag { display: block; }
+  video.js-preload { display: none !important; }
+  .js-speed { font-variant-numeric: tabular-nums; min-width: 58px; justify-content: center; }
+  html.explore .js-kfilm, html.explore .js-speed, html.explore .film-tag { display: none !important; }
+  @media (max-width: 1200px) { #view-knee .bar { gap: 6px; } #view-knee .bar .seg .btn { padding-inline: 10px; } #view-knee .bar .btn.ghost { padding-inline: 6px; } #view-knee .js-speed { min-width: 50px; } }   /* the ACL bar carries the 3D | Film switch and Speed too; this keeps it on one row at 1180 */
   .k3d-loading { position: absolute; inset: 0; display: grid; place-items: center; color: #e3e9f5; font: 600 18px var(--font-ui); background: rgba(12,21,38,.55); z-index: 2; }
   .k3d-loading[hidden] { display: none; }
   /* the scene rows: only the active scene's row shows (both knee talks) */
@@ -1849,16 +1861,21 @@
         <button class="btn on js-side-right" aria-pressed="true">Right</button>
         <button class="btn js-side-left" aria-pressed="false">Left</button>
       </span>
+      <span class="seg js-kfilm" role="group" aria-label="The 3D knee or the film">
+        <button class="btn on js-kmode" data-m="3d" aria-pressed="true">3D</button>
+        <button class="btn js-kmode" data-m="film" aria-pressed="false">Film</button>
+      </span>
       <span class="spacer"></span>
       <button class="btn js-draw" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
         Draw
       </button>
       <button class="btn ghost js-undo">Undo</button>
-      <button class="btn ghost js-clear">Clear ink</button>
+      <button class="btn ghost js-clear">Clear</button>
       <button class="btn ghost js-labels" aria-pressed="true">Labels</button>
       <button class="btn ghost js-cues" aria-pressed="true">Cues</button>
-      <button class="btn ghost js-reset">↺ Start over</button>
+      <button class="btn ghost js-speed" aria-label="Playback speed" title="Playback speed: 1.5x, 2x or real time">1.5x</button>
+      <button class="btn ghost js-reset">↺ Restart</button>
     </div>
 
     <div class="stage js-stage k3d">
@@ -1866,6 +1883,9 @@
       <svg class="drawing" viewBox="0 0 1000 640" aria-hidden="true"></svg>
       <div class="k3d-hint js-hint">Drag to spin · pinch to zoom</div>
       <div class="k3d-loading js-loading">Building the knee…</div>
+      <video class="js-film" muted playsinline loop autoplay preload="auto" aria-label="The film of this step"></video>
+      <video class="js-preload" muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+      <div class="film-tag js-film-tag">3D · no film for this beat</div>
 
       <canvas class="js-ink" aria-label="Your drawing on top of the model"></canvas>
       <div class="cue js-cue"></div>
@@ -2023,7 +2043,6 @@
         <button class="chip card-chip" data-card="recovery">Recovery</button>
         <button class="chip card-chip" data-card="timing">Timing</button>
         <button class="chip card-chip" data-card="favorite">Favorite</button>
-        <button class="chip js-aclsteps" type="button">Surgery steps ▶</button>
         <button class="chip js-grafts3d" type="button">New ACL in 3D</button>
         <button class="chip card-chip" data-card="meniscus">Meniscus</button>
         <button class="chip card-chip" data-card="home">Take home</button>
@@ -7075,6 +7094,82 @@ three/build/three.module.js:
   const KNEE_BASE = { shift: 0, acl: 'intact', bruise: false, portals: false, tunnels: false, graft: null, physis: false, meniscusTear: null, stitches: false,
                       harvest: null, harvestStage: 0, numb: false, bend: false, injury: null, chondro: 0, flip: false, fatpad: false, plica: false };
 
+  /* ---------- v0.70: the Film side of the knee talks (Brett's mode only) ----------
+     A silent loop from the Blender films over the 3D stage, chosen from the talk's STATE, so he can flip between the 3D knee
+     and the film at any beat and Next keeps whichever side he chose. The loops are cut at 1.5x (tools/acl-steps/make_clips.sh);
+     the Speed button (shared with the kneecap page through localStorage napkin.speed) scales them. Long steps play as parts,
+     back to back. The films show a LEFT knee, so Right mirrors them. */
+  const napkinSpeed = {
+    base: 1.5, steps: [1.5, 2, 1], v: 1.5,
+    load() { try { const m = parseFloat(localStorage.getItem('napkin.speed')); if (this.steps.includes(m)) this.v = m; } catch (e) {} return this.v; },
+    cycle() { this.v = this.steps[(this.steps.indexOf(this.v) + 1) % this.steps.length]; try { localStorage.setItem('napkin.speed', String(this.v)); } catch (e) {} return this.v; },
+    rate() { return this.v / this.base; }
+  };
+  function kneeFilmInit(api, clipFor, base) {
+    const view = api.view, stage = $('.js-stage', view), video = $('.js-film', stage), pre = $('.js-preload', stage), seg = $('.js-kfilm', view), spd = $('.js-speed', view);
+    if (!video || !seg) return;
+    const key = 'napkin.' + view.id.replace('view-', '') + '.view';
+    const explore = () => document.documentElement.classList.contains('explore');
+    let mode = '3d'; try { if (localStorage.getItem(key) === 'film') mode = 'film'; } catch (e) {}
+    let list = null, idx = 0, lastState = null;
+    const src = n => base + n + '.mp4', poster = n => base + n + '.jpg';
+    napkinSpeed.load();
+    const setRate = () => { try { video.playbackRate = napkinSpeed.rate(); video.defaultPlaybackRate = napkinSpeed.rate(); } catch (e) {} };
+    const applySpeed = () => { if (spd) spd.textContent = napkinSpeed.v + 'x'; setRate(); };
+    const play = () => { setRate(); const p = video.play(); if (p && p.catch) p.catch(() => {}); };
+    const load = i => { idx = i; const n = list[i], s = src(n); if (video.getAttribute('src') !== s) { video.setAttribute('poster', poster(n)); video.src = s; video.muted = true; video.defaultMuted = true; } play(); };
+    video.addEventListener('ended', () => { if (list && list.length > 1) load((idx + 1) % list.length); });
+    video.addEventListener('loadedmetadata', setRate);
+    video.addEventListener('click', () => { if (stage.classList.contains('drawing-mode')) return; if (video.paused) play(); else video.pause(); });
+    const paint = () => $$('.js-kmode', seg).forEach(b => { const on = b.dataset.m === mode; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    const setMode = m => { mode = m; try { localStorage.setItem(key, m); } catch (e) {} paint(); if (lastState) update(lastState); };
+    $$('.js-kmode', seg).forEach(b => b.addEventListener('click', () => setMode(b.dataset.m)));
+    if (spd) spd.addEventListener('click', () => { napkinSpeed.cycle(); applySpeed(); });
+    $('.js-side-left', view).addEventListener('click', () => stage.classList.remove('film-mirror'));
+    $('.js-side-right', view).addEventListener('click', () => stage.classList.add('film-mirror'));
+    function update(state) {
+      lastState = state;
+      const want = mode === 'film' && !explore() ? clipFor(state) : null;
+      stage.classList.toggle('film-3d', mode === 'film' && !explore() && !want);
+      stage.classList.toggle('film-on', !!want);
+      stage.classList.toggle('film-mirror', !api.left);
+      if (!want) { if (!video.paused) video.pause(); list = null; return; }
+      const same = list && list.join() === want.join();
+      if (!same) { list = want; video.loop = want.length === 1; load(0); }
+      else if (video.paused && !state.card) play();
+      if (state.card && !video.paused) video.pause();
+      const nx = clipFor.next ? clipFor.next(want) : null;
+      if (nx && pre) { const s = src(nx); if (pre.getAttribute('src') !== s) { pre.src = s; try { pre.load(); } catch (e) {} } }
+    }
+    stage.classList.toggle('film-mirror', !api.left);
+    paint(); applySpeed();
+    api.film = { update, setMode, get mode() { return mode; }, get list() { return list; } };
+  }
+  /* which ACL film loop goes with the talk's state (null = no film for this beat, show the 3D) */
+  function aclClipFor(s) {
+    const g = s.graftType === 'quad' ? 'quad' : 'btb';
+    if (s.scene === 'front') {
+      if (s.quadharvest) return s.backfill ? ['harvest-quad-close'] : ['harvest-quad-mark'];
+      if (s.harvest) return s.backfill ? ['harvest-btb-close'] : s.harvest >= 2 ? ['harvest-btb-lift'] : ['harvest-btb-mark'];
+      return null;
+    }
+    if (s.scene === 'above') return null;                                   /* the meniscus view: no ACL film */
+    if (s.scene === 'side') return (s.injury || s.bruise) ? null : ['exam'];  /* the pivot shift and the bruise are the 3D's own */
+    if (s.graft) return ['graft-' + g + '-a', 'graft-' + g + '-b'];
+    if (s.tunnels) return s.tunnelStage === 1 ? ['femur-' + g] : s.tunnelStage === 2 ? ['tibia-' + g] : ['femur-' + g, 'tibia-' + g];
+    if (s.stump) return ['clean-out'];
+    if (s.portals) return ['portals'];
+    if (s.tear) return ['tear'];
+    return ['anatomy'];
+  }
+  aclClipFor.next = list => {   /* the loop the next beat most likely wants, for the preload */
+    const n = list[list.length - 1], g = /quad/.test(n) ? 'quad' : 'btb';
+    const NEXT = { anatomy: 'tear', tear: 'exam', exam: 'portals', portals: 'clean-out', 'clean-out': 'femur-' + g, ['femur-' + g]: 'tibia-' + g, ['tibia-' + g]: 'graft-' + g + '-a',
+                   ['graft-' + g + '-a']: 'graft-' + g + '-b', ['graft-' + g + '-b']: 'harvest-btb-mark', 'harvest-btb-mark': 'harvest-btb-lift', 'harvest-btb-lift': 'harvest-btb-close',
+                   'harvest-btb-close': 'harvest-quad-mark', 'harvest-quad-mark': 'harvest-quad-close' };
+    return NEXT[n] || null;
+  };
+
   modules.knee = makeModule({
     view: views.knee,
     SKELETON: () => ({ scene: 'inside', ligaments: false, menisci: false, cartilage: false, tear: false, portals: false, stump: false, tunnels: false,
@@ -7098,7 +7193,8 @@ three/build/three.module.js:
       heal: 'When you sprain your MCL, those heal in every single time on their own. ACLs are really bad at healing. The ACL’s inside the knee, and stuff inside the knee doesn’t heal very well.',
       portals: 'When we do surgery for an ACL tear, we do a reconstruction. We go in with a camera through two little poke holes.',
       stump: 'We take out your torn stumpy ACL, and then we make you a new one.',
-      tunnels: 'We drill a hole that exits right in the middle of there, right where it’s supposed to go, and one down here.',
+      tunnels: 'We drill a hole that exits right in the middle of there, right where it’s supposed to go.',
+      tibiaTunnel: 'And one down here in the tibia, right where it’s supposed to go.',
       graft: 'Then we take your new ACL, put it up in there, fix it in place, and that becomes your new ACL.',
       btb: 'With a patellar tendon, there’s a piece of bone on each end that goes in the tunnels. We fix it with screws that are plastic and absorb into bone. If your bone breaks my plastic screw, I reserve the right to use a metal one.',
       quad: 'With a quad tendon, we take a little part of your quad and we use buttons to suspend it. Nothing hard goes across a growth plate, only soft tissue.',
@@ -7118,7 +7214,7 @@ three/build/three.module.js:
       favorite: 'This is my favorite surgery to do. I’ll do it on a Saturday, I don’t care. Three reasons.',
       home: 'I’m going to send Jodie in, and we’re going to get you all fixed up. If you have any more questions, just call. That’s what we’re here for.'
     },
-    init(api) { kneeTalkInit(api); },
+    init(api) { kneeTalkInit(api); kneeFilmInit(api, aclClipFor, '/clips/acl/'); },
     render(state, api) {
       api.chipsEl.dataset.scene = state.scene;
       const set = (k, v) => $$('.chip[data-toggle="' + k + '"]', api.view).forEach(c => c.classList.toggle('on', !!v));
@@ -7150,6 +7246,7 @@ three/build/three.module.js:
         });
       };
       api.lastPush = push; push();
+      if (api.film) api.film.update(state);
     },
     toggle(state, k) {
       let cue = k;
@@ -7161,7 +7258,7 @@ three/build/three.module.js:
         case 'tear': state.tear = !state.tear; if (state.tear) state.ligaments = true; else { clearSurgery(); cue = null; } break;
         case 'portals': state.portals = !state.portals; if (!state.portals) cue = null; break;
         case 'stump': state.stump = !state.stump; if (state.stump) { state.tear = true; state.ligaments = true; } else { state.tunnels = false; state.graft = false; cue = null; } break;
-        case 'tunnels': state.tunnels = !state.tunnels; if (state.tunnels) { state.stump = true; state.tear = true; state.ligaments = true; } else { state.graft = false; cue = null; } break;
+        case 'tunnels': state.tunnels = !state.tunnels; state.tunnelStage = 3; if (state.tunnels) { state.stump = true; state.tear = true; state.ligaments = true; } else { state.graft = false; cue = null; } break;
         case 'btb': case 'quad':
           if (state.graft && state.graftType === k) { state.graft = false; cue = null; }
           else { state.graft = true; state.graftType = k; state.tunnels = true; state.stump = true; state.tear = true; state.ligaments = true; }
@@ -7204,7 +7301,8 @@ three/build/three.module.js:
       ['heal',       s => { s.card = 'heal'; }],
       ['portals',    s => { s.card = null; s.scene = 'inside'; s.portals = true; }],
       ['stump',      s => { s.stump = true; }],
-      ['tunnels',    s => { s.tunnels = true; }],
+      ['tunnels',    s => { s.tunnels = true; s.tunnelStage = 1; }],
+      ['tibiaTunnel', s => { s.tunnelStage = 2; }],
       ['graft',      s => { s.graft = true; s.graftType = 'btb'; }],
       ['options',    s => { s.card = 'options'; }],
       ['harvest',    s => { s.card = null; s.scene = 'front'; s.harvest = 1; }],
@@ -7509,16 +7607,16 @@ three/build/three.module.js:
           { ch: 2, doc: 9, set: s => { kTorn(s); s.portals = true; }, text: 'We don’t sew the old ACL back together; we make a new one. It’s done through two small poke holes.' },
           { ch: 2, doc: 10, set: s => { kTorn(s); s.portals = true; s.stump = true; }, text: 'First I clean out the torn ends of the old ACL.' },
           { ch: 2, doc: 11, set: s => { kTorn(s); s.portals = true; s.stump = true; s.tunnels = true; }, text: 'Then I drill a tunnel in each bone, right where the ACL belongs.' },
-          { ch: 2, doc: 12, set: kNew, text: 'The new ACL goes up through the tunnels and is fixed in place at each end. That becomes your new ACL.' },
-          { ch: 2, doc: 13, set: s => { kNew(s); s.card = 'options'; }, text: 'The new ACL can come from a few places. My usual choices are the middle of your patellar tendon or your quad tendon, both your own tissue. We’ll talk about which one fits you best.' },
-          { ch: 2, doc: 14, set: s => { s.scene = 'front'; s.harvest = 1; }, text: 'With the patellar tendon, I take the middle third of the tendon below your kneecap, with a small piece of bone on each end.' },
-          { ch: 2, doc: 15, set: s => { s.scene = 'front'; s.harvest = 2; }, text: 'That strip, with a little bone on each end, comes out and becomes your new ACL.' },
-          { ch: 2, doc: 16, set: s => { s.scene = 'front'; s.harvest = 2; s.backfill = true; }, text: 'Then I stitch the tendon back together, and it heals in.' },
-          { ch: 2, doc: 18, set: s => { s.scene = 'front'; s.quadharvest = 2; }, text: 'With the quad tendon, it’s a strip from the middle of the tendon above the kneecap. The incisions are off the front of the knee, which is why people who kneel a lot sometimes pick it.' },
-          { ch: 2, doc: 20, set: s => { s.scene = 'above'; s.menisci = true; s.mtear = true; }, text: 'Sometimes a meniscus is torn too. Here we’re looking down on the top of the shin bone.' },
-          { ch: 2, doc: 21, set: s => { s.scene = 'above'; s.menisci = true; s.mtear = true; s.stitches = true; }, text: 'I repair it with stitches at the same surgery whenever I can. A meniscus heals best when the ACL is fixed at the same time.' },
-          { ch: 3, doc: 23, set: s => { kNew(s); s.card = 'recovery'; }, text: 'You go home the same day and walk on it right away. Crutches and a brace for three or four weeks, walking normally around six weeks, jogging at three to four months, and back to cutting and pivoting sports between seven and nine months. Waiting until nine lowers the chance of tearing it again.' },
-          { ch: 3, doc: 24, set: s => { kNew(s); s.card = 'timing'; }, text: 'There’s no rush. I usually wait about three weeks for the knee to calm down, and therapy before surgery helps you recover faster afterward.' }
+          { ch: 2, doc: 13, set: kNew, text: 'The new ACL goes up through the tunnels and is fixed in place at each end. That becomes your new ACL.' },
+          { ch: 2, doc: 14, set: s => { kNew(s); s.card = 'options'; }, text: 'The new ACL can come from a few places. My usual choices are the middle of your patellar tendon or your quad tendon, both your own tissue. We’ll talk about which one fits you best.' },
+          { ch: 2, doc: 15, set: s => { s.scene = 'front'; s.harvest = 1; }, text: 'With the patellar tendon, I take the middle third of the tendon below your kneecap, with a small piece of bone on each end.' },
+          { ch: 2, doc: 16, set: s => { s.scene = 'front'; s.harvest = 2; }, text: 'That strip, with a little bone on each end, comes out and becomes your new ACL.' },
+          { ch: 2, doc: 17, set: s => { s.scene = 'front'; s.harvest = 2; s.backfill = true; }, text: 'Then I stitch the tendon back together, and it heals in.' },
+          { ch: 2, doc: 19, set: s => { s.scene = 'front'; s.quadharvest = 2; }, text: 'With the quad tendon, it’s a strip from the middle of the tendon above the kneecap. The incisions are off the front of the knee, which is why people who kneel a lot sometimes pick it.' },
+          { ch: 2, doc: 21, set: s => { s.scene = 'above'; s.menisci = true; s.mtear = true; }, text: 'Sometimes a meniscus is torn too. Here we’re looking down on the top of the shin bone.' },
+          { ch: 2, doc: 22, set: s => { s.scene = 'above'; s.menisci = true; s.mtear = true; s.stitches = true; }, text: 'I repair it with stitches at the same surgery whenever I can. A meniscus heals best when the ACL is fixed at the same time.' },
+          { ch: 3, doc: 24, set: s => { kNew(s); s.card = 'recovery'; }, text: 'You go home the same day and walk on it right away. Crutches and a brace for three or four weeks, walking normally around six weeks, jogging at three to four months, and back to cutting and pivoting sports between seven and nine months. Waiting until nine lowers the chance of tearing it again.' },
+          { ch: 3, doc: 25, set: s => { kNew(s); s.card = 'timing'; }, text: 'There’s no rush. I usually wait about three weeks for the knee to calm down, and therapy before surgery helps you recover faster afterward.' }
         ],
         think: ['How did it happen? Did you feel or hear a pop?', 'Has the knee given out since then?', 'What sports do you play, and when does your next season start?', 'Do you kneel a lot, at work or in your sport?', 'What do you want to get back to doing?'],
         ask: ['Which graft is best for me?', 'When should we do surgery?', 'When can I get back to my sport?', 'What can I do before surgery?']
