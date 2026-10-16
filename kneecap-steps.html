@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fbf9f3">
+<meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/apple-touch-icon.png">
+<title>Kneecap dislocation · Clinic Diagrams</title>
+<!--
+  Kneecap dislocation (patellar instability and MPFL reconstruction), first built as a mockup 10/12/2026, shipped as v0.69 10/16/2026.
+  v0.69 (10/16): speed pass. Film loops recut at 1.5x (tools/kneecap-steps/make_clips.sh), the two long beats split (Cut the bone + Move it over;
+  Anchors + Socket + Graft in + New ligament), a Speed button (1.5x / 2x / 1x, remembered as localStorage napkin.speed, scales film and sketch
+  together), sketch timings halved, the next clip preloaded, the Sketch/Film choice remembered (napkin.kneecap.view).
+  Built from Brett's 10/12/2026 iPad recording of the talk (transcript and beat map in the companion note), his canonical
+  patellar instability talk (4/15 tape) and the MPFL non-op spiel, matched to the Blender kneecap dislocation and MPFL
+  reconstruction films (Film 1 cut v0.11, Film 2 cut v0.7).
+  Two views of the same step list: Sketch = his three drawings (the groove end-on, the knee from the front, the knee from
+  the side) drawn the way he drew them, tap to reveal and animate; Film = short silent loops cut from the films
+  (clips/kneecap/*.mp4, made by tools/kneecap-steps/make_clips.sh). Patient view (?patient) = the formal wording on the
+  film, the While You Wait shape. The films show a LEFT knee, so Right mirrors the clips (as the ACL steps page does).
+  v0.1.6 (Brett, 10/13): the mound sits on the outside (lateral) facet with a flat, hypoplastic inside facet and a step between (Dejour C/D), the kneecap perched laterally on it and tilted.
+  v0.1.5 (Brett, 10/13): Right/Left were flipped on the sketches; the drawn scenes are a left knee, so Right now mirrors.
+  v0.1.4 (Brett, 10/12): the MPFL is one solid band (not sketch lines), higher on the patella; two tear patterns, mid-substance or off the kneecap (chips); bruises high and medial on the patella, low and crescentic on the outside condyle; the high-grade groove is a broad Dejour-style dome, not a point.
+  v0.1.3 (Brett, 10/12): the MPFL starts on the medial edge of the patella, wraps the medial femoral condyle, and inserts lower on the far medial side of the thigh bone (the graft and the torn and healed versions follow the same route).
+  v0.1.2 (Brett, 10/12 evening): groove scene redrawn to his sketch (rounder shoulders and kneecap, sweeping MPFL arcs with his tear ticks, the lateral arc with the hook, cartilage lines, soft bruises where the bones kiss).
+  v0.1.1 (Brett, 10/12): the MPFL goes AROUND the thigh bone (over its inside shoulder, attaching on the outer face), never through it; the kneecap sits clear of the groove (joint space).
+  Sketch convention: the drawings are a LEFT knee, as in his 10/12 recording (the patient's study was a left knee): inside (medial) on the
+  viewer's LEFT, the kneecap dislocates to the RIGHT. Right mirrors the sketch, like the film (v0.1.5, Brett: right and left were flipped).
+-->
+<style>
+:root {
+  --paper: #fbf9f3; --paper-2: #f2eee3; --ink: #1e2a44; --ink-soft: #5b6478; --ink-faint: #9aa3b8;
+  --tendon: #cf5546; --hot: #d63a2f; --navy: #14325c; --sky: #8fc1ee; --bursa: #4f8fc9; --bone: #efe8d6;
+  --chip-bg: #ffffff; --chip-fg: #14325c; --chip-on-bg: #14325c; --chip-on-fg: #ffffff;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --ink-faint: #6e788e; --tendon: #e2705f; --hot: #ff6a5c; --navy: #9cc4ee; --bone: #2b3650;
+    --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --ink-faint: #6e788e; --tendon: #e2705f; --hot: #ff6a5c; --navy: #9cc4ee; --bone: #2b3650;
+  --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b; color-scheme: dark;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 17px; line-height: 1.35;
+  overflow: hidden; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+button { font: inherit; color: inherit; }
+button:focus-visible { outline: 3px solid #4f8fc9; outline-offset: 2px; }
+.app { height: 100%; display: flex; flex-direction: column; padding-inline: 16px; box-sizing: border-box; }
+
+.bar { display: flex; align-items: center; gap: 8px; padding-block: 8px; flex-wrap: wrap; }
+.bar h1 { font-weight: 700; font-size: 24px; margin: 0; line-height: 1; letter-spacing: -.2px; }
+.spacer { flex: 1; }
+.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 14px; border: 2px solid var(--navy); border-radius: 999px;
+  background: var(--chip-bg); color: var(--chip-fg); font-weight: 600; font-size: 16px; cursor: pointer; user-select: none; -webkit-user-select: none;
+  touch-action: manipulation; text-decoration: none; box-sizing: border-box; }
+.btn.on { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.btn.ghost { border-color: transparent; background: transparent; color: var(--ink-soft); padding-inline: 8px; }
+.btn.ghost[aria-pressed="false"] { opacity: .55; }
+.btn svg { width: 20px; height: 20px; }
+.seg { display: inline-flex; border: 2px solid var(--navy); border-radius: 999px; overflow: hidden; }
+.seg .btn { border: 0; border-radius: 0; min-height: 40px; padding: 4px 12px; font-size: 15px; }
+.seg .btn + .btn { border-left: 2px solid var(--navy); }
+.js-close { display: none; }
+html.embedded .js-close { display: inline-flex; }
+html.embedded .js-home, html.embedded .js-topics { display: none !important; }
+html.patient .js-home, html.patient .js-speed { display: none; }
+
+.stage { position: relative; flex: 1; min-height: 0; border-radius: 18px; overflow: hidden; background: var(--paper-2); }
+.stage.film { background: radial-gradient(ellipse at 50% 48%, #1d2f4b 0%, #16263f 62%, #121f35 100%); }
+.stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: none; }
+.stage.film video { display: block; }
+html:not(.left) .stage.film video { transform: scaleX(-1); }   /* the films show a LEFT knee */
+.stage svg.drawing { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.stage.film svg.drawing { display: none; }
+.stage canvas.ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; touch-action: none; z-index: 5; }
+.stage.drawing-mode canvas.ink { pointer-events: auto; cursor: crosshair; }
+.stage.drawing-mode::after { content: 'Drawing on. Tap Draw again to turn it off.'; position: absolute; right: 12px; top: 12px; font-size: 13px; color: #fff;
+  background: rgba(214,58,47,.85); padding: 4px 10px; border-radius: 999px; pointer-events: none; z-index: 6; }
+.tag { position: absolute; left: 14px; top: 12px; z-index: 4; display: flex; align-items: center; gap: 10px; background: #14325c; border: 2px solid var(--sky);
+  color: #fff; border-radius: 10px; padding: 6px 14px 6px 8px; font-size: 18px; font-weight: 600; pointer-events: none; }
+.tag b { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; padding: 0 6px; box-sizing: border-box;
+  border-radius: 999px; background: var(--sky); color: #14325c; font-size: 15px; }
+.tag b:empty { display: none; }
+.cue { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; padding: 12px 16px; text-align: center; pointer-events: none; font-size: 19px; color: var(--ink);
+  line-height: 1.3; text-wrap: balance; background: linear-gradient(to top, var(--paper-2) 55%, transparent); }
+.stage.film .cue { color: #e3e9f5; background: linear-gradient(to top, rgba(12,21,38,.94) 55%, transparent); }
+.cue:empty, html.nocues .cue { display: none; }
+.nofilm { position: absolute; inset: 0; display: none; place-items: center; color: #e3e9f5; font-size: 20px; text-align: center; padding: 0 40px; }
+.stage.film.nofilm-on .nofilm { display: grid; }
+.stage.film.nofilm-on video { display: none; }
+
+/* cards over the stage (the numbers, the options, recovery) */
+.card { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 4; width: min(92%, 760px); max-height: 82%; overflow: auto;
+  background: var(--chip-bg); color: var(--ink); border: 2px solid var(--navy); border-radius: 18px; padding: 18px 22px; box-sizing: border-box; box-shadow: 0 12px 40px rgba(0,0,0,.18); }
+.card[hidden] { display: none; }
+.card h2 { margin: 0 0 8px; font-size: 24px; color: var(--navy); }
+.card p { margin: 6px 0; font-size: 18px; }
+.card .src { font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
+.people { display: grid; grid-template-columns: repeat(20, 1fr); gap: 4px; margin: 10px 0; }
+.people i { display: block; aspect-ratio: 1; border-radius: 50%; background: var(--ink-faint); opacity: .45; }
+.people i.hit { background: var(--hot); opacity: 1; }
+.ladder { display: grid; gap: 8px; margin: 10px 0; }
+.ladder div { border: 2px solid var(--navy); border-radius: 12px; padding: 10px 14px; font-size: 18px; }
+.ladder div b { display: block; color: var(--navy); }
+.cal { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 10px 0; }
+.cal div { border: 2px solid var(--navy); border-radius: 12px; padding: 10px 12px; font-size: 16px; }
+.cal div b { display: block; font-size: 20px; color: var(--navy); }
+@media (max-width: 760px) { .cal { grid-template-columns: 1fr 1fr; } }
+
+.chips { display: flex; flex-direction: column; gap: 8px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row .lbl { font-size: 13px; color: var(--ink-soft); min-width: 54px; text-transform: uppercase; letter-spacing: .04em; }
+.chip { display: inline-flex; align-items: center; gap: 7px; min-height: 46px; padding: 6px 13px; border: 2px solid var(--navy); border-radius: 999px;
+  background: var(--chip-bg); color: var(--chip-fg); font-weight: 600; font-size: 15px; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.chip.on { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.chip .n { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 999px; background: var(--navy); color: var(--paper); font-size: 13px; }
+.chip.on .n { background: var(--chip-on-fg); color: var(--chip-on-bg); }
+.chip.primary { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.nav { margin-left: auto; display: flex; gap: 8px; }
+html.patient .row.js-steps .chip:not(.js-next):not(.js-back) { display: none; }
+html.patient .row.js-show, html.patient .row.js-tearrow { display: none; }
+html.patient .js-view, html.patient .js-draw, html.patient .js-undo, html.patient .js-clear, html.patient .js-cues { display: none; }
+html.patient .cue { font-size: 21px; padding-bottom: 18px; }
+video.js-preload { display: none !important; }
+.js-speed { font-variant-numeric: tabular-nums; min-width: 58px; justify-content: center; }
+@media (max-width: 1200px) { .js-steps .chip { min-height: 42px; padding: 5px 10px; font-size: 14px; gap: 6px; } .js-steps .chip .n { width: 22px; height: 22px; font-size: 12px; } .row .lbl { display: none; } }
+@media (max-width: 1100px) { .js-steps .chip .n { display: none; } .chips { gap: 6px; padding-block: 8px calc(8px + env(safe-area-inset-bottom, 0px)); } .row { gap: 6px; } }   /* a 1024 iPad: the numbers come off the beats (the tag on the stage still shows the number) so the talk stays in three rows */
+@media (max-width: 900px) { .chip { min-height: 44px; padding: 6px 11px; font-size: 14px; } .bar h1 { font-size: 20px; } }
+
+/* the sketch: Brett's ballpoint */
+svg.drawing { font-family: var(--font-ui); }
+svg.drawing .ink { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+svg.drawing .thin { stroke-width: 2.2; }
+svg.drawing .faint { stroke: var(--ink-faint); stroke-dasharray: 9 8; }
+svg.drawing .bone { fill: var(--bone); }
+svg.drawing .tendon { stroke: var(--tendon); }
+svg.drawing .hot { stroke: var(--hot); }
+svg.drawing .fill-hot { fill: var(--hot); opacity: .85; }
+svg.drawing .fill-tendon { fill: var(--tendon); opacity: .35; }
+svg.drawing .mpfl { fill: var(--tendon); opacity: .55; }
+svg.drawing .fill-sky { fill: var(--bursa); opacity: .35; }
+svg.drawing text { fill: var(--ink-soft); font-size: 22px; font-weight: 600; }
+svg.drawing text.big { font-size: 26px; fill: var(--ink); }
+svg.drawing .layer { opacity: 0; transition: opacity .2s ease; pointer-events: none; }
+svg.drawing .layer.on { opacity: 1; }
+svg.drawing .layer.on .draw { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: draw calc(.45s * var(--sk, 1)) ease forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+svg.drawing .layer.on .pop { transform-box: fill-box; transform-origin: center; animation: pop calc(.3s * var(--sk, 1)) cubic-bezier(.2,1.4,.4,1); }
+@keyframes pop { from { opacity: 0; } to { opacity: 1; } }
+svg.drawing .scene { display: none; }
+svg.drawing .scene.on { display: inline; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar">
+    <a class="btn ghost js-home" href="/" aria-label="Back to joints">‹ Joints</a>
+    <a class="btn ghost js-topics" href="/learn" hidden>All topics</a>
+    <h1>Kneecap dislocation</h1>
+    <span class="seg js-view" role="group" aria-label="Sketch or film">
+      <button class="btn js-mode" data-m="sketch">Sketch</button>
+      <button class="btn js-mode" data-m="film">Film</button>
+    </span>
+    <span class="seg" role="group" aria-label="Which knee">
+      <button class="btn js-side" data-side="R">Right</button>
+      <button class="btn js-side" data-side="L">Left</button>
+    </span>
+    <span class="spacer"></span>
+    <button class="btn js-draw" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Draw</button>
+    <button class="btn ghost js-undo">Undo</button>
+    <button class="btn ghost js-clear">Clear</button>
+    <button class="btn ghost js-cues" aria-pressed="true">Cues</button>
+    <button class="btn ghost js-speed" aria-label="Playback speed" title="Playback speed: 1.5x, 2x or real time">1.5x</button>
+    <button class="btn ghost js-close" aria-label="Close and go back to the knee">✕ Close</button>
+  </div>
+
+  <div class="stage js-stage">
+    <video class="js-video" muted playsinline loop autoplay preload="auto" aria-label="Animation of this step"></video>
+    <div class="nofilm js-nofilm"></div>
+
+    <svg class="drawing js-svg" viewBox="0 0 1000 640" aria-label="The kneecap, drawn as in the exam room">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="context-stroke"/></marker>
+      </defs>
+
+      <!-- SCENE A: the groove end-on (his first drawing, 10/12 at 1:10). Inside (medial) on the LEFT, the kneecap goes out to the RIGHT.
+           v0.1.2: redrawn to his sketch: wide rounded shoulders with a shallow U between, a pebble kneecap sitting in it with joint space,
+           long sweeping MPFL arcs round the inside shoulder with his little tear ticks, the lateral arc ending in a hook; refinements:
+           cartilage lines, soft bruises where the bones kiss (inside facet of the kneecap, outside shoulder of the thigh bone). -->
+      <g class="scene js-scene" id="sc-groove">
+        <defs>
+          <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter>
+          <radialGradient id="bruise"><stop offset="0" style="stop-color:#7b61c9;stop-opacity:.6"/><stop offset=".55" style="stop-color:#7b61c9;stop-opacity:.3"/><stop offset="1" style="stop-color:#7b61c9;stop-opacity:0"/></radialGradient>
+        </defs>
+        <g class="js-flip">
+          <g class="layer on" id="g-bone">
+            <path class="ink bone js-trochlea" d=""/>
+            <path class="ink thin js-cart-f" style="stroke:var(--bursa);opacity:.75" d=""/>
+          </g>
+          <!-- the MPFL: one band from the upper inside edge of the kneecap, draped over the inside condyle, inserting low on the inside face -->
+          <g class="layer" id="g-mpfl">
+            <path class="mpfl pop" d="M392 210 C338 208 296 246 292 302 C288 340 284 370 286 394 L300 416 C298 380 300 344 306 312 C316 272 356 240 396 240 Z"/>
+            <path class="ink tendon draw thin" d="M392 210 C338 208 296 246 292 302 C288 340 284 370 286 394"/>
+            <path class="ink tendon draw thin" d="M396 240 C356 240 316 272 306 312 C300 344 298 380 300 416"/>
+          </g>
+          <!-- torn in the middle of the ligament -->
+          <g class="layer" id="g-tear-mid">
+            <path class="mpfl pop" d="M292 318 C288 346 284 372 286 394 L300 416 C298 382 300 348 304 324 Z"/>
+            <path class="fill-hot pop" d="M292 318 l-6 -10 l10 2 l-2 -10 l10 6 l4 -8 l-4 36 Z"/>
+            <path class="ink hot draw" d="M250 300 l18 -6 M244 318 l20 -4 M252 336 l16 -6 M238 312 l8 -2"/>
+          </g>
+          <!-- pulled off the kneecap (with a fleck of bone), the rest of the band hanging over the condyle -->
+          <g class="layer" id="g-tear-pat">
+            <path class="mpfl pop" d="M366 230 C322 234 294 262 292 310 C288 346 284 372 286 394 L300 416 C298 382 300 348 306 320 C314 288 342 262 372 258 Z"/>
+            <path class="fill-hot pop" d="M366 230 l-8 -8 l10 -2 l-2 -10 l10 6 l2 -8 l6 18 Z"/>
+            <path class="ink hot draw" d="M250 300 l18 -6 M244 318 l20 -4 M252 336 l16 -6 M238 312 l8 -2"/>
+          </g>
+          <g class="layer" id="g-healed">
+            <path class="mpfl pop" style="opacity:.75" d="M392 210 C338 208 296 246 292 302 C288 340 284 370 286 394 L300 416 C298 380 300 344 306 312 C316 272 356 240 396 240 Z"/>
+            <path class="ink tendon draw" d="M392 210 C338 208 296 246 292 302 C288 340 284 370 286 394"/>
+            <path class="ink tendon draw" d="M396 240 C356 240 316 272 306 312 C300 344 298 380 300 416"/>
+            <path class="ink tendon draw thin" style="opacity:.6" d="M372 224 l10 14 M348 232 l10 14 M326 250 l10 12 M310 282 l12 8 M302 330 l12 4 M298 372 l12 2"/>
+          </g>
+          <!-- the new ligament: graft band on the same route, two anchors in the kneecap, screw in the thigh bone -->
+          <g class="layer" id="g-graft-socket">
+            <path class="ink draw thin" d="M282 400 l22 6 M284 390 l22 6 M286 380 l22 6 M288 370 l22 6"/>
+          </g>
+          <g class="layer" id="g-graft">
+            <path class="mpfl pop" d="M392 210 C338 208 296 246 292 302 C288 340 284 370 286 394 L300 416 C298 380 300 344 306 312 C316 272 356 240 396 240 Z"/>
+            <path class="ink tendon draw thin" d="M392 210 C338 208 296 246 292 302 C288 340 284 370 286 394"/>
+            <path class="ink tendon draw thin" d="M396 240 C356 240 316 272 306 312 C300 344 298 380 300 416"/>
+          </g>
+          <!-- the way out: his arc from the top of the kneecap, sweeping outside and down to the hook -->
+          <g class="layer" id="g-path">
+            <path class="ink faint draw" d="M522 150 C640 118 760 170 782 262" marker-end="url(#arrow)"/>
+            <path class="ink faint draw thin" d="M560 190 C620 182 670 200 700 232"/>
+          </g>
+          <!-- the kneecap (moves): a pebble, soft point at the bottom -->
+          <g class="js-patella">
+            <path class="ink bone" d="M392 232 C386 176 436 146 500 146 C564 146 614 176 608 232 C604 274 560 308 500 318 C440 308 396 274 392 232 Z"/>
+            <path class="ink thin" style="stroke:var(--bursa);opacity:.75" d="M404 258 C424 292 460 308 500 310 C540 308 576 292 596 258"/>
+            <g class="layer" id="g-tear-mid-p">
+              <path class="mpfl pop" d="M392 210 C360 209 334 220 318 238 L336 262 C350 248 372 240 396 240 Z"/>
+              <path class="fill-hot pop" d="M318 238 l-10 6 l8 6 l-9 8 l10 2 l-4 8 l23 -6 Z"/>
+            </g>
+            <g class="layer" id="g-tear-pat-p"><path class="fill-hot pop" d="M394 212 l-6 10 l6 10 l6 -2 l2 -16 Z"/></g>
+            <g class="layer" id="g-chunk"><path class="fill-hot pop" d="M548 282 C560 296 574 300 586 284 L578 272 Z"/><path class="ink hot draw thin" d="M548 282 C560 296 574 300 586 284"/></g>
+            <g class="layer" id="g-bruise-p"><ellipse class="pop" cx="432" cy="218" rx="22" ry="34" fill="#7b61c9" opacity=".5" filter="url(#soft)"/></g>
+            <g class="layer" id="g-graft-anchors"><!-- the two anchors sit in the kneecap, so they ride with it and draw on top of it (v0.69) -->
+              <circle class="pop" cx="400" cy="216" r="5.5" fill="var(--navy)"/>
+              <circle class="pop" cx="404" cy="240" r="5.5" fill="var(--navy)"/>
+            </g>
+          </g>
+          <g class="layer" id="g-loose"><path class="fill-hot pop" d="M610 470 C624 460 640 464 644 478 C640 492 622 496 612 486 Z"/></g>
+          <!-- the thigh bone's bruise: the outside shoulder, where the kneecap hit it on the way back in -->
+          <g class="layer" id="g-bruise-f"><path class="pop" d="M628 342 C668 362 696 398 700 444 C690 406 664 380 622 364 Z" fill="#7b61c9" opacity=".5" filter="url(#soft)"/></g>
+        </g>
+        <g class="js-labels">
+          <text class="big js-lbl" data-x="250" data-y="500" data-a="end" data-side="in">inside</text>
+          <text class="big js-lbl" data-x="750" data-y="500" data-a="start" data-side="out">outside</text>
+          <text class="js-lbl js-lbl-kneecap" data-x="500" data-y="112" data-a="middle">kneecap</text>
+          <text class="js-lbl" data-x="500" data-y="470" data-a="middle">thigh bone, end-on</text>
+          <text class="js-lbl js-lbl-mpfl" data-x="236" data-y="400" data-a="end" data-side="in">MPFL</text>
+          <text class="js-lbl js-lbl-groove" data-x="500" data-y="396" data-a="middle">the groove</text>
+        </g>
+      </g>
+
+      <!-- SCENE B: the knee from the front (his tendon drawing) -->
+      <g class="scene js-scene" id="sc-front">
+        <g class="js-flip">
+          <g class="layer on" id="f-bone">
+            <path class="ink" d="M425 30 L405 200 M575 30 L595 200"/>
+            <path class="ink" d="M400 470 Q500 455 600 470 M432 478 L418 640 M568 478 L582 640"/>
+          </g>
+          <!-- the kneecap (moves for tracking) -->
+          <g class="js-fpatella">
+            <path class="ink bone" d="M400 205 Q410 148 500 148 Q590 148 600 205 Q600 300 500 324 Q400 300 400 205 Z"/>
+            <g class="layer" id="f-inc"><path class="ink hot draw" d="M406 215 Q402 250 408 292"/></g>
+          </g>
+          <g class="layer on" id="f-tendons">
+            <path class="ink" d="M440 150 L446 40 M560 150 L554 40"/>
+            <path class="ink js-pt1" d="M470 318 L482 462"/>
+            <path class="ink js-pt2" d="M530 318 L518 462"/>
+            <circle class="ink" cx="500" cy="484" r="22"/>
+          </g>
+          <g class="layer" id="f-lateral">
+            <path class="ink faint draw" d="M530 318 L648 460 M500 322 L612 468"/>
+            <circle class="ink faint draw" cx="640" cy="484" r="22"/>
+            <path class="ink hot draw" d="M560 232 L680 196" marker-end="url(#arrow)"/>
+          </g>
+          <g class="layer" id="f-tto">
+            <path class="ink draw" d="M468 452 L532 452 L538 548 L462 548 Z"/>
+            <path class="ink hot draw" d="M458 500 L392 500" marker-end="url(#arrow)"/>
+          </g>
+          <g class="layer" id="f-tto-done">
+            <path class="ink bone pop" d="M408 452 L472 452 L478 548 L402 548 Z"/>
+            <circle class="ink pop" cx="440" cy="484" r="22"/>
+            <path class="ink draw" d="M470 318 L428 462 M530 318 L452 462"/>
+            <path class="ink draw thin" d="M420 522 L462 522 M416 536 L462 536 M430 514 l-10 8 l10 8"/>
+          </g>
+          <g class="layer" id="f-portals"><circle class="fill-hot pop" cx="468" cy="350" r="6"/><circle class="fill-hot pop" cx="532" cy="350" r="6"/><path class="ink hot draw" d="M372 100 Q368 124 374 150"/></g>
+        </g>
+        <g class="js-labels">
+          <text class="js-lbl" data-x="300" data-y="90" data-a="end" data-side="in">quad tendon</text>
+          <text class="js-lbl" data-x="300" data-y="400" data-a="end" data-side="in">patellar tendon</text>
+          <text class="js-lbl" data-x="300" data-y="490" data-a="end" data-side="in">where it attaches</text>
+          <text class="js-lbl js-lbl-pull" data-x="700" data-y="170" data-a="start" data-side="out">the line of pull</text>
+          <text class="js-lbl js-lbl-tto" data-x="700" data-y="520" data-a="start" data-side="out">cut the bone, move it over</text>
+          <text class="js-lbl js-lbl-inc" data-x="300" data-y="200" data-a="end" data-side="in">incision</text>
+          <text class="js-lbl js-lbl-inc" data-x="300" data-y="128" data-a="end" data-side="in">incision</text>
+          <text class="js-lbl js-lbl-inc" data-x="700" data-y="360" data-a="start" data-side="out">two little poke holes</text>
+        </g>
+      </g>
+
+      <!-- SCENE C: the knee from the side (his patella alta drawing) -->
+      <g class="scene js-scene" id="sc-side">
+        <g class="js-flip">
+          <g class="layer on" id="s-bone">
+            <path class="ink bone" d="M330 30 L336 250 C340 310 372 352 424 358 C476 362 512 334 514 292 C516 258 498 232 470 214 C440 196 404 130 392 30 Z"/>
+          </g>
+          <g class="js-tibia">
+            <path class="ink" d="M350 378 Q450 368 540 380 L552 400 L566 560 M350 378 L356 560"/>
+            <circle class="ink thin" cx="552" cy="420" r="9"/>
+          </g>
+          <path class="ink tendon js-stendon" d=""/>
+          <g class="js-spatella">
+            <ellipse class="ink bone" cx="0" cy="0" rx="28" ry="50"/>
+          </g>
+          <g class="layer" id="s-groove"><path class="ink faint draw" d="M468 212 C498 236 514 262 514 292"/></g>
+        </g>
+        <g class="js-labels">
+          <text class="js-lbl" data-x="300" data-y="130" data-a="end" data-side="in">thigh bone, from the side</text>
+          <text class="js-lbl js-lbl-alta" data-x="700" data-y="120" data-a="start" data-side="out">kneecap sits high</text>
+          <text class="js-lbl js-lbl-dec" data-x="700" data-y="310" data-a="start" data-side="out">into the groove</text>
+          <text class="js-lbl" data-x="300" data-y="470" data-a="end" data-side="in">shin bone</text>
+        </g>
+      </g>
+    </svg>
+
+    <div class="tag js-tag"><b class="js-tagn"></b><span class="js-tagt"></span></div>
+    <canvas class="ink js-ink" aria-label="Your drawing on top"></canvas>
+    <div class="cue js-cue"></div>
+
+    <div class="card js-card" hidden></div>
+  </div>
+
+  <video class="js-preload" muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+  <div class="chips">
+    <div class="row js-steps">
+      <span class="lbl">The talk</span>
+      <span class="nav">
+        <button class="chip js-back">◀ Back</button>
+        <button class="chip primary js-next">Next ▶</button>
+      </span>
+    </div>
+    <div class="row js-tearrow">
+      <span class="lbl">The tear</span>
+      <button class="chip js-tear" data-t="mid">Tears in the middle</button>
+      <button class="chip js-tear" data-t="pat">Pulls off the kneecap</button>
+    </div>
+    <div class="row js-show">
+      <span class="lbl">Show them</span>
+      <button class="chip js-card-btn" data-card="people">How often it happens again</button>
+      <button class="chip js-card-btn" data-card="options">Your options</button>
+      <button class="chip js-card-btn" data-card="old">Old way vs now</button>
+      <button class="chip js-card-btn" data-card="recovery">Recovery</button>
+      <button class="chip js-card-btn" data-card="qr">Take home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const root = document.documentElement;
+  const qs = new URLSearchParams(location.search);
+  let embedded = qs.has('embed');
+  try { if (window.self !== window.top) embedded = true; } catch (e) { embedded = true; }
+  if (embedded) root.classList.add('embedded');
+  const patient = qs.has('patient') || location.hash === '#patient' || /^\/(learn|explore)\//.test(location.pathname);
+  if (patient) { root.classList.add('patient'); const t = $('.js-topics'); t.hidden = false; t.href = /^\/explore\b/.test(location.pathname) ? '/explore' : '/learn'; }
+
+  const BASE = (document.currentScript && document.currentScript.dataset.clips) || (qs.get('clips') || '/clips/kneecap/');
+  const CLIP = (n) => BASE + n + '.mp4';
+  const POSTER = (n) => BASE + n + '.jpg';
+
+  // The groove, three ways (his drawing: a wide bone end with a notch; "ice rink"; "a mountain")
+  const BODY = ' C738 410 700 500 570 518 C440 530 332 510 302 436 C290 404 290 368 300 338 Z';
+  const TROCHLEA = {   // the top edge: inside shoulder, the groove, outside shoulder (a little taller); the body below is the same bean
+    normal: 'M300 338 C298 290 350 268 400 290 C446 312 470 340 500 340 C530 340 556 310 600 282 C650 254 700 278 712 340' + BODY,
+    shallow: 'M300 338 C298 300 350 292 400 300 C446 310 470 318 500 318 C530 318 556 308 600 298 C650 288 700 296 712 340' + BODY,
+    mountain: 'M300 338 C298 310 340 318 390 320 C440 320 490 318 522 308 C544 300 556 266 600 254 C650 256 698 282 712 340' + BODY,   // Dejour C/D: flat (hypoplastic) inside facet, a step, a convex mound on the outside facet
+  };
+  const CART = {   // the thin cartilage line over the groove
+    normal: 'M388 300 C430 322 470 352 500 352 C530 352 570 322 612 294',
+    shallow: 'M388 314 C424 322 464 328 500 330 C536 328 576 320 612 310',
+    mountain: 'M384 330 C436 330 494 322 522 312 C544 302 560 272 602 264 C640 266 674 282 692 302',
+  };
+  const PAT = { normal: [0, 0, 0], shallow: [0, -6, 0], mountain: [66, -58, 10], out: [238, 26, 34] };   // dx, dy, rotate; the kneecap sits clear of the groove (joint space)
+
+  // Brett's talk, in the order he gave it on 10/12/2026 (his words, de-identified; the patient wording is the formal twin)
+  const STEPS = [
+    { n: '1', label: 'In its groove', title: 'The kneecap sits in its groove', scene: 'groove', clip: 'groove',
+      set: { tro: 'normal', pat: 'normal', mpfl: true },
+      cue: 'The kneecap is like this, and it sits in its little groove.',
+      pt: 'The kneecap rides in a groove at the end of the thigh bone.' },
+    { n: '2', label: 'It goes out', title: 'It always goes to the outside', scene: 'groove', clip: 'dislocate',
+      set: { tro: 'normal', pat: 'out', mpfl: true, tear: true, path: true, anim: 'dislocate' },
+      cue: 'When it dislocates, it always comes laterally. If this is the inside and this is the outside, it always comes this way.',
+      pt: 'When the kneecap dislocates, it almost always goes toward the outside of the knee.' },
+    { n: '3', label: 'Tears the MPFL', title: 'To get that far it tears the MPFL', scene: 'groove', clip: 'dislocate',
+      set: { tro: 'normal', pat: 'out', tear: true, path: true },
+      cue: 'In order for it to get that far, you have to tear your MPFL. It is the thickening of the ligaments on the inside. It can’t travel that far otherwise, so it tears. It has to, for it to dislocate.',
+      pt: 'To travel that far, the kneecap has to tear the MPFL, the medial patellofemoral ligament, the main ligament holding it on the inside.' },
+    { n: '4', label: 'Back in', title: 'It comes out and it comes back in', scene: 'groove', clip: 'back-in',
+      set: { tro: 'normal', pat: 'normal', tear: true, bruise: true, anim: 'backin' },
+      cue: 'For a first-time dislocator, it comes out and it comes back in. The kneecap bumps the thigh bone on the way, so the MRI shows a bruise on each one, a little map of what happened.',
+      pt: 'Most of the time it pops straight back in. On the way, the kneecap bumps the thigh bone, which leaves a bruise on each bone on the MRI.' },
+    { n: '5', label: 'It heals', title: 'The MPFL can heal on its own', scene: 'groove', clip: 'heals',
+      set: { tro: 'normal', pat: 'normal', healed: true },
+      cue: 'The MPFL is kind of like the MCL: it sits outside of the knee joint, and it can heal in on its own. So after a first-time dislocation, your risk of it happening again is relatively low.',
+      pt: 'The MPFL sits outside the joint, like the MCL, so it can heal on its own. That is why most first-time dislocations are treated without surgery.' },
+    { n: '6', label: 'Happens again', title: 'If it happens again, it proves it didn’t heal', scene: 'groove', clip: 'heals', card: 'people',
+      set: { tro: 'normal', pat: 'normal', healed: true },
+      cue: 'If it does happen again, that proves this stuff didn’t heal in as well as we wanted, and it might be healed in a little bit loose. A second time makes a third more likely. After a third, it is just a matter of when.',
+      pt: 'If it happens again, the ligament has healed loose. Each dislocation makes the next one more likely, and that is when surgery comes into the conversation.' },
+    { n: '7', label: 'Shallow groove', title: 'A shallow groove: an ice rink', scene: 'groove', clip: 'shallow',
+      set: { tro: 'shallow', pat: 'shallow', mpfl: true },
+      cue: 'Some people are more set up for this. A shallowish groove, so your kneecap is sitting on a little ice rink. We call that trochlear dysplasia. It is just the shape of the groove.',
+      pt: 'Some people are born with a shallow groove, so the kneecap sits on something more like an ice rink than a track. This is called trochlear dysplasia.' },
+    { n: '8', label: 'A mountain', title: 'A groove like a mountain', scene: 'groove', clip: 'mountain',
+      set: { tro: 'mountain', pat: 'mountain', anim: 'teeter' },
+      cue: 'Some people have a groove that is literally like a mountain, and the kneecap is teeter-tottering on top of it. That is high-grade trochlear dysplasia, and those are the super unstable ones.',
+      pt: 'In the most severe form the groove is shaped like a mountain and the kneecap teeters on top of it. Those knees are the most unstable.' },
+    { n: '9', label: 'Angle of pull', title: 'Where the tendon attaches', scene: 'front', clip: 'pull',
+      set: { lateral: true },
+      cue: 'Your quad tendon comes here, and your patellar tendon comes down and attaches to the bone here. If it attached way over here, the line of pull wants to take the kneecap out. We measure that on your MRI.',
+      pt: 'The patellar tendon attaches the kneecap to the shin bone. If that attachment sits too far to the outside, every time the thigh muscle fires it pulls the kneecap outward. This is measured on the MRI.' },
+    { n: '10', label: 'Cut the bone', title: 'Cut the bone around the tendon', scene: 'front', clip: 'cut-bone',
+      set: { lateral: true, tto: true },
+      cue: 'When it is super far lateral, we add on a procedure where we cut the bone and move it over. Why not just move the tendon? Tendon doesn’t heal to bone very well, so you cut the bone around it.',
+      pt: 'When the attachment sits far to the outside, the piece of bone the tendon attaches to is cut free, rather than the tendon itself, because bone heals to bone reliably.' },
+    { n: '11', label: 'Move it over', title: 'Move it over and screw it back in', scene: 'front', clip: 'move-bone',
+      set: { lateral: true, tto: true, anim: 'tto' },
+      cue: 'You move the tendon with its bone and screw it back in, because bone heals better than tendon. People have to have really bad anatomy for me to recommend it.',
+      pt: 'That piece of bone is moved inward and forward and held with two screws. This is added only for unfavorable anatomy.' },
+    { n: '12', label: 'How it tracks', title: 'Watching it track', scene: 'front', clip: null,
+      set: { anim: 'track' },
+      cue: 'When you straighten your knee out, it tracks pretty well, ever so slightly lateral at the top. Some people straighten it out and it goes clunk, and then it has to clunk back in. Those are the ones I used to do this for.',
+      pt: 'Straightening the knee slowly shows how the kneecap tracks. A kneecap that clunks out of the groove at the top is a sign of unfavorable anatomy.' },
+    { n: '13', label: 'Sits high', title: 'A kneecap that sits high', scene: 'side', clip: null,
+      set: { alta: true },
+      cue: 'From the side, your kneecap may sit a little bit high. That is called patella alta. We are not overly aggressive about correcting it, because the MPFL reconstruction has been a really good operation for us.',
+      pt: 'Some kneecaps sit higher than usual on the thigh bone, called patella alta. It is rarely corrected on its own, because the ligament reconstruction works well without that.' },
+    { n: '14', label: 'The decision', title: 'Every bend, it makes a decision', scene: 'side', clip: 'decision',
+      set: { alta: true, groove: true, anim: 'decision' },
+      cue: 'All these drawings are bad, because your kneecap actually sits above its groove. Every time you bend your knee it has to decide: am I going into the groove or not? Most of the time it chooses correctly. Once it is bent, it is not going anywhere. A high kneecap just has a little more time to make the wrong decision. The MPFL’s job is to tighten up if it is about to choose wrong.',
+      pt: 'With the knee straight, the kneecap sits above its groove. As the knee bends, it drops into the groove. Once it is in, it is stable. A dislocation happens in that first bit of bend, with a twist. The MPFL is what pulls it back in when it starts to go.' },
+    { n: '15', label: 'Chunk of cartilage', title: 'When a chunk comes off', scene: 'groove', clip: 'chunk',
+      set: { tro: 'normal', pat: 'normal', chunk: true, loose: true },
+      cue: 'There is cartilage on the back of your kneecap. Sometimes people take a big chunk of cartilage and bone off, and it is floating around in there. That is the one time I say we should go do something about it now: take it out, or put it back in.',
+      pt: 'Sometimes a dislocation knocks a piece of cartilage and bone off the back of the kneecap. A loose piece in the joint is the one reason to operate right away.' },
+    { n: '16', label: 'Your options', title: 'What do we do about it?', scene: 'groove', clip: null, card: 'options',
+      set: { tro: 'normal', pat: 'normal', healed: true },
+      cue: 'It is the same surgery now as six months from now or a year from now. Nobody is rushing you. Option one, live with it. Option two, PT and a small kneecap-tracking brace. Option three, if you are sick of it, let’s go fix it.',
+      pt: 'A reconstruction is the same operation now or a year from now, so there is no rush. The choices are living with it, physical therapy with a kneecap-tracking brace, or surgery.' },
+    { n: '17', label: 'Old way vs now', title: 'The old way and the new way', scene: 'groove', clip: null, card: 'old',
+      set: { tro: 'normal', pat: 'normal', mpfl: true },
+      cue: 'The old-school way was to make an incision here and just tighten the ligaments up. It is called a reefing, and it had a really high failure rate. MPFL reconstruction fails about one to five percent of the time. It is a really, really good operation.',
+      pt: 'Tightening the stretched ligament (an older repair) failed often. Reconstructing the ligament with a new one has a low rate of repeat dislocation.' },
+    { n: '18', label: 'Incisions', title: 'Two incisions and two poke holes', scene: 'front', clip: 'incisions',
+      set: { inc: true },
+      cue: 'I use donor tendon, so I don’t have to harvest your own. You get this incision by the kneecap and this one on the inside of the thigh bone, plus two little poke holes, because I scope your knee and clean up the back of the kneecap too.',
+      pt: 'The new ligament is made from donor tendon, so nothing is taken from your own knee. There is a small incision beside the kneecap, one on the inside of the thigh, and two small arthroscopy portals.' },
+    { n: '19', label: 'Anchors', title: 'Two little anchors in the kneecap', scene: 'groove', clip: 'anchors',
+      set: { tro: 'normal', pat: 'normal', graft: 1 },
+      cue: 'I make you a new ligament from here to here. First, two little anchors in the edge of the kneecap.',
+      pt: 'The new ligament starts at two small anchors set into the inside edge of the kneecap.' },
+    { n: '20', label: 'Socket', title: 'A socket in the thigh bone', scene: 'groove', clip: 'tunnel',
+      set: { tro: 'normal', pat: 'normal', graft: 2 },
+      cue: 'Then a socket in the thigh bone, right where the real ligament attaches.',
+      pt: 'A small socket is drilled in the thigh bone where the original ligament attached.' },
+    { n: '21', label: 'Graft in', title: 'The graft goes into the socket', scene: 'groove', clip: 'graft-in',
+      set: { tro: 'normal', pat: 'normal', graft: 3, graftIn: true },
+      cue: 'The graft goes into the socket and a screw that dissolves holds it there.',
+      pt: 'The donor tendon is passed into the socket and held with a screw that dissolves over time.' },
+    { n: '22', label: 'New ligament', title: 'A new MPFL, kneecap to thigh bone', scene: 'groove', clip: 'new-ligament',
+      set: { tro: 'normal', pat: 'normal', graft: 3 },
+      cue: 'I tension it so it holds the kneecap without making the knee tight, and stitch it down to the kneecap. That is your new MPFL.',
+      pt: 'The new ligament is tensioned to catch the kneecap without limiting how the knee bends, and secured to the kneecap. The result is a new MPFL.' },
+    { n: '23', label: 'Recovery', title: 'What recovery looks like', scene: 'front', clip: 'healed', card: 'recovery',
+      set: { inc: false },
+      cue: 'Day surgery, in and out the same day. Walking on it right away, moving it right away, with a brace and crutches until your quad wakes up. Walking normally at about six weeks, ligament healed at three months, full sports at about six months, once your quad is ninety percent of the other side.',
+      pt: 'It is a same-day surgery. You walk on it right away in a brace with crutches, walk normally at about six weeks, and the ligament is healed by three months. Full return to sport is around six months, once the thigh muscle is back to ninety percent.' },
+  ];
+  const CARDS = {
+    people: () => `<h2>If it happens once, how often does it happen again?</h2>
+      <p>Of 100 people after a <b>first</b> dislocation, about <b>1 in 3</b> dislocate again.</p><div class="people">${dots(34)}</div>
+      <p>After <b>more than one</b>, about <b>1 in 2</b>, and the odds keep climbing with each one.</p><div class="people">${dots(49)}</div>
+      <p class="src">Huntington 2020 (pooled 33.6% after a first dislocation); Fithian 2004 (49% after a prior dislocation). From the 10/4/2026 fact check.</p>`,
+    options: () => `<h2>Your options</h2><div class="ladder">
+      <div><b>1. Live with it</b>Do nothing and see how it goes.</div>
+      <div><b>2. PT and a kneecap brace</b>Strengthen the quad, a small patellar tracking brace for a while. Never wrong, and it gets the knee ready if surgery comes later.</div>
+      <div><b>3. Fix it</b>MPFL reconstruction. Same operation now or a year from now. An MRI first, for the measurements and to look at the cartilage.</div></div>`,
+    old: () => `<h2>Old way vs now</h2><div class="ladder">
+      <div><b>The old way: tighten the ligament (a reefing)</b>About 1 in 3 dislocated again.</div>
+      <div><b>Now: a new ligament (MPFL reconstruction)</b>About 1 to 4 in 100 dislocate again.</div></div>
+      <p class="src">Repair: 28% (Camp 2010), 34.5% (Ahrend 2022). Reconstruction redislocation: 1.2% (Schneider 2016), 3.7% (Shah 2012), 3.9% (Patel 2026). From the 10/4/2026 fact check.</p>`,
+    recovery: () => `<h2>Recovery after MPFL reconstruction</h2><div class="cal">
+      <div><b>Day 0</b>Day surgery. Walking on it and moving it right away, brace and crutches.</div>
+      <div><b>3 to 4 weeks</b>Brace until the quad wakes up (the pirate walk). Stairs: up with the good, down with the bad.</div>
+      <div><b>6 weeks</b>Walking normally, no crutches, brace off.</div>
+      <div><b>3 months</b>Ligament healed. Jogging progression, the gym like normal.</div>
+      <div><b>6 months</b>Full competitive sports, once the quad is 90% of the other side.</div>
+      <div><b>With a tubercle move</b>Toe-touch weight bearing for 6 weeks and staged motion. Slower.</div></div>
+      <p>Most high school kids miss about five days of school. Operate on a Thursday, back at a desk on crutches by the next Tuesday or Wednesday.</p>`,
+    qr: () => `<h2>Take it home</h2><p class="sub">Point your phone camera at the code to go through this again at home, with the same pictures.</p><div class="js-qr" style="width:180px;height:180px;margin:12px auto;background:#fff;padding:8px;border-radius:12px;box-sizing:content-box"></div><p class="url" style="text-align:center;font-weight:600">exam-room-napkin.vercel.app/learn/kneecap</p><p class="src">More to read: brettraynormd.com/patellar-instability and brettraynormd.com/mpfl-reconstruction</p>`,
+  };
+  // the take-home QR (the library loads on first use; offline, the typed address stands in)
+  function makeQR(el, url) {
+    const draw = () => { try { new QRCode(el, { text: url, width: 180, height: 180, colorDark: '#14325c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch (e) { fail(); } };
+    const fail = () => { el.innerHTML = '<div style="font-size:13px;color:#14325c;text-align:center;padding:8px">QR needs a connection. Type the address instead.</div>'; };
+    if (window.QRCode) return draw();
+    const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'; sc.onload = draw; sc.onerror = fail; document.head.appendChild(sc);
+  }
+  const dots = (hit) => Array.from({ length: 100 }, (_, i) => `<i class="${i < hit ? 'hit' : ''}"></i>`).join('');
+
+  const S = { step: 0, mode: patient ? 'film' : 'sketch', side: 'R', cues: true, card: null, tear: 'mid' };
+  if (qs.get('side') === 'L') S.side = 'L';
+  const mem = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+  if (!patient && mem('napkin.kneecap.view') === 'film') S.mode = 'film';
+  if (qs.get('v') === 'film') S.mode = 'film'; else if (qs.get('v') === 'sketch') S.mode = 'sketch';
+  // Speed: the loops are cut at 1.5x real time (SPD.base); the button shows real-time multiples and scales film and sketch together.
+  const SPD = { base: 1.5, steps: [1.5, 2, 1], v: 1.5, k: 1 };
+  { const m = parseFloat(mem('napkin.speed')); if (SPD.steps.includes(m)) SPD.v = m; }
+  function applySpeed() { SPD.k = SPD.base / SPD.v; root.style.setProperty('--sk', SPD.k); $('.js-speed').textContent = SPD.v + 'x';
+    try { video.playbackRate = SPD.v / SPD.base; video.defaultPlaybackRate = SPD.v / SPD.base; } catch (e) {} }
+
+  const st0 = parseInt(qs.get('step'), 10); if (st0 >= 0 && st0 < STEPS.length) S.step = st0;
+
+  // step chips
+  const row = $('.js-steps'), nav = $('.nav', row);
+  STEPS.forEach((s, i) => {
+    const b = document.createElement('button'); b.className = 'chip js-step'; b.dataset.i = i;
+    b.innerHTML = '<span class="n"></span><span class="l"></span>';
+    b.querySelector('.n').textContent = s.n; b.querySelector('.l').textContent = s.label;
+    row.insertBefore(b, nav);
+    b.addEventListener('click', () => go(i));
+  });
+
+  const stage = $('.js-stage'), video = $('.js-video'), svg = $('.js-svg'), card = $('.js-card');
+
+  // ---------- film ----------
+  function setClip(name) {
+    if (!name) { video.removeAttribute('src'); video.removeAttribute('poster'); video.load(); stage.classList.add('nofilm-on');
+      $('.js-nofilm').textContent = 'No film for this beat yet (it is on the sketch).'; return; }
+    stage.classList.remove('nofilm-on');
+    const src = CLIP(name);
+    if (video.getAttribute('src') !== src) { video.setAttribute('poster', POSTER(name)); video.src = src; video.muted = true; video.defaultMuted = true; }
+    try { video.playbackRate = SPD.v / SPD.base; } catch (e) {}
+    const p = video.play(); if (p && p.catch) p.catch(() => {});
+  }
+
+  // ---------- sketch ----------
+  const flipGroups = $$('.js-flip');
+  const layer = (id, on) => { const g = document.getElementById(id); if (g) g.classList.toggle('on', !!on); };
+  const tro = $('.js-trochlea'), cartF = $('.js-cart-f'), patella = $('.js-patella');
+  let anim = null, raf = 0;
+  function stopAnim() { anim = null; if (raf) cancelAnimationFrame(raf); raf = 0; }
+  function setPatella(dx, dy, r) { patella.setAttribute('transform', `translate(${dx} ${dy}) rotate(${r} 500 230)`); }
+  const fpat = $('.js-fpatella'), pt1 = $('.js-pt1'), pt2 = $('.js-pt2');
+  function setFront(dx, dy) {
+    fpat.setAttribute('transform', `translate(${dx} ${dy})`);
+    pt1.setAttribute('d', `M${470 + dx} ${318 + dy} L482 462`); pt2.setAttribute('d', `M${530 + dx} ${318 + dy} L518 462`);
+  }
+  const tib = $('.js-tibia'), spat = $('.js-spatella'), sten = $('.js-stendon');
+  const KNEE = [444, 368];   // the tibia turns about this point
+  function setSide(bend, alta) {  // bend 0..1 (0 straight, 1 about 45 degrees), kneecap from high to seated
+    const ang = bend * 48;
+    tib.setAttribute('transform', `rotate(${ang} ${KNEE[0]} ${KNEE[1]})`);
+    const t = ang * Math.PI / 180, tx = 552, ty = 420;   // the tubercle, rotated with the shin
+    const rx = KNEE[0] + (tx - KNEE[0]) * Math.cos(t) - (ty - KNEE[1]) * Math.sin(t);
+    const ry = KNEE[1] + (tx - KNEE[0]) * Math.sin(t) + (ty - KNEE[1]) * Math.cos(t);
+    const hx = 500, hy = alta ? 150 : 192;   // high kneecap vs normal, knee straight, lying on the front of the thigh bone
+    const q = bend;
+    const px = hx + (540 - hx) * q, py = hy + (272 - hy) * q;   // down and round the front into the groove
+    spat.setAttribute('transform', `translate(${px} ${py}) rotate(${-8 - 34 * q})`);
+    sten.setAttribute('d', `M${px + 8} ${py + 46} L${rx - 2} ${ry - 8}`);
+  }
+  function renderSketch(s) {
+    const set = s.set || {};
+    $$('.js-scene').forEach((g) => g.classList.toggle('on', g.id === 'sc-' + s.scene));
+    stopAnim();
+    if (s.scene === 'groove') {
+      tro.setAttribute('d', TROCHLEA[set.tro || 'normal']); cartF.setAttribute('d', CART[set.tro || 'normal']);
+      const p = PAT[set.pat || 'normal']; setPatella(...p);
+      layer('g-mpfl', set.mpfl); layer('g-tear-mid', set.tear && S.tear === 'mid'); layer('g-tear-mid-p', set.tear && S.tear === 'mid'); layer('g-tear-pat', set.tear && S.tear === 'pat'); layer('g-tear-pat-p', set.tear && S.tear === 'pat'); layer('g-healed', set.healed); const gr = set.graft === true ? 3 : (set.graft || 0); layer('g-graft-anchors', gr >= 1); layer('g-graft-socket', gr >= 2); layer('g-graft', gr >= 3);
+      layer('g-path', set.path); layer('g-chunk', set.chunk); layer('g-loose', set.loose); layer('g-bruise-p', set.bruise); layer('g-bruise-f', set.bruise);
+      $('.js-lbl-mpfl').style.opacity = (set.mpfl || set.tear || set.healed || gr >= 3) ? 1 : 0;
+      $('.js-lbl-groove').style.opacity = set.tro === 'mountain' ? 0 : 1;
+      $('.js-lbl-kneecap').style.opacity = set.tro === 'mountain' ? 0 : 1;
+      if (set.anim === 'dislocate') play(1300, (k) => { const e = k < .5 ? k * 2 : 1; const q = e * e * (3 - 2 * e); setPatella(238 * q, 26 * q - 76 * Math.sin(q * Math.PI), 34 * q); });
+      if (set.anim === 'backin') play(1000, (k) => { const q = 1 - Math.pow(1 - Math.min(1, k * 1.4), 3); setPatella(238 * (1 - q), 26 * (1 - q) - 76 * Math.sin((1 - q) * Math.PI), 34 * (1 - q)); });
+      if (set.anim === 'teeter') play(1800, (k) => { setPatella(66 + 8 * Math.sin(k * Math.PI * 2), -58 + 3 * Math.sin(k * Math.PI * 2), 10 + 6 * Math.sin(k * Math.PI * 2)); }, true);
+    } else if (s.scene === 'front') {
+      setFront(0, 0);
+      layer('f-lateral', set.lateral); layer('f-tto', set.tto && set.anim !== 'tto-done'); layer('f-tto-done', false);
+      layer('f-inc', set.inc); layer('f-portals', set.inc);
+      $$('.js-lbl-pull').forEach((t) => t.style.opacity = set.lateral ? 1 : 0);
+      $$('.js-lbl-tto').forEach((t) => t.style.opacity = set.tto ? 1 : 0);
+      $$('.js-lbl-inc').forEach((t) => t.style.opacity = set.inc ? 1 : 0);
+      if (set.anim === 'tto') play(1500, (k) => { if (k > .55 && !anim.done) { anim.done = true; layer('f-tto', false); layer('f-tto-done', true); } });
+      if (set.anim === 'track') play(2400, (k) => {   // straighten (kneecap rides up), then bend back down; a small clunk near the top
+        const b = k < .5 ? 1 - k * 2 : (k - .5) * 2; const up = 1 - b;   // 1 at straight
+        const clunk = up > .8 ? (up - .8) * 5 : 0;
+        setFront(12 * up + 46 * clunk, -70 * up);
+      }, true);
+    } else if (s.scene === 'side') {
+      layer('s-groove', set.groove);
+      $$('.js-lbl-alta').forEach((t) => t.style.opacity = set.alta ? 1 : 0);
+      $$('.js-lbl-dec').forEach((t) => t.style.opacity = set.groove ? 1 : 0);
+      setSide(0, set.alta);
+      if (set.anim === 'decision') play(2200, (k) => { const b = k < .5 ? k * 2 : 1 - (k - .5) * 2; const q = b * b * (3 - 2 * b); setSide(q, set.alta); }, true);
+    }
+    // labels (text stays readable: never mirrored)
+    $$('.js-lbl').forEach((t) => {
+      let x = +t.dataset.x, a = t.dataset.a;
+      if (S.side === 'R') { x = 1000 - x; a = a === 'end' ? 'start' : a === 'start' ? 'end' : a; }   // the sketches are drawn as a LEFT knee (his 10/12 drawing); Right is the mirror
+      t.setAttribute('x', x); t.setAttribute('y', t.dataset.y); t.setAttribute('text-anchor', a);
+    });
+    flipGroups.forEach((g) => g.setAttribute('transform', S.side === 'R' ? 'translate(1000 0) scale(-1 1)' : ''));
+  }
+  function play(ms, fn, loop) {
+    const a = { t0: performance.now(), ms: ms * SPD.k, fn, loop, done: false }; anim = a;
+    const tick = (now) => { if (anim !== a) return; let k = (now - a.t0) / a.ms; if (k >= 1) { if (a.loop) { a.t0 = now; k = 0; } else { a.fn(1); raf = 0; return; } } a.fn(k); raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+  }
+  // stroke lengths for the draw-on
+  $$('svg.drawing .draw').forEach((p) => { try { p.style.setProperty('--len', p.getTotalLength()); } catch (e) {} });
+
+  // ---------- cards ----------
+  function showCard(name) {
+    S.card = name;
+    $$('.js-card-btn').forEach((b) => b.classList.toggle('on', b.dataset.card === name));
+    if (!name) { card.hidden = true; card.innerHTML = ''; return; }
+    card.innerHTML = CARDS[name]() + '<p style="text-align:right;margin:10px 0 0"><button class="chip js-card-close">Close ✕</button></p>'; card.hidden = false;
+    $('.js-card-close', card).addEventListener('click', () => showCard(null));
+    if (name === 'qr') makeQR($('.js-qr', card), 'https://exam-room-napkin.vercel.app/learn/kneecap');
+    $$('.js-card-btn').forEach((b) => b.classList.toggle('on', b.dataset.card === name));
+  }
+
+  function render() {
+    const s = STEPS[S.step];
+    root.classList.toggle('left', S.side === 'L');
+    root.classList.toggle('nocues', !S.cues);
+    stage.classList.toggle('film', S.mode === 'film');
+    $('.js-tagn').textContent = s.n; $('.js-tagt').textContent = s.title;
+    $('.js-cue').textContent = patient ? s.pt : s.cue;
+    if (S.mode === 'film') { setClip(s.clip); stopAnim(); } else { video.pause(); renderSketch(s); }
+    showCard(patient && !(s.card === 'options' || s.card === 'recovery') ? null : s.card || null);
+    $$('.js-step').forEach((b) => b.classList.toggle('on', +b.dataset.i === S.step));
+    $$('.js-mode').forEach((b) => { const on = b.dataset.m === S.mode; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    $$('.js-side').forEach((b) => { const on = b.dataset.side === S.side; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    $$('.js-tear').forEach((b) => b.classList.toggle('on', b.dataset.t === S.tear));
+    $('.js-cues').setAttribute('aria-pressed', S.cues);
+    $('.js-next').textContent = S.step === STEPS.length - 1 ? 'Done ✓' : 'Next ▶';
+    warmNext();
+  }
+  // preload the next beat's clip in a hidden video element (Safari fetches video with range requests, so fetch() warmed nothing)
+  const pre = $('.js-preload');
+  function warmNext() {
+    const nx = STEPS[S.step + 1]; if (!nx || !nx.clip || S.mode !== 'film') return;
+    const src = CLIP(nx.clip); if (pre.getAttribute('src') !== src) { pre.src = src; try { pre.load(); } catch (e) {} }
+  }
+  function go(i) { S.step = Math.max(0, Math.min(STEPS.length - 1, i)); clearInk(); render(); }
+
+  $('.js-next').addEventListener('click', () => go(S.step === STEPS.length - 1 ? 0 : S.step + 1));
+  $('.js-back').addEventListener('click', () => go(S.step - 1));
+  $$('.js-mode').forEach((b) => b.addEventListener('click', () => { S.mode = b.dataset.m; mem('napkin.kneecap.view', S.mode); render(); }));
+  $('.js-speed').addEventListener('click', () => { SPD.v = SPD.steps[(SPD.steps.indexOf(SPD.v) + 1) % SPD.steps.length]; mem('napkin.speed', SPD.v); applySpeed(); if (S.mode === 'sketch') renderSketch(STEPS[S.step]); });
+  video.addEventListener('loadedmetadata', () => { try { video.playbackRate = SPD.v / SPD.base; } catch (e) {} });
+  $$('.js-side').forEach((b) => b.addEventListener('click', () => { S.side = b.dataset.side; clearInk(); render(); }));
+  $$('.js-tear').forEach((b) => b.addEventListener('click', () => { S.tear = b.dataset.t; if (!(STEPS[S.step].set || {}).tear) S.step = 2; render(); }));
+  $$('.js-card-btn').forEach((b) => b.addEventListener('click', () => showCard(S.card === b.dataset.card ? null : b.dataset.card)));
+  $('.js-cues').addEventListener('click', () => { S.cues = !S.cues; render(); });
+  $('.js-close').addEventListener('click', () => { try { window.parent.postMessage({ napkin: 'grafts-close' }, location.origin); } catch (e) {} });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') go(S.step + 1);
+    else if (e.key === 'ArrowLeft') go(S.step - 1);
+    else if (e.key === 'Escape') { if (S.card) showCard(null); else $('.js-close').click(); }
+  });
+  // tap the stage: replay the beat's animation (sketch) or pause/play the film
+  stage.addEventListener('click', (e) => {
+    if (drawing || e.target.closest('.card')) return;
+    if (S.mode === 'film') { if (video.paused) video.play().catch(() => {}); else video.pause(); }
+    else renderSketch(STEPS[S.step]);
+  });
+
+  // ---------- ink ----------
+  const ink = $('.js-ink'); const ctx = ink.getContext('2d');
+  let strokes = [], cur = null, drawing = false;
+  function sizeInk() { const r = ink.getBoundingClientRect(); const d = Math.min(devicePixelRatio || 1, 2); ink.width = r.width * d; ink.height = r.height * d; redraw(); }
+  function redraw() {
+    const d = ink.width / (ink.getBoundingClientRect().width || 1);
+    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, ink.width, ink.height);
+    ctx.strokeStyle = '#ff5a4a'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const s of strokes) { ctx.lineWidth = 4; ctx.beginPath(); s.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke(); }
+  }
+  function clearInk() { strokes = []; redraw(); }
+  new ResizeObserver(sizeInk).observe(ink);
+  ink.addEventListener('pointerdown', (e) => { if (!drawing) return; const r = ink.getBoundingClientRect(); cur = [[e.clientX - r.left, e.clientY - r.top]]; strokes.push(cur); ink.setPointerCapture(e.pointerId); });
+  ink.addEventListener('pointermove', (e) => { if (!cur) return; const r = ink.getBoundingClientRect(); cur.push([e.clientX - r.left, e.clientY - r.top]); redraw(); });
+  ['pointerup', 'pointercancel'].forEach((ev) => ink.addEventListener(ev, () => { cur = null; }));
+  $('.js-draw').addEventListener('click', (e) => { drawing = !drawing; e.currentTarget.classList.toggle('on', drawing); e.currentTarget.setAttribute('aria-pressed', drawing); stage.classList.toggle('drawing-mode', drawing); });
+  $('.js-undo').addEventListener('click', () => { strokes.pop(); redraw(); });
+  $('.js-clear').addEventListener('click', clearInk);
+
+  if (!patient) $('.js-show').appendChild(nav);   // Brett's mode: Back / Next sit at the bottom right, under the beats (23 beats fill three rows on an iPad); the patient view keeps them in the step row
+  applySpeed();
+  render();
+  window.KNEECAP = { S, go, STEPS, render, SPD, version: '0.69' };
+  window.READY = true;
+})();
+</script>
+</body>
+</html>

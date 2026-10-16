@@ -37,6 +37,10 @@
       "destination": "/acl-steps.html"
     },
     {
+      "source": "/kneecap-steps",
+      "destination": "/kneecap-steps.html"
+    },
+    {
       "source": "/recovery",
       "destination": "/recovery.html"
     },
@@ -55,6 +59,14 @@
     {
       "source": "/explore/arthritis",
       "destination": "/arthritis.html"
+    },
+    {
+      "source": "/learn/kneecap",
+      "destination": "/kneecap-steps.html"
+    },
+    {
+      "source": "/explore/kneecap",
+      "destination": "/kneecap-steps.html"
     },
     {
       "source": "/explore",

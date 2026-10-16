@@ -311,6 +311,8 @@
   .tile small { color: var(--ink-soft); font-size: 14px; }
   /* v0.28: six tiles fit on one row (Knee arthritis joined) */
   @media (min-width: 601px) { .tiles { max-width: 1240px; } .tiles > .tile { flex: 1 1 140px; } .tiles > .tile b { font-size: clamp(19px, 2.1vw, 28px); } }
+  /* v0.69: seven tiles (Kneecap dislocation joined), so a 1024 iPad narrows them a touch to keep one row */
+  @media (min-width: 601px) and (max-width: 1100px) { .tiles { gap: 10px; } .tiles > .tile { flex: 1 1 112px; padding: 8px; } .tile svg { width: 52%; } .tiles > .tile b { font-size: clamp(17px, 1.9vw, 24px); } }
   .tile.soon { opacity: .6; border-style: dashed; }
   .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper);
            padding: 10px 18px; border-radius: 999px; font-size: 15px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 9; }
@@ -629,6 +631,16 @@
           <path d="M80 40 l7 -3 M81 61 l7 3 M34 42 l-6 -3" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
         </svg>
         <b>Knee arthritis</b><small>wear, treatment, replacement</small>
+      </div>
+      <div class="tile" role="button" tabindex="0" data-go="kneecap" data-href="/kneecap-steps">
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M18 72 C16 50 32 36 50 42 C58 45 62 50 66 50 C70 50 76 42 92 38 C108 34 114 52 110 72 C106 88 88 94 64 94 C40 94 22 88 18 72 Z" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
+          <path d="M40 48 C50 58 62 58 72 50" stroke="var(--bursa)" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="92" cy="24" rx="19" ry="14" transform="rotate(22 92 24)" fill="var(--bone)" stroke="var(--ink)" stroke-width="4"/>
+          <path d="M44 24 C50 12 64 8 76 12" stroke="var(--hot)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-dasharray="5 5"/>
+          <path d="M70 8 L78 12 L72 20" stroke="var(--hot)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <b>Kneecap dislocation</b><small>why it comes out, MPFL reconstruction</small>
       </div>
     </div>
     <p style="font-size:14px; margin-top:8px;">Prototype v0.15 · shoulder, shoulder instability and hip drawn the way Dr. Raynor draws them, plus two talks on a 3D knee · nothing you draw is saved</p>
@@ -8042,6 +8054,12 @@ three/build/three.module.js:
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
       const b = document.createElement('b'); b.textContent = 'Knee arthritis'; const sm = document.createElement('small'); sm.textContent = 'wear and tear, treatment options';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
+    /* Kneecap dislocation (v0.69) lives on its own page (kneecap-steps.html, the film with formal captions); its picker tile is a link there */
+    { const src = $('.tile[data-go="kneecap"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'kneecap';
+      a.href = (/^\/explore\b/.test(location.pathname) ? '/explore' : '/learn') + '/kneecap'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
+      if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
+      const b = document.createElement('b'); b.textContent = 'Kneecap dislocation'; const sm = document.createElement('small'); sm.textContent = 'why it comes out, and how it is fixed';
+      a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
     /* Recovery roadmaps (v0.36) live on their own page; the picker tile opens the chooser (v0.42: ACL, meniscus repair, rotator cuff repair) */
     { const src = $('.tile[data-go="knee"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'recovery';
       a.href = '/recovery'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
@@ -8065,7 +8083,7 @@ three/build/three.module.js:
         ['rotator-cuff', 'Rotator cuff repair', 'sling, motion, then strength', 'shoulder'],
         ['shoulder-instability', 'Shoulder stabilization', 'labral repair after a dislocation', 'instab']];
       const GROUPS = [
-        { key: 'knee', name: 'Knee', sub: 'pain, ACL tears, arthritis', icon: 'knee', items: ['knee', 'acl', 'arthritis'] },
+        { key: 'knee', name: 'Knee', sub: 'pain, ACL tears, kneecap dislocation, arthritis', icon: 'knee', items: ['knee', 'acl', 'kneecap', 'arthritis'] },
         { key: 'hip', name: 'Hip', sub: 'hip and groin pain, the labrum', icon: 'hip', items: ['hip'] },
         { key: 'shoulder', name: 'Shoulder', sub: 'pain, rotator cuff, dislocations', icon: 'shoulder', items: ['shoulder', 'instability'] },
         { key: 'postop', name: 'Post-op', sub: 'recovery after surgery', icon: null, items: ROADMAPS.map(r => 'road-' + r[0]) }];
