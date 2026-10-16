@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fbf9f3">
+<meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/apple-touch-icon.png">
+<title>Meniscus repair · Clinic Diagrams</title>
+<!--
+  Meniscus repair (v0.72, 10/16/2026): Brett asked for a whole separate section on meniscus repair, with the different types of
+  repair from the meniscus films as their own clips, 1.5x as the standard and the Speed button to go faster or slower.
+  The same shell as the kneecap dislocation page, film only (there is no napkin sketch for this talk): one row of numbered beats
+  in the order of the films (which follow his meniscus and root tear canonical talks), Next / Back, Right / Left (the films show a
+  LEFT knee, so Right mirrors), Draw / Undo / Clear ink, Cues, Speed (shared with every napkin page through localStorage
+  napkin.speed; the loops are cut at 1.5x), tap the film to pause, arrow keys step, and a Show them row of cards.
+  Clips: /clips/meniscus/*.mp4 (tools/meniscus-film/make_clips.sh, from the films' per-clip renders on Mac-Studio-2). Long steps
+  play as parts back to back. Cue lines are the films' narration (his clinic wording, storyboard 10/4/2026); the patient wording
+  (?patient, /learn/meniscus-repair) is the formal twin. Every number on a card is from the storyboard's PubMed-checked claims.
+-->
+<style>
+:root {
+  --paper: #fbf9f3; --paper-2: #f2eee3; --ink: #1e2a44; --ink-soft: #5b6478; --ink-faint: #9aa3b8;
+  --tendon: #cf5546; --hot: #d63a2f; --navy: #14325c; --sky: #8fc1ee; --bursa: #4f8fc9; --bone: #efe8d6;
+  --chip-bg: #ffffff; --chip-fg: #14325c; --chip-on-bg: #14325c; --chip-on-fg: #ffffff;
+  --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --ink-faint: #6e788e; --tendon: #e2705f; --hot: #ff6a5c; --navy: #9cc4ee; --bone: #2b3650;
+    --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1b2230; --paper-2: #232c3d; --ink: #eaeef7; --ink-soft: #a9b3c7; --ink-faint: #6e788e; --tendon: #e2705f; --hot: #ff6a5c; --navy: #9cc4ee; --bone: #2b3650;
+  --chip-bg: #232c3d; --chip-fg: #d6e4f7; --chip-on-bg: #9cc4ee; --chip-on-fg: #0f1a2b; color-scheme: dark;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 17px; line-height: 1.35;
+  overflow: hidden; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+button { font: inherit; color: inherit; }
+button:focus-visible { outline: 3px solid #4f8fc9; outline-offset: 2px; }
+.app { height: 100%; display: flex; flex-direction: column; padding-inline: 16px; box-sizing: border-box; }
+
+.bar { display: flex; align-items: center; gap: 8px; padding-block: 8px; flex-wrap: wrap; }
+.bar h1 { font-weight: 700; font-size: 24px; margin: 0; line-height: 1; letter-spacing: -.2px; }
+.spacer { flex: 1; }
+.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 14px; border: 2px solid var(--navy); border-radius: 999px;
+  background: var(--chip-bg); color: var(--chip-fg); font-weight: 600; font-size: 16px; cursor: pointer; user-select: none; -webkit-user-select: none;
+  touch-action: manipulation; text-decoration: none; box-sizing: border-box; }
+.btn.on { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.btn.ghost { border-color: transparent; background: transparent; color: var(--ink-soft); padding-inline: 8px; }
+.btn.ghost[aria-pressed="false"] { opacity: .55; }
+.btn svg { width: 20px; height: 20px; }
+.seg { display: inline-flex; border: 2px solid var(--navy); border-radius: 999px; overflow: hidden; }
+.seg .btn { border: 0; border-radius: 0; min-height: 40px; padding: 4px 12px; font-size: 15px; }
+.seg .btn + .btn { border-left: 2px solid var(--navy); }
+.js-close { display: none; }
+html.embedded .js-close { display: inline-flex; }
+html.embedded .js-home, html.embedded .js-topics { display: none !important; }
+html.patient .js-home, html.patient .js-speed { display: none; }
+.js-topics[hidden] { display: none !important; }   /* the hidden attribute loses to the .btn display rule */
+.js-speed { font-variant-numeric: tabular-nums; min-width: 58px; justify-content: center; }
+
+.stage { position: relative; flex: 1; min-height: 0; border-radius: 18px; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 48%, #1d2f4b 0%, #16263f 62%, #121f35 100%); }
+.stage video.js-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+html:not(.left) .stage video.js-video { transform: scaleX(-1); }   /* the films show a LEFT knee */
+video.js-preload { display: none !important; }
+.stage canvas.ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; touch-action: none; z-index: 5; }
+.stage.drawing-mode canvas.ink { pointer-events: auto; cursor: crosshair; }
+.stage.drawing-mode::after { content: 'Drawing on. Tap Draw again to turn it off.'; position: absolute; right: 12px; top: 12px; font-size: 13px; color: #fff;
+  background: rgba(214,58,47,.85); padding: 4px 10px; border-radius: 999px; pointer-events: none; z-index: 6; }
+.tag { position: absolute; left: 14px; top: 12px; z-index: 4; display: flex; align-items: center; gap: 10px; background: #14325c; border: 2px solid var(--sky);
+  color: #fff; border-radius: 10px; padding: 6px 14px 6px 8px; font-size: 18px; font-weight: 600; pointer-events: none; }
+.tag b { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; padding: 0 6px; box-sizing: border-box;
+  border-radius: 999px; background: var(--sky); color: #14325c; font-size: 15px; }
+.tag b:empty { display: none; }
+.cue { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; padding: 12px 16px; text-align: center; pointer-events: none; font-size: 19px; color: #e3e9f5;
+  line-height: 1.3; text-wrap: balance; background: linear-gradient(to top, rgba(12,21,38,.94) 55%, transparent); }
+.cue:empty, html.nocues .cue { display: none; }
+.nofilm { position: absolute; inset: 0; display: none; place-items: center; color: #e3e9f5; font-size: 20px; text-align: center; padding: 0 40px; }
+.stage.nofilm-on .nofilm { display: grid; }
+.stage.nofilm-on video.js-video { display: none; }
+
+.card { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 4; width: min(92%, 760px); max-height: 82%; overflow: auto;
+  background: var(--chip-bg); color: var(--ink); border: 2px solid var(--navy); border-radius: 18px; padding: 18px 22px; box-sizing: border-box; box-shadow: 0 12px 40px rgba(0,0,0,.18); }
+.card[hidden] { display: none; }
+.card h2 { margin: 0 0 8px; font-size: 24px; color: var(--navy); }
+.card p { margin: 6px 0; font-size: 18px; }
+.card .src { font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
+.ladder { display: grid; gap: 8px; margin: 10px 0; }
+.ladder div { border: 2px solid var(--navy); border-radius: 12px; padding: 10px 14px; font-size: 18px; }
+.ladder div b { display: block; color: var(--navy); }
+.cal { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 10px 0; }
+.cal div { border: 2px solid var(--navy); border-radius: 12px; padding: 10px 12px; font-size: 16px; }
+.cal div b { display: block; font-size: 20px; color: var(--navy); }
+@media (max-width: 760px) { .cal { grid-template-columns: 1fr 1fr; } }
+
+.chips { display: flex; flex-direction: column; gap: 8px; padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row .lbl { font-size: 13px; color: var(--ink-soft); min-width: 54px; text-transform: uppercase; letter-spacing: .04em; }
+.chip { display: inline-flex; align-items: center; gap: 7px; min-height: 46px; padding: 6px 13px; border: 2px solid var(--navy); border-radius: 999px;
+  background: var(--chip-bg); color: var(--chip-fg); font-weight: 600; font-size: 15px; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.chip.on { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.chip .n { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 999px; background: var(--navy); color: var(--paper); font-size: 13px; }
+.chip.on .n { background: var(--chip-on-fg); color: var(--chip-on-bg); }
+.chip.primary { background: var(--chip-on-bg); color: var(--chip-on-fg); }
+.nav { margin-left: auto; display: flex; gap: 8px; }
+html.patient .row.js-steps .chip:not(.js-next):not(.js-back) { display: none; }
+html.patient .js-card-btn:not([data-card="trim"]):not([data-card="repair"]):not([data-card="rootrecovery"]):not([data-card="acl"]) { display: none; }
+html.patient .js-draw, html.patient .js-undo, html.patient .js-clear, html.patient .js-cues { display: none; }
+html.patient .cue { font-size: 21px; padding-bottom: 18px; }
+@media (max-width: 1200px) { .js-steps .chip { min-height: 42px; padding: 5px 10px; font-size: 14px; gap: 6px; } .js-steps .chip .n { width: 22px; height: 22px; font-size: 12px; } .row .lbl { display: none; } }
+@media (max-width: 1100px) { .js-steps .chip .n { display: none; } .chips { gap: 6px; padding-block: 8px calc(8px + env(safe-area-inset-bottom, 0px)); } .row { gap: 6px; } }
+@media (max-width: 900px) { .chip { min-height: 44px; padding: 6px 11px; font-size: 14px; } .bar h1 { font-size: 20px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar">
+    <a class="btn ghost js-home" href="/" aria-label="Back to joints">‹ Joints</a>
+    <a class="btn ghost js-topics" href="/learn" hidden>All topics</a>
+    <h1>Meniscus repair</h1>
+    <span class="seg" role="group" aria-label="Which knee">
+      <button class="btn js-side" data-side="R">Right</button>
+      <button class="btn js-side" data-side="L">Left</button>
+    </span>
+    <span class="spacer"></span>
+    <button class="btn js-draw" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z M14 6l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Draw</button>
+    <button class="btn ghost js-undo">Undo</button>
+    <button class="btn ghost js-clear">Clear</button>
+    <button class="btn ghost js-cues" aria-pressed="true">Cues</button>
+    <button class="btn ghost js-speed" aria-label="Playback speed" title="Playback speed: 1.5x, 2x or real time">1.5x</button>
+    <button class="btn ghost js-close" aria-label="Close and go back">✕ Close</button>
+  </div>
+
+  <div class="stage js-stage">
+    <video class="js-video" muted playsinline autoplay preload="auto" aria-label="The film of this step"></video>
+    <div class="nofilm js-nofilm"></div>
+    <canvas class="ink js-ink" aria-label="Your drawing on top of the film"></canvas>
+    <div class="tag js-tag"><b class="js-tagn"></b><span class="js-tagt"></span></div>
+    <div class="cue js-cue"></div>
+    <div class="card js-card" hidden role="dialog" aria-modal="true"></div>
+  </div>
+  <video class="js-preload" muted playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+
+  <div class="chips">
+    <div class="row js-steps">
+      <span class="lbl">The talk</span>
+      <span class="nav">
+        <button class="chip js-back">◀ Back</button>
+        <button class="chip primary js-next">Next ▶</button>
+      </span>
+    </div>
+    <div class="row js-show">
+      <span class="lbl">Show them</span>
+      <button class="chip js-card-btn" data-card="trim">After a trim</button>
+      <button class="chip js-card-btn" data-card="repair">After a repair</button>
+      <button class="chip js-card-btn" data-card="rootrecovery">After a root repair</button>
+      <button class="chip js-card-btn" data-card="rootoptions">Root tear options</button>
+      <button class="chip js-card-btn" data-card="pressure">Why fix a root</button>
+      <button class="chip js-card-btn" data-card="acl">With an ACL</button>
+      <button class="chip js-card-btn" data-card="qr">Take home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const root = document.documentElement;
+  const qs = new URLSearchParams(location.search);
+  let embedded = qs.has('embed');
+  try { if (window.self !== window.top) embedded = true; } catch (e) { embedded = true; }
+  if (embedded) root.classList.add('embedded');
+  const patient = qs.has('patient') || location.hash === '#patient' || /^\/(learn|explore)\//.test(location.pathname);
+  if (patient) { root.classList.add('patient'); const t = $('.js-topics'); t.hidden = false; t.href = /^\/explore\b/.test(location.pathname) ? '/explore' : '/learn'; }
+
+  const BASE = (document.currentScript && document.currentScript.dataset.clips) || (qs.get('clips') || '/clips/meniscus/');
+  const CLIP = (n) => BASE + n + '.mp4';
+  const POSTER = (n) => BASE + n + '.jpg';
+
+  /* The beats, in the order of the films (Film 1 tears and the trim, Film 2 repairs, Film 3 the root), which follow his meniscus
+     and root tear talks. clip: one loop, or parts played back to back. cue: the film's narration (his words). pt: the formal twin. */
+  const STEPS = [
+    { label: 'Red zone, white zone', title: 'Where a meniscus can heal', clip: ['zones'],
+      cue: 'Only the outer edge has a good blood supply. We call that the red zone, and tears out there can heal if I put stitches in them. The inner white zone has no blood supply, so tears in there don’t heal.',
+      pt: 'Only the outer edge of the meniscus has a blood supply (the red zone), so tears there can heal when they are stitched. The inner white zone has none, so tears there do not heal.' },
+    { label: 'Trim it', title: 'A white zone tear: trim it', clip: ['trim'],
+      cue: 'If the tear is in the white zone, I take out just the torn part with a tiny biter, then smooth the edge so there are no loose pieces left. I leave as much good meniscus as I can.',
+      pt: 'For a tear in the white zone, only the torn part is removed with a small instrument and the edge is smoothed, leaving as much healthy meniscus as possible.' },
+    { label: 'After a trim', title: 'What a trim means for you', clip: ['trim'], card: 'trim',
+      cue: 'You walk on it right away, with no restrictions. Most people feel pretty good in three or four weeks, and really good in about two months.',
+      pt: 'After a trim you walk right away with no restrictions. Most people feel good in three to four weeks and very good by about two months.' },
+    { label: 'Why repair', title: 'A red zone tear: try to save it', clip: ['zones'],
+      cue: 'If a tear is out in the red zone, I try to repair it. If it heals, you keep your shock absorber for life.',
+      pt: 'A tear in the red zone is repaired whenever possible. If it heals, you keep your shock absorber for life.' },
+    { label: 'All-inside', title: 'A small tear: all-inside stitches', clip: ['fiberstitch-a', 'fiberstitch-b'],
+      cue: 'First I roughen up the edges so they’re ready to heal. A thin needle passes through the meniscus and sets two tiny anchors, made of suture, on the outside of the joint lining. Pulling the stitch snug closes the tear. For a small tear, one or two of these is all it takes.',
+      pt: 'The edges are roughened so they are ready to heal. A thin needle passes through the meniscus and sets two tiny suture anchors outside the joint lining; pulling the stitch snug closes the tear. A small tear needs one or two of these.' },
+    { label: 'Bucket handle', title: 'A bucket handle tear', clip: ['bucket'],
+      cue: 'In a bucket handle tear, a long piece of the meniscus flips over into the middle of the knee, next to the ACL and PCL. Then the knee can’t straighten all the way. The flipped piece is in the way.',
+      pt: 'In a bucket handle tear a long piece of the meniscus flips into the middle of the knee, next to the ACL and PCL, and the knee cannot straighten all the way.' },
+    { label: 'Inside-out', title: 'Flip it back and stitch it: inside-out', clip: ['insideout-a', 'insideout-b'],
+      cue: 'For a bucket handle tear, I flip the torn piece back where it belongs, then pass a row of stitches from the inside of the knee to the outside. They’re tied on the outside of the joint through a small incision, which spot welds the meniscus in place.',
+      pt: 'The torn piece is flipped back where it belongs, then a row of stitches is passed from inside the knee to the outside and tied through a small incision, holding the meniscus in place.' },
+    { label: 'Outside meniscus', title: 'The outside meniscus: a stitch passer', clip: ['novostitch-a', 'novostitch-b'],
+      cue: 'On the outside meniscus, I use a device that slides underneath the meniscus and passes the stitch straight up through it. Each stitch wraps around the tear and squeezes it closed.',
+      pt: 'On the outside (lateral) meniscus a device slides underneath and passes each stitch straight up through it. Each stitch wraps around the tear and squeezes it closed.' },
+    { label: 'The roots', title: 'The two roots', clip: ['roots'],
+      cue: 'Your meniscus is attached to the bone in only two places, in the front and in the back. Those attachments are the roots, and they’re what let the meniscus work as a shock absorber.',
+      pt: 'The meniscus is attached to the bone in only two places, the front and back roots. They are what let it work as a shock absorber.' },
+    { label: 'A root tear', title: 'A root tear', clip: ['root'],
+      cue: 'A root tear often comes with a pop in the back of the knee, and then it hurts to walk. The meniscus is still there, but it’s completely lost its function, since it’s no longer attached.',
+      pt: 'A root tear often starts with a pop in the back of the knee, and then walking hurts. The meniscus is still there, but it has lost its function because it is no longer attached.' },
+    { label: 'Root repair', title: 'Root repair', clip: ['root_repair-a', 'root_repair-b', 'root_repair-c'],
+      cue: 'It’s all done with a camera, through two little poke holes and a third small one. I roughen up the bone where the root attached, so it has a spot to heal. Then I drill a small tunnel that comes out right in the middle of that spot. Two stitches go through the root and down the tunnel, and a little all-suture anchor tacks it down and holds it right up against the bone.',
+      pt: 'Through small arthroscopy portals, the bone where the root attached is roughened so it can heal, a small tunnel is drilled to that spot, two stitches pass through the root and down the tunnel, and a small all-suture anchor holds the root against the bone.' },
+    { label: 'After a repair', title: 'What a repair means for you', clip: ['fiberstitch-b'], card: 'repair',
+      cue: 'If it’s one or two stitches, not much changes. With more stitches, you still put your weight on it, but you walk like a pirate, with your leg straight, for six weeks. You’re not running or playing golf for about four months.',
+      pt: 'After one or two stitches, little changes. After a larger repair you still put weight on the leg, but walk with it straight in a brace for six weeks, and running and golf wait about four months.' },
+    { label: 'After a root repair', title: 'What a root repair means for you', clip: ['root_repair-c'], card: 'rootrecovery',
+      cue: 'This is the one tear where stepping on it wants to pull it apart, so you’re on crutches with your toe down, but not your weight, for six weeks. You bend it right away. At three months it’s mostly healed and you start strengthening. Most people are doing everything by about four months and feel great at six.',
+      pt: 'A root repair is the one repair that stepping on would pull apart, so it is six weeks on crutches with the toe down but no weight, bending from the start. At three months it is mostly healed and strengthening begins; most people are doing everything by about four months.' },
+    { label: 'If it doesn’t heal', title: 'If a repair doesn’t heal', clip: ['fiberstitch-b'],
+      cue: 'Sometimes a repair doesn’t heal, because the meniscus doesn’t have a great blood supply to begin with. If that happens, we can go back and trim it.',
+      pt: 'Sometimes a repair does not heal, because the meniscus has a limited blood supply to begin with. If that happens, the torn part can be trimmed in a second, smaller procedure.' },
+    { label: 'With an ACL', title: 'If your ACL is torn too', clip: ['insideout-b'], card: 'acl',
+      cue: 'If your ACL is torn too, I fix the meniscus at the same surgery. Meniscus repairs heal best when the ACL is done at the same time.',
+      pt: 'If the ACL is torn as well, the meniscus is repaired at the same surgery. Repairs heal best when the ACL is reconstructed at the same time.' },
+  ];
+  const CARDS = {
+    trim: () => `<h2>After a trim</h2><div class="cal">
+      <div><b>Day 0</b>Walk on it right away, no restrictions.</div>
+      <div><b>3 to 4 weeks</b>Feeling pretty good.</div>
+      <div><b>About 2 months</b>Feeling really good.</div></div>`,
+    repair: () => `<h2>After a repair</h2><div class="cal">
+      <div><b>1 or 2 stitches</b>Not much changes.</div>
+      <div><b>More stitches: 6 weeks</b>Weight on it, but the pirate walk, leg straight.</div>
+      <div><b>About 4 months</b>Running and golf.</div></div>
+      <p class="src">The full roadmap: exam-room-napkin.vercel.app/recovery/meniscus</p>`,
+    rootrecovery: () => `<h2>After a root repair</h2><div class="cal">
+      <div><b>6 weeks</b>Crutches, toe down, no weight. Bending from day one.</div>
+      <div><b>3 months</b>Mostly healed. Strengthening starts.</div>
+      <div><b>4 to 6 months</b>Doing everything by about four months, feeling great at six.</div></div>`,
+    rootoptions: () => `<h2>Root tear: the options</h2><div class="ladder">
+      <div><b>1. Live with it</b>Walking on it isn’t harming anything. It hurts because the bone is seeing all the load.</div>
+      <div><b>2. Calm it down</b>Medicine, a brace or an injection. Lower-demand knees that already have some arthritis don’t have to be fixed.</div>
+      <div><b>3. Fix it</b>Younger, without much arthritis: repair the root.</div></div>`,
+    pressure: () => `<h2>Why fix a root</h2>
+      <p>In a lab study, a torn root put the <b>same peak pressure</b> on the cartilage as removing the whole meniscus. Repairing the root brought it back to normal.</p>
+      <p class="src">Allaire R, et al. J Bone Joint Surg Am 2008;90:1922-31. From the meniscus films’ fact check (10/4/2026).</p>`,
+    acl: () => `<h2>With an ACL</h2>
+      <p>If the ACL is torn too, the meniscus is fixed at the same surgery. Meniscus repairs done alone fail more often than repairs done with an ACL reconstruction.</p>
+      <p class="src">Costa GG, et al. Am J Sports Med 2022;50:1742-52 (bucket handle tears). From the meniscus films’ fact check (10/4/2026).</p>`,
+    qr: () => `<h2>Take it home</h2><p class="sub">Point your phone camera at the code for the meniscus repair recovery roadmap, stage by stage.</p>
+      <div class="js-qr" style="width:180px;height:180px;margin:12px auto;background:#fff;padding:8px;border-radius:12px;box-sizing:content-box"></div>
+      <p class="url" style="text-align:center;font-weight:600">exam-room-napkin.vercel.app/recovery/meniscus</p>`,
+  };
+  function makeQR(el, url) {
+    const draw = () => { try { new QRCode(el, { text: url, width: 180, height: 180, colorDark: '#14325c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch (e) { fail(); } };
+    const fail = () => { el.innerHTML = '<div style="font-size:13px;color:#14325c;text-align:center;padding:8px">QR needs a connection. Type the address instead.</div>'; };
+    if (window.QRCode) return draw();
+    const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'; sc.onload = draw; sc.onerror = fail; document.head.appendChild(sc);
+  }
+
+  const S = { step: 0, side: 'R', cues: true, card: null };
+  if (qs.get('side') === 'L') S.side = 'L';
+  const st0 = parseInt(qs.get('step'), 10); if (st0 >= 0 && st0 < STEPS.length) S.step = st0;
+  const mem = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+  /* Speed: the loops are cut at 1.5x real time (SPD.base); the button shows real-time multiples; shared with every napkin page */
+  const SPD = { base: 1.5, steps: [1.5, 2, 1], v: 1.5 };
+  { const m = parseFloat(mem('napkin.speed')); if (SPD.steps.includes(m)) SPD.v = m; }
+  const stage = $('.js-stage'), video = $('.js-video'), pre = $('.js-preload'), card = $('.js-card');
+  const setRate = () => { try { video.playbackRate = SPD.v / SPD.base; video.defaultPlaybackRate = SPD.v / SPD.base; } catch (e) {} };
+  function applySpeed() { $('.js-speed').textContent = SPD.v + 'x'; setRate(); }
+
+  // step chips
+  const row = $('.js-steps'), nav = $('.nav', row);
+  STEPS.forEach((s, i) => {
+    const b = document.createElement('button'); b.className = 'chip js-step'; b.dataset.i = i;
+    b.innerHTML = '<span class="n"></span><span class="l"></span>';
+    b.querySelector('.n').textContent = i + 1; b.querySelector('.l').textContent = s.label;
+    row.insertBefore(b, nav);
+    b.addEventListener('click', () => go(i));
+  });
+
+  // ---------- film: one loop, or parts back to back ----------
+  let list = null, idx = 0;
+  const play = () => { setRate(); const p = video.play(); if (p && p.catch) p.catch(() => {}); };
+  const load = (i) => { idx = i; const n = list[i], s = CLIP(n); if (video.getAttribute('src') !== s) { video.setAttribute('poster', POSTER(n)); video.src = s; video.muted = true; video.defaultMuted = true; } play(); };
+  video.addEventListener('ended', () => { if (list && list.length > 1) load((idx + 1) % list.length); });
+  video.addEventListener('loadedmetadata', setRate);
+  function setClip(names) {
+    if (!names || !names.length) { video.removeAttribute('src'); video.removeAttribute('poster'); video.load(); stage.classList.add('nofilm-on'); $('.js-nofilm').textContent = 'No film for this beat yet.'; list = null; return; }
+    stage.classList.remove('nofilm-on');
+    if (list && list.join() === names.join()) { if (video.paused && !S.card) play(); return; }
+    list = names; video.loop = names.length === 1; load(0);
+  }
+  function warmNext() {
+    const nx = STEPS[S.step + 1]; if (!nx || !nx.clip) return;
+    const s = CLIP(nx.clip[0]); if (pre.getAttribute('src') !== s) { pre.src = s; try { pre.load(); } catch (e) {} }
+  }
+
+  // ---------- cards ----------
+  function showCard(name) {
+    S.card = name;
+    $$('.js-card-btn').forEach((b) => b.classList.toggle('on', b.dataset.card === name));
+    if (!name) { card.hidden = true; card.innerHTML = ''; if (video.paused && list) play(); return; }
+    card.innerHTML = CARDS[name]() + '<p style="text-align:right;margin:10px 0 0"><button class="chip js-card-close">Close ✕</button></p>'; card.hidden = false;
+    $('.js-card-close', card).addEventListener('click', () => showCard(null));
+    if (name === 'qr') makeQR($('.js-qr', card), 'https://exam-room-napkin.vercel.app/recovery/meniscus');
+    video.pause();
+  }
+
+  function render() {
+    const s = STEPS[S.step];
+    root.classList.toggle('left', S.side === 'L');
+    root.classList.toggle('nocues', !S.cues);
+    $('.js-tagn').textContent = S.step + 1; $('.js-tagt').textContent = s.title;
+    $('.js-cue').textContent = patient ? s.pt : s.cue;
+    setClip(s.clip);
+    showCard(patient && !(s.card === 'trim' || s.card === 'repair' || s.card === 'rootrecovery' || s.card === 'acl') ? null : s.card || null);
+    $$('.js-step').forEach((b) => b.classList.toggle('on', +b.dataset.i === S.step));
+    $$('.js-side').forEach((b) => { const on = b.dataset.side === S.side; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    $('.js-cues').setAttribute('aria-pressed', S.cues);
+    $('.js-next').textContent = S.step === STEPS.length - 1 ? 'Done ✓' : 'Next ▶';
+    warmNext();
+  }
+  function go(i) { S.step = Math.max(0, Math.min(STEPS.length - 1, i)); clearInk(); render(); }
+
+  $('.js-next').addEventListener('click', () => go(S.step === STEPS.length - 1 ? 0 : S.step + 1));
+  $('.js-back').addEventListener('click', () => go(S.step - 1));
+  $$('.js-side').forEach((b) => b.addEventListener('click', () => { S.side = b.dataset.side; clearInk(); render(); }));
+  $$('.js-card-btn').forEach((b) => b.addEventListener('click', () => showCard(S.card === b.dataset.card ? null : b.dataset.card)));
+  $('.js-cues').addEventListener('click', () => { S.cues = !S.cues; render(); });
+  $('.js-speed').addEventListener('click', () => { SPD.v = SPD.steps[(SPD.steps.indexOf(SPD.v) + 1) % SPD.steps.length]; mem('napkin.speed', SPD.v); applySpeed(); });
+  $('.js-close').addEventListener('click', () => { try { window.parent.postMessage({ napkin: 'grafts-close' }, location.origin); } catch (e) {} });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') go(S.step + 1);
+    else if (e.key === 'ArrowLeft') go(S.step - 1);
+    else if (e.key === 'Escape') { if (S.card) showCard(null); else $('.js-close').click(); }
+  });
+  // tap the film: pause or play
+  stage.addEventListener('click', (e) => {
+    if (drawing || e.target.closest('.card')) return;
+    if (video.paused) play(); else video.pause();
+  });
+
+  // ---------- ink ----------
+  const ink = $('.js-ink'); const ctx = ink.getContext('2d');
+  let strokes = [], cur = null, drawing = false;
+  function sizeInk() { const r = ink.getBoundingClientRect(); const d = Math.min(devicePixelRatio || 1, 2); ink.width = r.width * d; ink.height = r.height * d; redraw(); }
+  function redraw() {
+    const d = ink.width / (ink.getBoundingClientRect().width || 1);
+    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, ink.width, ink.height);
+    ctx.strokeStyle = '#ff5a4a'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const s of strokes) { ctx.lineWidth = 4; ctx.beginPath(); s.forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.stroke(); }
+  }
+  function clearInk() { strokes = []; redraw(); }
+  new ResizeObserver(sizeInk).observe(ink);
+  ink.addEventListener('pointerdown', (e) => { if (!drawing) return; const r = ink.getBoundingClientRect(); cur = [[e.clientX - r.left, e.clientY - r.top]]; strokes.push(cur); ink.setPointerCapture(e.pointerId); });
+  ink.addEventListener('pointermove', (e) => { if (!cur) return; const r = ink.getBoundingClientRect(); cur.push([e.clientX - r.left, e.clientY - r.top]); redraw(); });
+  ['pointerup', 'pointercancel'].forEach((ev) => ink.addEventListener(ev, () => { cur = null; }));
+  $('.js-draw').addEventListener('click', (e) => { drawing = !drawing; e.currentTarget.classList.toggle('on', drawing); e.currentTarget.setAttribute('aria-pressed', drawing); stage.classList.toggle('drawing-mode', drawing); });
+  $('.js-undo').addEventListener('click', () => { strokes.pop(); redraw(); });
+  $('.js-clear').addEventListener('click', clearInk);
+
+  if (!patient) $('.js-show').appendChild(nav);   // Brett's mode: Back / Next at the bottom right; the patient view keeps them in the step row
+  applySpeed();
+  render();
+  window.MENISCUS = { S, go, STEPS, render, SPD, version: '0.72' };
+  window.READY = true;
+})();
+</script>
+</body>
+</html>

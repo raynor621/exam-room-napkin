@@ -73,6 +73,7 @@ button:focus-visible { outline: 3px solid #4f8fc9; outline-offset: 2px; }
 html.embedded .js-close { display: inline-flex; }
 html.embedded .js-home, html.embedded .js-topics { display: none !important; }
 html.patient .js-home, html.patient .js-speed { display: none; }
+.js-topics[hidden] { display: none !important; }   /* the hidden attribute loses to the .btn display rule */
 
 .stage { position: relative; flex: 1; min-height: 0; border-radius: 18px; overflow: hidden; background: var(--paper-2); }
 .stage.film { background: radial-gradient(ellipse at 50% 48%, #1d2f4b 0%, #16263f 62%, #121f35 100%); }

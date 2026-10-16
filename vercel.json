@@ -41,6 +41,10 @@
       "destination": "/kneecap-steps.html"
     },
     {
+      "source": "/meniscus-repair",
+      "destination": "/meniscus-repair.html"
+    },
+    {
       "source": "/recovery",
       "destination": "/recovery.html"
     },
@@ -67,6 +71,14 @@
     {
       "source": "/explore/kneecap",
       "destination": "/kneecap-steps.html"
+    },
+    {
+      "source": "/learn/meniscus-repair",
+      "destination": "/meniscus-repair.html"
+    },
+    {
+      "source": "/explore/meniscus-repair",
+      "destination": "/meniscus-repair.html"
     },
     {
       "source": "/explore",
