@@ -13,6 +13,8 @@
 <title>Kneecap dislocation · Clinic Diagrams</title>
 <!--
   Kneecap dislocation (patellar instability and MPFL reconstruction), first built as a mockup 10/12/2026, shipped as v0.69 10/16/2026.
+  v0.75.1 (10/18, Brett): his own Next in the same order as While You Wait, keeping Old way vs now (before the MPFL steps), Sits high
+  (before The decision) and How it tracks (after the tubercle move).
   v0.75 (10/18, Brett's notes from clinic): the front drawn like a real knee (quad tendon with VMO and VL, a broad patellar tendon, a
   tubercle that moves: normal, out to the side with the line of pull, then cut and moved back in line with two screws), the quad tendon
   following the kneecap in the J sign, the side view redrawn (condyles to the back, the plateau, tubercle and fibula; the kneecap rides
@@ -559,11 +561,13 @@ svg.drawing .scene.on { display: inline; }
   ];
   // v0.75: While You Wait goes through it in a patient's order (Brett, 10/18/2026): what happened, the options, the MPFL reconstruction
   // step by step, then the anatomy that sets some people up and the tubercle move added for it. No How it tracks or Sits high (no film),
-  // no Old way vs now. His own mode keeps the order of his talk.
+  // no Old way vs now. v0.75.1 (Brett, 10/18/2026): his own mode runs the same order and keeps those three beats.
   const PT_ORDER = ['groove', 'out', 'tear', 'backin', 'heals', 'again', 'chunk', 'options', 'incisions', 'anchors', 'socket', 'graftin', 'newlig',
                     'shallow', 'mountain', 'decision', 'pullNormal', 'pull', 'cut', 'move', 'recovery'];
   const BYID = Object.fromEntries(ALL.map((x) => [x.id, x]));
-  const STEPS = (patient ? PT_ORDER.map((id) => BYID[id]) : ALL).map((x, i) => Object.assign({}, x, { n: String(i + 1) }));
+  const DOC_ORDER = ['groove', 'out', 'tear', 'backin', 'heals', 'again', 'chunk', 'options', 'old', 'incisions', 'anchors', 'socket', 'graftin',
+                     'newlig', 'shallow', 'mountain', 'alta', 'decision', 'pullNormal', 'pull', 'cut', 'move', 'track', 'recovery'];
+  const STEPS = (patient ? PT_ORDER : DOC_ORDER).map((id) => BYID[id]).map((x, i) => Object.assign({}, x, { n: String(i + 1) }));
   const CARDS = {
     people: () => `<h2>If it happens once, how often does it happen again?</h2>
       <p>Of 100 people after a <b>first</b> dislocation, about <b>1 in 3</b> dislocate again.</p><div class="people">${dots(34)}</div>
@@ -854,7 +858,7 @@ svg.drawing .scene.on { display: inline; }
   if (!patient) $('.js-show').appendChild(nav);   // Brett's mode: Back / Next sit at the bottom right, under the beats (23 beats fill three rows on an iPad); the patient view keeps them in the step row
   applySpeed();
   render();
-  window.KNEECAP = { S, go, STEPS, render, SPD, version: '0.75' };
+  window.KNEECAP = { S, go, STEPS, render, SPD, version: '0.75.1' };
   window.READY = true;
 })();
 </script>
