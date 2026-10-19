@@ -13,6 +13,13 @@
 <title>Kneecap dislocation · Clinic Diagrams</title>
 <!--
   Kneecap dislocation (patellar instability and MPFL reconstruction), first built as a mockup 10/12/2026, shipped as v0.69 10/16/2026.
+  v0.75 (10/18, Brett's notes from clinic): the front drawn like a real knee (quad tendon with VMO and VL, a broad patellar tendon, a
+  tubercle that moves: normal, out to the side with the line of pull, then cut and moved back in line with two screws), the quad tendon
+  following the kneecap in the J sign, the side view redrawn (condyles to the back, the plateau, tubercle and fibula; the kneecap rides
+  the front of the thigh bone on a tendon of fixed length), the MPFL graft in a socket with an interference screw and two all-suture
+  anchors (Q-FIX MINI) in the kneecap, no recurrence card popping up on Next, a new Normal pull beat; While You Wait in a patient
+  order (the dislocation, the options, the MPFL reconstruction step by step, then the anatomy that sets people up and the tubercle
+  move), without How it tracks, Sits high and Old way vs now; step 4's film no longer shows the cartilage chunk (clips/kneecap/back-in2).
   v0.69 (10/16): speed pass. Film loops recut at 1.5x (tools/kneecap-steps/make_clips.sh), the two long beats split (Cut the bone + Move it over;
   Anchors + Socket + Graft in + New ligament), a Speed button (1.5x / 2x / 1x, remembered as localStorage napkin.speed, scales film and sketch
   together), sketch timings halved, the next clip preloaded, the Sketch/Film choice remembered (napkin.kneecap.view).
@@ -133,7 +140,7 @@ html.patient .js-view, html.patient .js-draw, html.patient .js-undo, html.patien
 html.patient .cue { font-size: 21px; padding-bottom: 18px; }
 video.js-preload { display: none !important; }
 .js-speed { font-variant-numeric: tabular-nums; min-width: 58px; justify-content: center; }
-@media (max-width: 1200px) { .js-steps .chip { min-height: 42px; padding: 5px 10px; font-size: 14px; gap: 6px; } .js-steps .chip .n { width: 22px; height: 22px; font-size: 12px; } .row .lbl { display: none; } }
+@media (max-width: 1200px) { .js-steps .chip { min-height: 42px; padding: 5px 8px; font-size: 14px; gap: 5px; } .js-steps { gap: 6px; } .js-steps .chip .n { width: 22px; height: 22px; font-size: 12px; } .row .lbl { display: none; } }
 @media (max-width: 1100px) { .js-steps .chip .n { display: none; } .chips { gap: 6px; padding-block: 8px calc(8px + env(safe-area-inset-bottom, 0px)); } .row { gap: 6px; } }   /* a 1024 iPad: the numbers come off the beats (the tag on the stage still shows the number) so the talk stays in three rows */
 @media (max-width: 900px) { .chip { min-height: 44px; padding: 6px 11px; font-size: 14px; } .bar h1 { font-size: 20px; } }
 
@@ -148,6 +155,13 @@ svg.drawing .hot { stroke: var(--hot); }
 svg.drawing .fill-hot { fill: var(--hot); opacity: .85; }
 svg.drawing .fill-tendon { fill: var(--tendon); opacity: .35; }
 svg.drawing .mpfl { fill: var(--tendon); opacity: .55; }
+svg.drawing .tband { fill: color-mix(in srgb, var(--tendon) 26%, var(--paper)); stroke: var(--ink); stroke-width: 2.6; stroke-linejoin: round; }
+svg.drawing .mband { fill: color-mix(in srgb, var(--tendon) 50%, var(--paper)); stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; opacity: .9; }
+svg.drawing .fib { fill: none; stroke: var(--tendon); stroke-width: 1.4; opacity: .55; stroke-linecap: round; }
+svg.drawing .socket { fill: color-mix(in srgb, var(--ink) 14%, var(--bone)); stroke: var(--ink); stroke-width: 2.2; }
+svg.drawing .screw { fill: #f3efe4; stroke: var(--ink); stroke-width: 2; }
+svg.drawing .suture { fill: none; stroke: #2f62b0; stroke-width: 2; stroke-linecap: round; }
+svg.drawing .asa { fill: #f6f6f2; stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; }
 svg.drawing .fill-sky { fill: var(--bursa); opacity: .35; }
 svg.drawing text { fill: var(--ink-soft); font-size: 22px; font-weight: 600; }
 svg.drawing text.big { font-size: 26px; fill: var(--ink); }
@@ -232,13 +246,21 @@ svg.drawing .scene.on { display: inline; }
             <path class="ink tendon draw thin" style="opacity:.6" d="M372 224 l10 14 M348 232 l10 14 M326 250 l10 12 M310 282 l12 8 M302 330 l12 4 M298 372 l12 2"/>
           </g>
           <!-- the new ligament: graft band on the same route, two anchors in the kneecap, screw in the thigh bone -->
+          <!-- v0.75 (Brett): a real socket in the thigh bone at the attachment, and an interference screw beside the graft in it -->
           <g class="layer" id="g-graft-socket">
-            <path class="ink draw thin" d="M282 400 l22 6 M284 390 l22 6 M286 380 l22 6 M288 370 l22 6"/>
+            <g transform="rotate(-8 297 404)"><path class="socket pop" d="M297 392 L378 392 A12 12 0 0 1 378 416 L297 416"/></g>
           </g>
           <g class="layer" id="g-graft">
-            <path class="mpfl pop" d="M392 210 C338 208 296 246 292 302 C288 340 284 370 286 394 L300 416 C298 380 300 344 306 312 C316 272 356 240 396 240 Z"/>
-            <path class="ink tendon draw thin" d="M392 210 C338 208 296 246 292 302 C288 340 284 370 286 394"/>
-            <path class="ink tendon draw thin" d="M396 240 C356 240 316 272 306 312 C300 344 298 380 300 416"/>
+            <path class="mpfl pop" d="M392 210 C338 208 296 246 292 302 C288 340 286 370 290 393 L298 404 C298 378 300 344 306 312 C316 272 356 240 396 240 Z"/>
+            <path class="ink tendon draw thin" d="M392 210 C338 208 296 246 292 302 C288 340 286 370 290 393"/>
+            <path class="ink tendon draw thin" d="M396 240 C356 240 316 272 306 312 C300 344 298 378 298 404"/>
+          </g>
+          <g class="layer" id="g-graft-screw">
+            <g transform="rotate(-8 297 404)">
+              <path class="mpfl pop" d="M291 393 L376 393 L376 403.5 L291 403.5 Z"/>
+              <rect class="screw pop" x="301" y="405" width="72" height="10" rx="4"/>
+              <path class="ink thin" style="stroke-width:1.4" d="M309 405 l-3 10 M317 405 l-3 10 M325 405 l-3 10 M333 405 l-3 10 M341 405 l-3 10 M349 405 l-3 10 M357 405 l-3 10 M365 405 l-3 10"/>
+            </g>
           </g>
           <!-- the way out: his arc from the top of the kneecap, sweeping outside and down to the hook -->
           <g class="layer" id="g-path">
@@ -256,9 +278,20 @@ svg.drawing .scene.on { display: inline; }
             <g class="layer" id="g-tear-pat-p"><path class="fill-hot pop" d="M394 212 l-6 10 l6 10 l6 -2 l2 -16 Z"/></g>
             <g class="layer" id="g-chunk"><path class="fill-hot pop" d="M548 282 C560 296 574 300 586 284 L578 272 Z"/><path class="ink hot draw thin" d="M548 282 C560 296 574 300 586 284"/></g>
             <g class="layer" id="g-bruise-p"><ellipse class="pop" cx="432" cy="218" rx="22" ry="34" fill="#7b61c9" opacity=".5" filter="url(#soft)"/></g>
-            <g class="layer" id="g-graft-anchors"><!-- the two anchors sit in the kneecap, so they ride with it and draw on top of it (v0.69) -->
-              <circle class="pop" cx="400" cy="216" r="5.5" fill="var(--navy)"/>
-              <circle class="pop" cx="404" cy="240" r="5.5" fill="var(--navy)"/>
+            <g class="layer" id="g-graft-anchors"><!-- the two anchors sit in the kneecap, so they ride with it and draw on top of it (v0.69).
+                 v0.75 (Brett): all-suture anchors (he uses the Q-FIX MINI): a small drill hole into the inside edge of the kneecap, the anchor
+                 bunched up at the bottom of it, its suture coming back out of the hole -->
+              <g transform="rotate(-5 391 213)"><rect class="socket" x="390" y="209" width="38" height="8" rx="3"/>
+                <path class="asa pop" d="M421 213 c0 -6 4 -8 7 -6 c2 -4 7 -3 8 1 c4 0 5 5 2 7 c2 4 -2 7 -5 5 c-2 4 -7 3 -8 0 c-4 1 -6 -4 -4 -7 Z"/>
+                <path class="suture" d="M424 212 L388 212 C380 211 374 207 368 202 M424 214 L388 214 C381 215 376 219 370 224"/></g>
+              <g transform="rotate(-3 395 240)"><rect class="socket" x="394" y="236" width="38" height="8" rx="3"/>
+                <path class="asa pop" d="M425 240 c0 -6 4 -8 7 -6 c2 -4 7 -3 8 1 c4 0 5 5 2 7 c2 4 -2 7 -5 5 c-2 4 -7 3 -8 0 c-4 1 -6 -4 -4 -7 Z"/>
+                <path class="suture" d="M428 239 L392 239 C384 238 378 234 372 230 M428 241 L392 241 C385 242 380 246 374 251"/></g>
+            </g>
+            <g class="layer" id="g-graft-ties">
+              <path class="suture draw" d="M389 212 C374 202 360 206 360 216 C360 226 374 228 388 220"/>
+              <path class="suture draw" d="M393 240 C378 250 364 248 362 238 C362 228 376 226 392 232"/>
+              <circle cx="360" cy="216" r="3.2" fill="#2f62b0"/><circle cx="362" cy="238" r="3.2" fill="#2f62b0"/>
             </g>
           </g>
           <g class="layer" id="g-loose"><path class="fill-hot pop" d="M610 470 C624 460 640 464 644 478 C640 492 622 496 612 486 Z"/></g>
@@ -275,74 +308,90 @@ svg.drawing .scene.on { display: inline; }
         </g>
       </g>
 
-      <!-- SCENE B: the knee from the front (his tendon drawing) -->
+      <!-- SCENE B: the knee from the front, a LEFT knee (inside on the viewer's left). v0.75 (Brett, 10/18/2026): drawn like a real knee,
+           with a quad tendon and VMO / VL above the kneecap and a broad patellar tendon to the tubercle; the tendons, the tubercle and
+           the line of pull are drawn from script (drawFront) so the kneecap, the tubercle and the tendons move together: normal, the
+           tubercle out to the side (the line of pull), then cut and moved back in line with two screws. -->
       <g class="scene js-scene" id="sc-front">
         <g class="js-flip">
-          <g class="layer on" id="f-bone">
-            <path class="ink" d="M425 30 L405 200 M575 30 L595 200"/>
-            <path class="ink" d="M400 470 Q500 455 600 470 M432 478 L418 640 M568 478 L582 640"/>
+          <g id="f-bone">
+            <path class="ink bone" d="M470 -20 C466 70 456 150 448 198 C442 236 404 256 388 286 C376 310 380 342 398 356 C414 368 448 368 468 358 C482 351 490 340 498 330 C506 340 514 350 528 356 C552 366 588 362 604 348 C622 332 622 302 610 280 C596 254 564 236 558 198 C552 150 560 70 572 -20 Z"/>
+            <path class="ink bone" d="M600 402 C602 386 626 380 640 394 C650 408 644 428 630 436 L624 680 L606 680 L610 436 C602 428 598 416 600 402 Z"/>
+            <path class="ink bone" d="M392 374 C392 366 404 362 420 362 L476 364 L486 352 L494 364 L506 364 L514 350 L524 364 L588 362 C602 362 612 368 610 378 C606 402 584 422 566 448 C554 468 548 492 546 522 L544 680 L452 680 L452 522 C450 490 440 464 426 442 C408 416 392 398 392 374 Z"/>
           </g>
-          <!-- the kneecap (moves for tracking) -->
-          <g class="js-fpatella">
-            <path class="ink bone" d="M400 205 Q410 148 500 148 Q590 148 600 205 Q600 300 500 324 Q400 300 400 205 Z"/>
-            <g class="layer" id="f-inc"><path class="ink hot draw" d="M406 215 Q402 250 408 292"/></g>
-          </g>
-          <g class="layer on" id="f-tendons">
-            <path class="ink" d="M440 150 L446 40 M560 150 L554 40"/>
-            <path class="ink js-pt1" d="M470 318 L482 462"/>
-            <path class="ink js-pt2" d="M530 318 L518 462"/>
-            <circle class="ink" cx="500" cy="484" r="22"/>
-          </g>
-          <g class="layer" id="f-lateral">
-            <path class="ink faint draw" d="M530 318 L648 460 M500 322 L612 468"/>
-            <circle class="ink faint draw" cx="640" cy="484" r="22"/>
-            <path class="ink hot draw" d="M560 232 L680 196" marker-end="url(#arrow)"/>
+          <!-- the tubercle and, for the tubercle move, the block of bone around it (drawn at the lateral spot, translated by script) -->
+          <g transform="translate(-29 0)"><!-- the block markup is drawn at x 585; the lateral tubercle sits at 556 (FR.TUB_L) -->
+          <g class="js-fghost" style="opacity:0"><path class="ink thin" style="stroke-dasharray:7 6;opacity:.55" d="M556 420 L614 420 L606 566 L572 566 Z"/></g>
+          <g class="js-fblock">
+            <path class="ink bone js-fblock-fill" style="opacity:0" d="M556 420 L614 420 L606 566 L572 566 Z"/>
+            <ellipse class="ink bone" cx="585" cy="458" rx="26" ry="20"/>
+            <g class="js-fscrews" style="opacity:0">
+              <circle cx="585" cy="486" r="9" fill="#d9dee7" stroke="var(--ink)" stroke-width="2.4"/><path d="M579 486 h12 M585 480 v12" stroke="var(--ink)" stroke-width="2"/>
+              <circle cx="589" cy="530" r="9" fill="#d9dee7" stroke="var(--ink)" stroke-width="2.4"/><path d="M583 530 h12 M589 524 v12" stroke="var(--ink)" stroke-width="2"/>
+            </g>
           </g>
           <g class="layer" id="f-tto">
-            <path class="ink draw" d="M468 452 L532 452 L538 548 L462 548 Z"/>
-            <path class="ink hot draw" d="M458 500 L392 500" marker-end="url(#arrow)"/>
+            <path class="ink hot draw" style="stroke-dasharray:10 7" d="M556 420 L614 420 L606 566 L572 566 Z"/>
+            <path class="ink hot draw" d="M548 496 L486 496" marker-end="url(#arrow)"/>
           </g>
-          <g class="layer" id="f-tto-done">
-            <path class="ink bone pop" d="M408 452 L472 452 L478 548 L402 548 Z"/>
-            <circle class="ink pop" cx="440" cy="484" r="22"/>
-            <path class="ink draw" d="M470 318 L428 462 M530 318 L452 462"/>
-            <path class="ink draw thin" d="M420 522 L462 522 M416 536 L462 536 M430 514 l-10 8 l10 8"/>
           </g>
-          <g class="layer" id="f-portals"><circle class="fill-hot pop" cx="468" cy="350" r="6"/><circle class="fill-hot pop" cx="532" cy="350" r="6"/><path class="ink hot draw" d="M372 100 Q368 124 374 150"/></g>
+          <!-- the quadriceps: the vastus medialis (VMO) and lateralis bellies into the quad tendon, which runs into the top of the kneecap -->
+          <path class="mband js-fvmo" d=""/>
+          <path class="mband js-fvl" d=""/>
+          <path class="tband js-fquad" d=""/>
+          <path class="fib js-fquad-fib" d=""/>
+          <path class="tband js-fpt" d=""/>
+          <path class="fib js-fpt-fib" d=""/>
+          <!-- the kneecap (moves for tracking) -->
+          <g class="js-fpatella">
+            <path class="ink bone" d="M-62 -48 C-64 -76 -30 -80 0 -80 C30 -80 64 -76 62 -48 C60 -8 32 32 5 56 C2 59 -2 59 -5 56 C-32 32 -60 -8 -62 -48 Z"/>
+            <g class="layer" id="f-inc"><path class="ink hot draw" d="M-74 -54 Q-80 -24 -72 6"/></g>
+          </g>
+          <g class="layer" id="f-pull">
+            <path class="ink faint js-pull-q" d=""/>
+            <path class="ink faint js-pull-t" d=""/>
+            <path class="ink hot js-pull-arrow" d="" marker-end="url(#arrow)"/>
+          </g>
+          <g class="layer" id="f-portals"><circle class="fill-hot pop" cx="452" cy="372" r="6"/><circle class="fill-hot pop" cx="560" cy="372" r="6"/><path class="ink hot draw" d="M372 262 Q366 290 372 318"/></g>
         </g>
         <g class="js-labels">
-          <text class="js-lbl" data-x="300" data-y="90" data-a="end" data-side="in">quad tendon</text>
-          <text class="js-lbl" data-x="300" data-y="400" data-a="end" data-side="in">patellar tendon</text>
-          <text class="js-lbl" data-x="300" data-y="490" data-a="end" data-side="in">where it attaches</text>
-          <text class="js-lbl js-lbl-pull" data-x="700" data-y="170" data-a="start" data-side="out">the line of pull</text>
-          <text class="js-lbl js-lbl-tto" data-x="700" data-y="520" data-a="start" data-side="out">cut the bone, move it over</text>
-          <text class="js-lbl js-lbl-inc" data-x="300" data-y="200" data-a="end" data-side="in">incision</text>
-          <text class="js-lbl js-lbl-inc" data-x="300" data-y="128" data-a="end" data-side="in">incision</text>
-          <text class="js-lbl js-lbl-inc" data-x="700" data-y="360" data-a="start" data-side="out">two little poke holes</text>
+          <text class="js-lbl" data-x="330" data-y="60" data-a="end" data-side="in">quad tendon</text>
+          <text class="js-lbl" data-x="330" data-y="410" data-a="end" data-side="in">patellar tendon</text>
+          <text class="js-lbl" data-x="330" data-y="462" data-a="end" data-side="in">where it attaches</text>
+          <text class="js-lbl js-lbl-pull" data-x="690" data-y="190" data-a="start" data-side="out">the line of pull</text>
+          <text class="js-lbl js-lbl-tto" data-x="690" data-y="500" data-a="start" data-side="out">cut the bone, move it over</text>
+          <text class="js-lbl js-lbl-inc" data-x="330" data-y="212" data-a="end" data-side="in">incision</text>
+          <text class="js-lbl js-lbl-inc" data-x="330" data-y="296" data-a="end" data-side="in">incision</text>
+          <text class="js-lbl js-lbl-inc" data-x="690" data-y="380" data-a="start" data-side="out">two little poke holes</text>
         </g>
       </g>
-
-      <!-- SCENE C: the knee from the side (his patella alta drawing) -->
+      <!-- SCENE C: the knee from the side, a LEFT knee seen from the outside (the front of the knee on the RIGHT). v0.75 (Brett, 10/18/2026:
+           "the femur looks backwards, the tibia looks weird"): the condyles bulge to the BACK of the thigh bone, the shin bone has its
+           plateau, the tubercle on the front and the fibula behind; the kneecap rides a path 36 units off the front of the thigh bone
+           (joint space showing) and the patellar tendon keeps its length, so as the knee bends the kneecap drops into the groove
+           (drawSide). A high kneecap (patella alta) has a longer tendon, so it sits above the groove and gets there later. -->
       <g class="scene js-scene" id="sc-side">
         <g class="js-flip">
           <g class="layer on" id="s-bone">
-            <path class="ink bone" d="M330 30 L336 250 C340 310 372 352 424 358 C476 362 512 334 514 292 C516 258 498 232 470 214 C440 196 404 130 392 30 Z"/>
+            <path class="ink bone" d="M380 -20 L380 168 C380 206 370 230 350 248 C322 274 316 330 344 356 C370 378 420 384 452 370 C486 356 506 324 506 290 C506 256 490 226 478 196 L470 -20 Z"/>
           </g>
+          <g class="layer" id="s-groove"><path class="ink faint draw" d="M482 214 C496 240 500 264 500 292 C500 316 492 334 480 348"/></g>
           <g class="js-tibia">
-            <path class="ink" d="M350 378 Q450 368 540 380 L552 400 L566 560 M350 378 L356 560"/>
-            <circle class="ink thin" cx="552" cy="420" r="9"/>
+            <path class="ink bone" d="M330 392 C326 404 330 420 344 432 C372 458 392 486 398 530 L404 680 L494 680 L498 540 C502 500 518 474 526 452 C532 434 524 418 510 408 C500 400 498 390 498 380 Z"/>
+            <path class="ink bone" d="M342 438 C334 452 338 470 352 478 L354 680 L376 680 L376 482 C392 472 394 448 380 438 C368 430 350 430 342 438 Z"/>
           </g>
-          <path class="ink tendon js-stendon" d=""/>
+          <path class="tband js-squad" d=""/>
+          <path class="tband js-stendon" d=""/>
           <g class="js-spatella">
-            <ellipse class="ink bone" cx="0" cy="0" rx="28" ry="50"/>
+            <path class="ink bone" d="M2 -66 C24 -64 36 -40 36 -4 C36 30 22 52 6 66 C-6 56 -18 38 -24 16 C-30 -6 -30 -32 -22 -50 C-16 -62 -8 -66 2 -66 Z"/>
           </g>
-          <g class="layer" id="s-groove"><path class="ink faint draw" d="M468 212 C498 236 514 262 514 292"/></g>
         </g>
         <g class="js-labels">
           <text class="js-lbl" data-x="300" data-y="130" data-a="end" data-side="in">thigh bone, from the side</text>
-          <text class="js-lbl js-lbl-alta" data-x="700" data-y="120" data-a="start" data-side="out">kneecap sits high</text>
-          <text class="js-lbl js-lbl-dec" data-x="700" data-y="310" data-a="start" data-side="out">into the groove</text>
-          <text class="js-lbl" data-x="300" data-y="470" data-a="end" data-side="in">shin bone</text>
+          <text class="js-lbl js-lbl-alta" data-x="640" data-y="120" data-a="start" data-side="out">kneecap sits high</text>
+          <text class="js-lbl js-lbl-dec" data-x="640" data-y="300" data-a="start" data-side="out">into the groove</text>
+          <text class="js-lbl" data-x="300" data-y="500" data-a="end" data-side="in">shin bone</text>
+          <text class="js-lbl" data-x="640" data-y="420" data-a="start" data-side="out">patellar tendon</text>
         </g>
       </g>
     </svg>
@@ -410,100 +459,111 @@ svg.drawing .scene.on { display: inline; }
   const PAT = { normal: [0, 0, 0], shallow: [0, -6, 0], mountain: [66, -58, 10], out: [238, 26, 34] };   // dx, dy, rotate; the kneecap sits clear of the groove (joint space)
 
   // Brett's talk, in the order he gave it on 10/12/2026 (his words, de-identified; the patient wording is the formal twin)
-  const STEPS = [
-    { n: '1', label: 'In its groove', title: 'The kneecap sits in its groove', scene: 'groove', clip: 'groove',
+  const ALL = [
+    { id: 'groove', n: '1', label: 'In its groove', title: 'The kneecap sits in its groove', scene: 'groove', clip: 'groove',
       set: { tro: 'normal', pat: 'normal', mpfl: true },
       cue: 'The kneecap is like this, and it sits in its little groove.',
       pt: 'The kneecap rides in a groove at the end of the thigh bone.' },
-    { n: '2', label: 'It goes out', title: 'It always goes to the outside', scene: 'groove', clip: 'dislocate',
+    { id: 'out', n: '2', label: 'It goes out', title: 'It always goes to the outside', scene: 'groove', clip: 'dislocate',
       set: { tro: 'normal', pat: 'out', mpfl: true, tear: true, path: true, anim: 'dislocate' },
       cue: 'When it dislocates, it always comes laterally. If this is the inside and this is the outside, it always comes this way.',
       pt: 'When the kneecap dislocates, it almost always goes toward the outside of the knee.' },
-    { n: '3', label: 'Tears the MPFL', title: 'To get that far it tears the MPFL', scene: 'groove', clip: 'dislocate',
+    { id: 'tear', n: '3', label: 'Tears the MPFL', title: 'To get that far it tears the MPFL', scene: 'groove', clip: 'dislocate',
       set: { tro: 'normal', pat: 'out', tear: true, path: true },
       cue: 'In order for it to get that far, you have to tear your MPFL. It is the thickening of the ligaments on the inside. It can’t travel that far otherwise, so it tears. It has to, for it to dislocate.',
       pt: 'To travel that far, the kneecap has to tear the MPFL, the medial patellofemoral ligament, the main ligament holding it on the inside.' },
-    { n: '4', label: 'Back in', title: 'It comes out and it comes back in', scene: 'groove', clip: 'back-in',
+    { id: 'backin', n: '4', label: 'Back in', title: 'It comes out and it comes back in', scene: 'groove', clip: 'back-in2',
       set: { tro: 'normal', pat: 'normal', tear: true, bruise: true, anim: 'backin' },
       cue: 'For a first-time dislocator, it comes out and it comes back in. The kneecap bumps the thigh bone on the way, so the MRI shows a bruise on each one, a little map of what happened.',
       pt: 'Most of the time it pops straight back in. On the way, the kneecap bumps the thigh bone, which leaves a bruise on each bone on the MRI.' },
-    { n: '5', label: 'It heals', title: 'The MPFL can heal on its own', scene: 'groove', clip: 'heals',
+    { id: 'heals', n: '5', label: 'It heals', title: 'The MPFL can heal on its own', scene: 'groove', clip: 'heals',
       set: { tro: 'normal', pat: 'normal', healed: true },
       cue: 'The MPFL is kind of like the MCL: it sits outside of the knee joint, and it can heal in on its own. So after a first-time dislocation, your risk of it happening again is relatively low.',
       pt: 'The MPFL sits outside the joint, like the MCL, so it can heal on its own. That is why most first-time dislocations are treated without surgery.' },
-    { n: '6', label: 'Happens again', title: 'If it happens again, it proves it didn’t heal', scene: 'groove', clip: 'heals', card: 'people',
+    { id: 'again', n: '6', label: 'Happens again', title: 'If it happens again, it proves it didn’t heal', scene: 'groove', clip: 'heals',
       set: { tro: 'normal', pat: 'normal', healed: true },
       cue: 'If it does happen again, that proves this stuff didn’t heal in as well as we wanted, and it might be healed in a little bit loose. A second time makes a third more likely. After a third, it is just a matter of when.',
       pt: 'If it happens again, the ligament has healed loose. Each dislocation makes the next one more likely, and that is when surgery comes into the conversation.' },
-    { n: '7', label: 'Shallow groove', title: 'A shallow groove: an ice rink', scene: 'groove', clip: 'shallow',
+    { id: 'shallow', n: '7', label: 'Shallow groove', title: 'A shallow groove: an ice rink', scene: 'groove', clip: 'shallow',
       set: { tro: 'shallow', pat: 'shallow', mpfl: true },
       cue: 'Some people are more set up for this. A shallowish groove, so your kneecap is sitting on a little ice rink. We call that trochlear dysplasia. It is just the shape of the groove.',
-      pt: 'Some people are born with a shallow groove, so the kneecap sits on something more like an ice rink than a track. This is called trochlear dysplasia.' },
-    { n: '8', label: 'A mountain', title: 'A groove like a mountain', scene: 'groove', clip: 'mountain',
+      pt: 'Some knees are built in a way that makes the kneecap more likely to go out. Some people are born with a shallow groove, so the kneecap sits on something more like an ice rink than a track. This is called trochlear dysplasia.' },
+    { id: 'mountain', n: '8', label: 'A mountain', title: 'A groove like a mountain', scene: 'groove', clip: 'mountain',
       set: { tro: 'mountain', pat: 'mountain', anim: 'teeter' },
       cue: 'Some people have a groove that is literally like a mountain, and the kneecap is teeter-tottering on top of it. That is high-grade trochlear dysplasia, and those are the super unstable ones.',
       pt: 'In the most severe form the groove is shaped like a mountain and the kneecap teeters on top of it. Those knees are the most unstable.' },
-    { n: '9', label: 'Angle of pull', title: 'Where the tendon attaches', scene: 'front', clip: 'pull',
-      set: { lateral: true },
-      cue: 'Your quad tendon comes here, and your patellar tendon comes down and attaches to the bone here. If it attached way over here, the line of pull wants to take the kneecap out. We measure that on your MRI.',
-      pt: 'The patellar tendon attaches the kneecap to the shin bone. If that attachment sits too far to the outside, every time the thigh muscle fires it pulls the kneecap outward. This is measured on the MRI.' },
-    { n: '10', label: 'Cut the bone', title: 'Cut the bone around the tendon', scene: 'front', clip: 'cut-bone',
-      set: { lateral: true, tto: true },
+    { id: 'pullNormal', n: '9', label: 'Normal pull', title: 'Where the tendon attaches', scene: 'front', clip: 'pull-a',
+      set: { pull: 'normal' },
+      cue: 'Your quad tendon comes here, and your patellar tendon comes down and attaches to the bone here. Normally the line of pull runs pretty straight.',
+      pt: 'The quadriceps tendon runs into the top of the kneecap, and the patellar tendon runs from the bottom of the kneecap to a bump on the shin bone. Normally they line up, so the pull runs nearly straight.' },
+    { id: 'pull', n: '9', label: 'Angle of pull', title: 'When it attaches too far out', scene: 'front', clip: 'pull-b',
+      set: { pull: 'lateral', anim: 'lateralize' },
+      cue: 'If it attached way over here, the line of pull wants to take the kneecap out. We measure that on your MRI.',
+      pt: 'If that attachment sits too far to the outside, every time the thigh muscle fires it pulls the kneecap outward. This is measured on the MRI.' },
+    { id: 'cut', n: '10', label: 'Cut the bone', title: 'Cut the bone around the tendon', scene: 'front', clip: 'cut-bone',
+      set: { pull: 'lateral', tto: 'cut' },
       cue: 'When it is super far lateral, we add on a procedure where we cut the bone and move it over. Why not just move the tendon? Tendon doesn’t heal to bone very well, so you cut the bone around it.',
-      pt: 'When the attachment sits far to the outside, the piece of bone the tendon attaches to is cut free, rather than the tendon itself, because bone heals to bone reliably.' },
-    { n: '11', label: 'Move it over', title: 'Move it over and screw it back in', scene: 'front', clip: 'move-bone',
-      set: { lateral: true, tto: true, anim: 'tto' },
+      pt: 'For some of these knees, a second procedure is added to the MPFL reconstruction: a tibial tubercle osteotomy. The piece of bone the tendon attaches to is cut free, rather than the tendon itself, because bone heals to bone reliably.' },
+    { id: 'move', n: '11', label: 'Move it over', title: 'Move it over and screw it back in', scene: 'front', clip: 'move-bone',
+      set: { pull: 'corrected', tto: 'moved', anim: 'tto' },
       cue: 'You move the tendon with its bone and screw it back in, because bone heals better than tendon. People have to have really bad anatomy for me to recommend it.',
-      pt: 'That piece of bone is moved inward and forward and held with two screws. This is added only for unfavorable anatomy.' },
-    { n: '12', label: 'How it tracks', title: 'Watching it track', scene: 'front', clip: null,
+      pt: 'That piece of bone is moved inward and forward, back in line, and held with two screws. It is added only when the anatomy calls for it.' },
+    { id: 'track', n: '12', label: 'How it tracks', title: 'Watching it track', scene: 'front', clip: null,
       set: { anim: 'track' },
       cue: 'When you straighten your knee out, it tracks pretty well, ever so slightly lateral at the top. Some people straighten it out and it goes clunk, and then it has to clunk back in. Those are the ones I used to do this for.',
       pt: 'Straightening the knee slowly shows how the kneecap tracks. A kneecap that clunks out of the groove at the top is a sign of unfavorable anatomy.' },
-    { n: '13', label: 'Sits high', title: 'A kneecap that sits high', scene: 'side', clip: null,
+    { id: 'alta', n: '13', label: 'Sits high', title: 'A kneecap that sits high', scene: 'side', clip: null,
       set: { alta: true },
       cue: 'From the side, your kneecap may sit a little bit high. That is called patella alta. We are not overly aggressive about correcting it, because the MPFL reconstruction has been a really good operation for us.',
       pt: 'Some kneecaps sit higher than usual on the thigh bone, called patella alta. It is rarely corrected on its own, because the ligament reconstruction works well without that.' },
-    { n: '14', label: 'The decision', title: 'Every bend, it makes a decision', scene: 'side', clip: 'decision',
+    { id: 'decision', n: '14', label: 'The decision', title: 'Every bend, it makes a decision', scene: 'side', clip: 'decision',
       set: { alta: true, groove: true, anim: 'decision' },
       cue: 'All these drawings are bad, because your kneecap actually sits above its groove. Every time you bend your knee it has to decide: am I going into the groove or not? Most of the time it chooses correctly. Once it is bent, it is not going anywhere. A high kneecap just has a little more time to make the wrong decision. The MPFL’s job is to tighten up if it is about to choose wrong.',
-      pt: 'With the knee straight, the kneecap sits above its groove. As the knee bends, it drops into the groove. Once it is in, it is stable. A dislocation happens in that first bit of bend, with a twist. The MPFL is what pulls it back in when it starts to go.' },
-    { n: '15', label: 'Chunk of cartilage', title: 'When a chunk comes off', scene: 'groove', clip: 'chunk',
+      pt: 'With the knee straight, the kneecap sits above its groove. As the knee bends, it drops into the groove, and once it is in, it is stable. A kneecap that sits high, called patella alta, takes a little longer to get there. The MPFL is what pulls it back in when it starts to go.' },
+    { id: 'chunk', n: '15', label: 'Chunk of cartilage', title: 'When a chunk comes off', scene: 'groove', clip: 'chunk',
       set: { tro: 'normal', pat: 'normal', chunk: true, loose: true },
       cue: 'There is cartilage on the back of your kneecap. Sometimes people take a big chunk of cartilage and bone off, and it is floating around in there. That is the one time I say we should go do something about it now: take it out, or put it back in.',
       pt: 'Sometimes a dislocation knocks a piece of cartilage and bone off the back of the kneecap. A loose piece in the joint is the one reason to operate right away.' },
-    { n: '16', label: 'Your options', title: 'What do we do about it?', scene: 'groove', clip: null, card: 'options',
+    { id: 'options', n: '16', label: 'Your options', title: 'What do we do about it?', scene: 'groove', clip: null, card: 'options',
       set: { tro: 'normal', pat: 'normal', healed: true },
       cue: 'It is the same surgery now as six months from now or a year from now. Nobody is rushing you. Option one, live with it. Option two, PT and a small kneecap-tracking brace. Option three, if you are sick of it, let’s go fix it.',
       pt: 'A reconstruction is the same operation now or a year from now, so there is no rush. The choices are living with it, physical therapy with a kneecap-tracking brace, or surgery.' },
-    { n: '17', label: 'Old way vs now', title: 'The old way and the new way', scene: 'groove', clip: null, card: 'old',
+    { id: 'old', n: '17', label: 'Old way vs now', title: 'The old way and the new way', scene: 'groove', clip: null, card: 'old',
       set: { tro: 'normal', pat: 'normal', mpfl: true },
       cue: 'The old-school way was to make an incision here and just tighten the ligaments up. It is called a reefing, and it had a really high failure rate. MPFL reconstruction fails about one to five percent of the time. It is a really, really good operation.',
       pt: 'Tightening the stretched ligament (an older repair) failed often. Reconstructing the ligament with a new one has a low rate of repeat dislocation.' },
-    { n: '18', label: 'Incisions', title: 'Two incisions and two poke holes', scene: 'front', clip: 'incisions',
+    { id: 'incisions', n: '18', label: 'Incisions', title: 'Two incisions and two poke holes', scene: 'front', clip: 'incisions',
       set: { inc: true },
       cue: 'I use donor tendon, so I don’t have to harvest your own. You get this incision by the kneecap and this one on the inside of the thigh bone, plus two little poke holes, because I scope your knee and clean up the back of the kneecap too.',
-      pt: 'The new ligament is made from donor tendon, so nothing is taken from your own knee. There is a small incision beside the kneecap, one on the inside of the thigh, and two small arthroscopy portals.' },
-    { n: '19', label: 'Anchors', title: 'Two little anchors in the kneecap', scene: 'groove', clip: 'anchors',
+      pt: 'When it needs surgery, the most common operation is an MPFL reconstruction: a new ligament made from donor tendon, so nothing is taken from your own knee. There is a small incision beside the kneecap, one on the inside of the thigh, and two small arthroscopy portals.' },
+    { id: 'anchors', n: '19', label: 'Anchors', title: 'Two little anchors in the kneecap', scene: 'groove', clip: 'anchors',
       set: { tro: 'normal', pat: 'normal', graft: 1 },
       cue: 'I make you a new ligament from here to here. First, two little anchors in the edge of the kneecap.',
-      pt: 'The new ligament starts at two small anchors set into the inside edge of the kneecap.' },
-    { n: '20', label: 'Socket', title: 'A socket in the thigh bone', scene: 'groove', clip: 'tunnel',
+      pt: 'The new ligament starts at two small anchors, made entirely of suture, set into the inside edge of the kneecap.' },
+    { id: 'socket', n: '20', label: 'Socket', title: 'A socket in the thigh bone', scene: 'groove', clip: 'tunnel',
       set: { tro: 'normal', pat: 'normal', graft: 2 },
       cue: 'Then a socket in the thigh bone, right where the real ligament attaches.',
       pt: 'A small socket is drilled in the thigh bone where the original ligament attached.' },
-    { n: '21', label: 'Graft in', title: 'The graft goes into the socket', scene: 'groove', clip: 'graft-in',
+    { id: 'graftin', n: '21', label: 'Graft in', title: 'The graft goes into the socket', scene: 'groove', clip: 'graft-in',
       set: { tro: 'normal', pat: 'normal', graft: 3, graftIn: true },
       cue: 'The graft goes into the socket and a screw that dissolves holds it there.',
-      pt: 'The donor tendon is passed into the socket and held with a screw that dissolves over time.' },
-    { n: '22', label: 'New ligament', title: 'A new MPFL, kneecap to thigh bone', scene: 'groove', clip: 'new-ligament',
+      pt: 'The donor tendon is passed into the socket and held there with a screw that dissolves over time.' },
+    { id: 'newlig', n: '22', label: 'New ligament', title: 'A new MPFL, kneecap to thigh bone', scene: 'groove', clip: 'new-ligament',
       set: { tro: 'normal', pat: 'normal', graft: 3 },
       cue: 'I tension it so it holds the kneecap without making the knee tight, and stitch it down to the kneecap. That is your new MPFL.',
       pt: 'The new ligament is tensioned to catch the kneecap without limiting how the knee bends, and secured to the kneecap. The result is a new MPFL.' },
-    { n: '23', label: 'Recovery', title: 'What recovery looks like', scene: 'front', clip: 'healed', card: 'recovery',
+    { id: 'recovery', n: '23', label: 'Recovery', title: 'What recovery looks like', scene: 'front', clip: 'healed', card: 'recovery',
       set: { inc: false },
       cue: 'Day surgery, in and out the same day. Walking on it right away, moving it right away, with a brace and crutches until your quad wakes up. Walking normally at about six weeks, ligament healed at three months, full sports at about six months, once your quad is ninety percent of the other side.',
       pt: 'It is a same-day surgery. You walk on it right away in a brace with crutches, walk normally at about six weeks, and the ligament is healed by three months. Full return to sport is around six months, once the thigh muscle is back to ninety percent.' },
   ];
+  // v0.75: While You Wait goes through it in a patient's order (Brett, 10/18/2026): what happened, the options, the MPFL reconstruction
+  // step by step, then the anatomy that sets some people up and the tubercle move added for it. No How it tracks or Sits high (no film),
+  // no Old way vs now. His own mode keeps the order of his talk.
+  const PT_ORDER = ['groove', 'out', 'tear', 'backin', 'heals', 'again', 'chunk', 'options', 'incisions', 'anchors', 'socket', 'graftin', 'newlig',
+                    'shallow', 'mountain', 'decision', 'pullNormal', 'pull', 'cut', 'move', 'recovery'];
+  const BYID = Object.fromEntries(ALL.map((x) => [x.id, x]));
+  const STEPS = (patient ? PT_ORDER.map((id) => BYID[id]) : ALL).map((x, i) => Object.assign({}, x, { n: String(i + 1) }));
   const CARDS = {
     people: () => `<h2>If it happens once, how often does it happen again?</h2>
       <p>Of 100 people after a <b>first</b> dislocation, about <b>1 in 3</b> dislocate again.</p><div class="people">${dots(34)}</div>
@@ -579,24 +639,83 @@ svg.drawing .scene.on { display: inline; }
   let anim = null, raf = 0;
   function stopAnim() { anim = null; if (raf) cancelAnimationFrame(raf); raf = 0; }
   function setPatella(dx, dy, r) { patella.setAttribute('transform', `translate(${dx} ${dy}) rotate(${r} 500 230)`); }
-  const fpat = $('.js-fpatella'), pt1 = $('.js-pt1'), pt2 = $('.js-pt2');
-  function setFront(dx, dy) {
-    fpat.setAttribute('transform', `translate(${dx} ${dy})`);
-    pt1.setAttribute('d', `M${470 + dx} ${318 + dy} L482 462`); pt2.setAttribute('d', `M${530 + dx} ${318 + dy} L518 462`);
+  // ---------- the front: tendons, tubercle and the line of pull follow the kneecap and the tubercle (v0.75) ----------
+  const FR = { P: [505, 262], TUB_N: 510, TUB_L: 556, TY: 456 };
+  const fpat = $('.js-fpatella'), fquad = $('.js-fquad'), fquadF = $('.js-fquad-fib'), fvmo = $('.js-fvmo'), fvl = $('.js-fvl'), fpt = $('.js-fpt'), fptF = $('.js-fpt-fib');
+  const fblock = $('.js-fblock'), fblockFill = $('.js-fblock-fill'), fscrews = $('.js-fscrews'), fghost = $('.js-fghost');
+  const pullQ = $('.js-pull-q'), pullT = $('.js-pull-t'), pullA = $('.js-pull-arrow');
+  const F2 = (n) => n.toFixed(1);
+  function bandPath(a, b, wa, wb, sag) {   // a tapered band from a to b (half-widths wa, wb), its sides bowed in by sag
+    const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L;
+    const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], wm = (wa + wb) / 2 - sag;
+    const p = (q, w, s) => [q[0] + nx * w * s, q[1] + ny * w * s];
+    const a1 = p(a, wa, 1), b1 = p(b, wb, 1), m1 = p(m, wm, 1), a2 = p(a, wa, -1), b2 = p(b, wb, -1), m2 = p(m, wm, -1);
+    return `M${F2(a1[0])} ${F2(a1[1])} Q${F2(m1[0] * 2 - (a1[0] + b1[0]) / 2)} ${F2(m1[1] * 2 - (a1[1] + b1[1]) / 2)} ${F2(b1[0])} ${F2(b1[1])} L${F2(b2[0])} ${F2(b2[1])} Q${F2(m2[0] * 2 - (a2[0] + b2[0]) / 2)} ${F2(m2[1] * 2 - (a2[1] + b2[1]) / 2)} ${F2(a2[0])} ${F2(a2[1])} Z`;
   }
-  const tib = $('.js-tibia'), spat = $('.js-spatella'), sten = $('.js-stendon');
-  const KNEE = [444, 368];   // the tibia turns about this point
-  function setSide(bend, alta) {  // bend 0..1 (0 straight, 1 about 45 degrees), kneecap from high to seated
-    const ang = bend * 48;
-    tib.setAttribute('transform', `rotate(${ang} ${KNEE[0]} ${KNEE[1]})`);
-    const t = ang * Math.PI / 180, tx = 552, ty = 420;   // the tubercle, rotated with the shin
-    const rx = KNEE[0] + (tx - KNEE[0]) * Math.cos(t) - (ty - KNEE[1]) * Math.sin(t);
-    const ry = KNEE[1] + (tx - KNEE[0]) * Math.sin(t) + (ty - KNEE[1]) * Math.cos(t);
-    const hx = 500, hy = alta ? 150 : 192;   // high kneecap vs normal, knee straight, lying on the front of the thigh bone
-    const q = bend;
-    const px = hx + (540 - hx) * q, py = hy + (272 - hy) * q;   // down and round the front into the groove
-    spat.setAttribute('transform', `translate(${px} ${py}) rotate(${-8 - 34 * q})`);
-    sten.setAttribute('d', `M${px + 8} ${py + 46} L${rx - 2} ${ry - 8}`);
+  function fibers(a, b, wa, wb, n) {   // thin lines along a band
+    let d = ''; const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L;
+    for (let i = 1; i < n; i++) { const t = i / n * 2 - 1, A = [a[0] + nx * wa * t * .8, a[1] + ny * wa * t * .8], B = [b[0] + nx * wb * t * .8, b[1] + ny * wb * t * .8];
+      d += `M${F2(A[0] + dx * .08)} ${F2(A[1] + dy * .08)} L${F2(B[0] - dx * .08)} ${F2(B[1] - dy * .08)} `; }
+    return d;
+  }
+  function drawFront(o) {   // o: { dx, dy (the kneecap), tub (the tubercle's x), block: null|'cut'|'moved', pull: null|'normal'|'lateral'|'corrected' }
+    const P = [FR.P[0] + (o.dx || 0), FR.P[1] + (o.dy || 0)], tub = o.tub == null ? FR.TUB_N : o.tub;
+    fpat.setAttribute('transform', `translate(${F2(P[0])} ${F2(P[1])})`);
+    // the quad tendon: from the base of the kneecap up the front of the thigh, a little to the outside; the two vasti beside it
+    const qa = [P[0] + 2, P[1] - 70], qb = [544, -24];
+    fquad.setAttribute('d', bandPath(qa, qb, 46, 40, 7)); fquadF.setAttribute('d', fibers(qa, qb, 46, 40, 6));
+    // the VMO: a full belly low on the inside, its fibres running into the upper inside edge of the kneecap; the VL up the outside
+    const dX = o.dx || 0, dY = o.dy || 0;
+    fvmo.setAttribute('d', `M${F2(P[0] - 56)} ${F2(P[1] - 50)} C${F2(420 + dX * .7)} ${F2(214 + dY * .7)} ${F2(384 + dX * .4)} ${F2(190 + dY * .4)} ${F2(388 + dX * .25)} ${F2(140 + dY * .25)} C392 90 430 20 446 -24 L472 -24 C468 40 ${F2(462 + dX * .3)} ${F2(120 + dY * .3)} ${F2(P[0] - 36)} ${F2(P[1] - 78)} Z`);
+    fvl.setAttribute('d', `M${F2(P[0] + 54)} ${F2(P[1] - 60)} C${F2(582 + dX * .7)} ${F2(184 + dY * .7)} ${F2(602 + dX * .4)} ${F2(150 + dY * .4)} ${F2(608 + dX * .25)} ${F2(110 + dY * .25)} C614 60 624 10 628 -24 L598 -24 C590 40 ${F2(560 + dX * .3)} ${F2(120 + dY * .3)} ${F2(P[0] + 40)} ${F2(P[1] - 80)} Z`);
+    // the patellar tendon: broad off the bottom of the kneecap, into the tubercle
+    const ta = [P[0], P[1] + 26], tb = [tub, FR.TY - 8];
+    fpt.setAttribute('d', bandPath(ta, tb, 38, 22, 5)); fptF.setAttribute('d', fibers(ta, tb, 38, 22, 6));
+    // the tubercle (with its block of bone when it is cut or moved)
+    fblock.setAttribute('transform', `translate(${F2(tub - FR.TUB_L)} 0)`);
+    fblockFill.style.opacity = o.block === 'moved' ? 1 : 0; fscrews.style.opacity = o.block === 'moved' && o.screws !== false ? 1 : 0; fghost.style.opacity = o.block === 'moved' ? 1 : 0;
+    // the line of pull: the quad pulls up its line, the tendon down to the tubercle; off to the side, the kneecap goes with it
+    if (o.pull) {
+      const qd = [qb[0] - P[0], qb[1] - P[1]], ql = Math.hypot(...qd), up = [P[0] + qd[0] / ql * 220, P[1] + qd[1] / ql * 220];
+      pullQ.setAttribute('d', `M${F2(P[0])} ${F2(P[1])} L${F2(up[0])} ${F2(up[1])}`);
+      pullT.setAttribute('d', `M${F2(P[0])} ${F2(P[1])} L${F2(tub)} ${F2(FR.TY)}`);
+      const off = Math.max(0, (tub - FR.TUB_N) / (FR.TUB_L - FR.TUB_N));   // 0 in line, 1 far out
+      pullA.style.opacity = off > .15 ? 1 : 0;
+      pullA.setAttribute('d', `M${F2(P[0] + 30)} ${F2(P[1] - 6)} L${F2(P[0] + 30 + 120 * Math.max(off, .2))} ${F2(P[1] - 6 - 22 * Math.max(off, .2))}`);
+    }
+  }
+  // ---------- the side: the kneecap rides the front of the thigh bone; the patellar tendon keeps its length (v0.75) ----------
+  const SD = { KNEE: [396, 300], TUB: [522, 436],
+    PATH: [[506, -11], [510, 99], [514, 192], [524, 220], [537, 252], [542, 290], [536, 329], [518, 364], [487, 392]] };
+  { let acc = 0; SD.S = SD.PATH.map((p, i) => i ? (acc += Math.hypot(p[0] - SD.PATH[i - 1][0], p[1] - SD.PATH[i - 1][1])) : 0); SD.LEN = acc; }
+  function sidePat(s) {   // centre and tilt of the kneecap at arc length s along its path
+    s = Math.max(0, Math.min(SD.LEN, s)); let i = 1; while (i < SD.S.length - 1 && SD.S[i] < s) i++;
+    const a = SD.PATH[i - 1], b = SD.PATH[i], t = (s - SD.S[i - 1]) / (SD.S[i] - SD.S[i - 1] || 1);
+    // the tilt follows a smoothed tangent (the neighbouring segments blended) so the kneecap turns smoothly round the end of the bone
+    const tang = (k) => { const p = SD.PATH[Math.max(0, k - 1)], q = SD.PATH[Math.min(SD.PATH.length - 1, k)]; return Math.atan2(-(q[0] - p[0]), q[1] - p[1]); };
+    const ang = tang(i) * (1 - t) + tang(Math.min(SD.PATH.length - 1, i + 1)) * t;
+    return { x: a[0] + (b[0] - a[0]) * t, y: a[1] + (b[1] - a[1]) * t, ang };
+  }
+  const rotP = (p, c, ang) => { const s = Math.sin(ang), co = Math.cos(ang); return [c[0] + (p[0] - c[0]) * co - (p[1] - c[1]) * s, c[1] + (p[0] - c[0]) * s + (p[1] - c[1]) * co]; };
+  const local = (pt, q) => rotP([pt.x + q[0], pt.y + q[1]], [pt.x, pt.y], pt.ang);
+  const POLE = [6, 62], TOP = [4, -64];
+  const tib = $('.js-tibia'), spat = $('.js-spatella'), sten = $('.js-stendon'), squad = $('.js-squad');
+  const SEAT = { normal: 236, alta: 168 };   // where the kneecap sits with the knee straight (the centre's height)
+  const seatS = (y) => { let lo = 0, hi = SD.LEN; for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; if (sidePat(m).y < y) lo = m; else hi = m; } return (lo + hi) / 2; };
+  const TLEN = {};
+  for (const k of ['normal', 'alta']) { const pt = sidePat(seatS(SEAT[k])), pole = local(pt, POLE); TLEN[k] = Math.hypot(pole[0] - SD.TUB[0], pole[1] - SD.TUB[1]); }
+  function drawSide(bend, alta) {   // bend 0..1 (0 straight, 1 about 50 degrees)
+    const ang = bend * 42 * Math.PI / 180;
+    tib.setAttribute('transform', `rotate(${F2(bend * 42)} ${SD.KNEE[0]} ${SD.KNEE[1]})`);
+    const T = rotP(SD.TUB, SD.KNEE, ang), L = TLEN[alta ? 'alta' : 'normal'];
+    let lo = 0, hi = SD.LEN;   // the spot on the path where the tendon is exactly its length (the distance shrinks as the kneecap goes down)
+    for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2, pole = local(sidePat(m), POLE); if (Math.hypot(pole[0] - T[0], pole[1] - T[1]) > L) lo = m; else hi = m; }
+    const pt = sidePat((lo + hi) / 2), pole = local(pt, POLE), top = local(pt, TOP);
+    spat.setAttribute('transform', `translate(${F2(pt.x)} ${F2(pt.y)}) rotate(${F2(pt.ang * 180 / Math.PI)})`);
+    sten.setAttribute('d', bandPath(pole, [T[0] - 2, T[1] - 2], 11, 10, 1.5));
+    // the quad tendon: from the top of the kneecap up the front of the thigh bone, hugging it
+    const qTop = [500, -24], c1 = [top[0] - 4, top[1] - 40], qm = [(c1[0] + qTop[0]) / 2 + 2, (c1[1] + qTop[1]) / 2];
+    squad.setAttribute('d', `M${F2(top[0] - 13)} ${F2(top[1] + 4)} Q${F2(c1[0] - 13)} ${F2(c1[1])} ${F2(qm[0] - 13)} ${F2(qm[1])} T${F2(qTop[0] - 14)} ${qTop[1]} L${F2(qTop[0] + 14)} ${qTop[1]} Q${F2(qm[0] + 16)} ${F2(qm[1] + 20)} ${F2(top[0] + 15)} ${F2(top[1] + 2)} Z`);
   }
   function renderSketch(s) {
     const set = s.set || {};
@@ -605,7 +724,7 @@ svg.drawing .scene.on { display: inline; }
     if (s.scene === 'groove') {
       tro.setAttribute('d', TROCHLEA[set.tro || 'normal']); cartF.setAttribute('d', CART[set.tro || 'normal']);
       const p = PAT[set.pat || 'normal']; setPatella(...p);
-      layer('g-mpfl', set.mpfl); layer('g-tear-mid', set.tear && S.tear === 'mid'); layer('g-tear-mid-p', set.tear && S.tear === 'mid'); layer('g-tear-pat', set.tear && S.tear === 'pat'); layer('g-tear-pat-p', set.tear && S.tear === 'pat'); layer('g-healed', set.healed); const gr = set.graft === true ? 3 : (set.graft || 0); layer('g-graft-anchors', gr >= 1); layer('g-graft-socket', gr >= 2); layer('g-graft', gr >= 3);
+      layer('g-mpfl', set.mpfl); layer('g-tear-mid', set.tear && S.tear === 'mid'); layer('g-tear-mid-p', set.tear && S.tear === 'mid'); layer('g-tear-pat', set.tear && S.tear === 'pat'); layer('g-tear-pat-p', set.tear && S.tear === 'pat'); layer('g-healed', set.healed); const gr = set.graft === true ? 3 : (set.graft || 0); layer('g-graft-anchors', gr >= 1); layer('g-graft-socket', gr >= 2); layer('g-graft', gr >= 3); layer('g-graft-screw', gr >= 3); layer('g-graft-ties', gr >= 3);
       layer('g-path', set.path); layer('g-chunk', set.chunk); layer('g-loose', set.loose); layer('g-bruise-p', set.bruise); layer('g-bruise-f', set.bruise);
       $('.js-lbl-mpfl').style.opacity = (set.mpfl || set.tear || set.healed || gr >= 3) ? 1 : 0;
       $('.js-lbl-groove').style.opacity = set.tro === 'mountain' ? 0 : 1;
@@ -614,24 +733,30 @@ svg.drawing .scene.on { display: inline; }
       if (set.anim === 'backin') play(1000, (k) => { const q = 1 - Math.pow(1 - Math.min(1, k * 1.4), 3); setPatella(238 * (1 - q), 26 * (1 - q) - 76 * Math.sin((1 - q) * Math.PI), 34 * (1 - q)); });
       if (set.anim === 'teeter') play(1800, (k) => { setPatella(66 + 8 * Math.sin(k * Math.PI * 2), -58 + 3 * Math.sin(k * Math.PI * 2), 10 + 6 * Math.sin(k * Math.PI * 2)); }, true);
     } else if (s.scene === 'front') {
-      setFront(0, 0);
-      layer('f-lateral', set.lateral); layer('f-tto', set.tto && set.anim !== 'tto-done'); layer('f-tto-done', false);
-      layer('f-inc', set.inc); layer('f-portals', set.inc);
-      $$('.js-lbl-pull').forEach((t) => t.style.opacity = set.lateral ? 1 : 0);
-      $$('.js-lbl-tto').forEach((t) => t.style.opacity = set.tto ? 1 : 0);
+      // v0.75: normal, out to the side (the line of pull), cut, moved back in line (two screws); the J sign moves the quad tendon with the kneecap
+      const pull = set.pull || null, tto = set.tto || null, lat = pull === 'lateral';
+      const base = { dx: 0, dy: 0, tub: lat ? FR.TUB_L : FR.TUB_N, block: tto === 'moved' ? 'moved' : null, pull };
+      drawFront(base);
+      layer('f-pull', !!pull); layer('f-tto', tto === 'cut'); layer('f-inc', set.inc); layer('f-portals', set.inc);
+      const lp = $('.js-lbl-pull'); lp.textContent = pull === 'corrected' ? 'back in line' : pull === 'lateral' ? 'pulls it to the outside' : 'the line of pull';
+      $$('.js-lbl-pull').forEach((t) => t.style.opacity = pull ? 1 : 0);
+      $$('.js-lbl-tto').forEach((t) => t.style.opacity = tto ? 1 : 0);
       $$('.js-lbl-inc').forEach((t) => t.style.opacity = set.inc ? 1 : 0);
-      if (set.anim === 'tto') play(1500, (k) => { if (k > .55 && !anim.done) { anim.done = true; layer('f-tto', false); layer('f-tto-done', true); } });
+      const ease = (k) => k * k * (3 - 2 * k);
+      if (set.anim === 'lateralize') play(1100, (k) => drawFront(Object.assign({}, base, { tub: FR.TUB_N + (FR.TUB_L - FR.TUB_N) * ease(Math.min(1, k * 1.25)) })));
+      if (set.anim === 'tto') play(1500, (k) => { const q = ease(Math.min(1, k * 1.3)); drawFront(Object.assign({}, base, { tub: FR.TUB_L + (FR.TUB_N - FR.TUB_L) * q, screws: k > .85, pull: k > .85 ? 'corrected' : 'lateral' }));
+        lp.textContent = k > .85 ? 'back in line' : 'pulls it to the outside'; });
       if (set.anim === 'track') play(2400, (k) => {   // straighten (kneecap rides up), then bend back down; a small clunk near the top
         const b = k < .5 ? 1 - k * 2 : (k - .5) * 2; const up = 1 - b;   // 1 at straight
         const clunk = up > .8 ? (up - .8) * 5 : 0;
-        setFront(12 * up + 46 * clunk, -70 * up);
+        drawFront(Object.assign({}, base, { dx: 12 * up + 46 * clunk, dy: -70 * up }));
       }, true);
     } else if (s.scene === 'side') {
       layer('s-groove', set.groove);
       $$('.js-lbl-alta').forEach((t) => t.style.opacity = set.alta ? 1 : 0);
       $$('.js-lbl-dec').forEach((t) => t.style.opacity = set.groove ? 1 : 0);
-      setSide(0, set.alta);
-      if (set.anim === 'decision') play(2200, (k) => { const b = k < .5 ? k * 2 : 1 - (k - .5) * 2; const q = b * b * (3 - 2 * b); setSide(q, set.alta); }, true);
+      drawSide(0, set.alta);
+      if (set.anim === 'decision') play(2200, (k) => { const b = k < .5 ? k * 2 : 1 - (k - .5) * 2; const q = b * b * (3 - 2 * b); drawSide(q, set.alta); }, true);
     }
     // labels (text stays readable: never mirrored)
     $$('.js-lbl').forEach((t) => {
@@ -691,7 +816,7 @@ svg.drawing .scene.on { display: inline; }
   $('.js-speed').addEventListener('click', () => { SPD.v = SPD.steps[(SPD.steps.indexOf(SPD.v) + 1) % SPD.steps.length]; mem('napkin.speed', SPD.v); applySpeed(); if (S.mode === 'sketch') renderSketch(STEPS[S.step]); });
   video.addEventListener('loadedmetadata', () => { try { video.playbackRate = SPD.v / SPD.base; } catch (e) {} });
   $$('.js-side').forEach((b) => b.addEventListener('click', () => { S.side = b.dataset.side; clearInk(); render(); }));
-  $$('.js-tear').forEach((b) => b.addEventListener('click', () => { S.tear = b.dataset.t; if (!(STEPS[S.step].set || {}).tear) S.step = 2; render(); }));
+  $$('.js-tear').forEach((b) => b.addEventListener('click', () => { S.tear = b.dataset.t; if (!(STEPS[S.step].set || {}).tear) S.step = STEPS.findIndex((x) => x.id === 'tear'); render(); }));
   $$('.js-card-btn').forEach((b) => b.addEventListener('click', () => showCard(S.card === b.dataset.card ? null : b.dataset.card)));
   $('.js-cues').addEventListener('click', () => { S.cues = !S.cues; render(); });
   $('.js-close').addEventListener('click', () => { try { window.parent.postMessage({ napkin: 'grafts-close' }, location.origin); } catch (e) {} });
@@ -729,7 +854,7 @@ svg.drawing .scene.on { display: inline; }
   if (!patient) $('.js-show').appendChild(nav);   // Brett's mode: Back / Next sit at the bottom right, under the beats (23 beats fill three rows on an iPad); the patient view keeps them in the step row
   applySpeed();
   render();
-  window.KNEECAP = { S, go, STEPS, render, SPD, version: '0.69' };
+  window.KNEECAP = { S, go, STEPS, render, SPD, version: '0.75' };
   window.READY = true;
 })();
 </script>
