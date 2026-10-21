@@ -8325,6 +8325,12 @@ three/build/three.module.js:
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
       const b = document.createElement('b'); b.textContent = 'Kneecap dislocation'; const sm = document.createElement('small'); sm.textContent = 'why it comes out, and how it is fixed';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
+    /* Meniscus tear (v0.76) lives on its own page (meniscus.html, the film loops with formal captions and cards); its picker tile is a link there */
+    { const src = $('.tile[data-go="meniscus"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'meniscus';
+      a.href = (/^\/explore\b/.test(location.pathname) ? '/explore' : '/learn') + '/meniscus'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
+      if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
+      const b = document.createElement('b'); b.textContent = 'Meniscus tear'; const sm = document.createElement('small'); sm.textContent = 'tear types, treatment, surgery';
+      a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
     /* Recovery roadmaps (v0.36) live on their own page; the picker tile opens the chooser (v0.42: ACL, meniscus repair, rotator cuff repair) */
     { const src = $('.tile[data-go="knee"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'recovery';
       a.href = '/recovery'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
@@ -8348,7 +8354,7 @@ three/build/three.module.js:
         ['rotator-cuff', 'Rotator cuff repair', 'sling, motion, then strength', 'shoulder'],
         ['shoulder-instability', 'Shoulder stabilization', 'labral repair after a dislocation', 'instab']];
       const GROUPS = [
-        { key: 'knee', name: 'Knee', sub: 'pain, ACL tears, kneecap dislocation, arthritis', icon: 'knee', items: ['knee', 'acl', 'kneecap', 'arthritis'] },
+        { key: 'knee', name: 'Knee', sub: 'pain, meniscus and ACL tears, kneecap dislocation, arthritis', icon: 'knee', items: ['knee', 'meniscus', 'acl', 'kneecap', 'arthritis'] },
         { key: 'hip', name: 'Hip', sub: 'hip and groin pain, the labrum', icon: 'hip', items: ['hip'] },
         { key: 'shoulder', name: 'Shoulder', sub: 'pain, rotator cuff, dislocations', icon: 'shoulder', items: ['shoulder', 'instability'] },
         { key: 'postop', name: 'Post-op', sub: 'recovery after surgery', icon: null, items: ROADMAPS.map(r => 'road-' + r[0]) }];

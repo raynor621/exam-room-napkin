@@ -81,6 +81,14 @@
       "destination": "/meniscus-repair.html"
     },
     {
+      "source": "/learn/meniscus",
+      "destination": "/meniscus.html"
+    },
+    {
+      "source": "/explore/meniscus",
+      "destination": "/meniscus.html"
+    },
+    {
       "source": "/explore",
       "destination": "/explore.html"
     },
