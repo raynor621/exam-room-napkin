@@ -89,6 +89,14 @@
       "destination": "/meniscus.html"
     },
     {
+      "source": "/learn/shoulder-mri",
+      "destination": "/shoulder-mri.html"
+    },
+    {
+      "source": "/explore/shoulder-mri",
+      "destination": "/shoulder-mri.html"
+    },
+    {
       "source": "/explore",
       "destination": "/explore.html"
     },
