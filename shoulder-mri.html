@@ -162,10 +162,15 @@ video.js-preload { display: none !important; }
 .term .src { font-size: 13px; color: var(--ink-soft); margin: 6px 0 0; }
 .term .acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 4px; }
 .tnone { font-size: 18px; color: var(--ink-soft); margin: 16px 0; }
-.seeit { position: absolute; inset: 0; z-index: 6; background: radial-gradient(ellipse at 50% 48%, #1d2f4b 0%, #16263f 62%, #121f35 100%); }
+/* v0.84: See it is the same in-place pop-up as the v0.82 cross-links: the loop, the term, the step's short caption, ✕ Back */
+.seeit { position: absolute; inset: 0; z-index: 6; background: var(--paper); display: flex; flex-direction: column; gap: 10px; padding: 0 0 12px; box-sizing: border-box; }
+.seeit .seebox { position: relative; flex: 1; min-height: 0; border-radius: 18px; overflow: hidden; background: radial-gradient(ellipse at 50% 48%, #1d2f4b 0%, #16263f 62%, #121f35 100%); }
 .seeit video, .seeit img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-.seeit .chip { position: absolute; top: 10px; right: 10px; z-index: 2; }
-.seeit .ttl { position: absolute; left: 12px; bottom: 10px; z-index: 2; color: #e3e9f5; font-weight: 700; font-size: 17px; background: rgba(10, 20, 36, .7); padding: 6px 12px; border-radius: 10px; }
+.seeit .chip { position: absolute; top: 10px; right: 10px; z-index: 2; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+.seeit .ttl { position: absolute; left: 12px; top: 12px; z-index: 2; max-width: calc(100% - 150px); color: #e3e9f5; font-weight: 700; font-size: 17px; background: rgba(10, 20, 36, .7); padding: 6px 12px; border-radius: 10px; }
+.seeit .seecap { margin: 0 4px; font-size: 18px; line-height: 1.4; max-width: 70ch; color: var(--ink); }
+.seeit .seecap:empty { display: none; }
+@media (max-width: 600px) { .seeit .seecap { font-size: 16px; } .seeit .ttl { font-size: 15px; max-width: calc(100% - 110px); } }
 .qbtns { display: flex; flex-wrap: wrap; gap: 8px; }
 /* v0.82: the in-place pop-up for an animation from another walkthrough (its own step, shown inside this module) */
 .sketch { position: absolute; inset: 0; z-index: 7; background: var(--paper); }
@@ -233,11 +238,14 @@ video.js-preload { display: none !important; }
       <div class="js-tlist"></div>
       <p class="tnone js-tnone" hidden>No match. Try a shorter word, or bring the report and ask me at your visit.</p>
     </div>
-    <div class="seeit js-seeit" hidden>
-      <video class="js-seevid" muted playsinline loop preload="auto" aria-label="The animation for this term"></video>
-      <img class="js-seeimg" alt="" hidden>
-      <span class="ttl js-seettl"></span>
-      <button class="chip primary js-seeclose" type="button">✕ Back to the list</button>
+    <div class="seeit js-seeit" hidden role="dialog" aria-label="See it">
+      <div class="seebox">
+        <video class="js-seevid" muted playsinline loop preload="auto" aria-label="The animation for this term"></video>
+        <img class="js-seeimg" alt="" hidden>
+        <span class="ttl js-seettl"></span>
+      </div>
+      <p class="seecap js-seecap"></p>
+      <button class="chip primary js-seeclose" type="button">✕ Back</button>
     </div>
     <div class="sketch js-sketch" hidden>
       <iframe class="js-sketchframe" title="The animation" loading="eager"></iframe>
@@ -560,9 +568,20 @@ video.js-preload { display: none !important; }
     $('.js-tnone').hidden = any;
   }
   $('.js-filter').addEventListener('input', (e) => filter(e.target.value));   /* runs on the device only: nothing typed is stored or sent */
+  /* v0.84: the short caption under a See it loop: one sentence of the step that shows that loop (no step, no caption) */
+  function seeCap(t) {
+    const n = t.see ? t.see[0] : null;
+    const s = STEPS.find((x) => (n && x.clip && x.clip.includes(n)) || (t.img && x.img === t.img)); if (!s) return '';
+    const sent = (s.pt.match(/[^.!?]+[.!?]+(?=\s|$)/g) || [s.pt]).map((x) => x.trim());
+    const k = n && t.see.length === 1 ? Math.max(0, s.clip.indexOf(n)) : 0;
+    return sent[Math.min(k, sent.length - 1)];
+  }
+  let tscroll = 0;   /* where the term list was scrolled to (kept across a pop-up and when leaving the list and coming back) */
   function seeIt(id) {
     const t = TERMS.find((x) => x.id === id); if (!t) return;
-    $('.js-seettl').textContent = t.phrase; seeit.hidden = false;
+    if (seeit.hidden && !terms.hidden) tscroll = terms.scrollTop;
+    closePop();
+    $('.js-seettl').textContent = t.phrase; $('.js-seecap').textContent = seeCap(t); seeit.hidden = false; idle();
     if (t.img) { seevid.pause(); seevid.removeAttribute('src'); seevid.hidden = true; seeimg.hidden = false; seeimg.src = STILL(t.img); seeimg.alt = t.phrase; return; }
     seeimg.hidden = true; seevid.hidden = false;
     let k = 0; const names = t.see;
@@ -575,14 +594,19 @@ video.js-preload { display: none !important; }
   const sketch = $('.js-sketch'), sframe = $('.js-sketchframe');
   function pop(k) {
     const P = POPS[k]; if (!P) return;
+    if (sketch.hidden && seeit.hidden && !terms.hidden) tscroll = terms.scrollTop;
     closeSee(); video.pause();
     sframe.title = P[2]; sframe.src = '/learn/' + P[0] + '?embed&solo=' + P[1];
     sketch.hidden = false; idle();
   }
-  function closePop() { if (sketch.hidden) return; sketch.hidden = true; sframe.removeAttribute('src'); try { sframe.src = 'about:blank'; } catch (e) {} if (S.screen === 'steps' && list && STEPS[S.step] && STEPS[S.step].clip) play(); }
+  function closePop() { if (sketch.hidden) return; sketch.hidden = true; sframe.removeAttribute('src'); try { sframe.src = 'about:blank'; } catch (e) {} if (!terms.hidden) terms.scrollTop = tscroll; if (S.screen === 'steps' && list && STEPS[S.step] && STEPS[S.step].clip) play(); }
   $('.js-sketchclose').addEventListener('click', closePop);
 
-  function closeSee() { seeit.hidden = true; seevid.pause(); seevid.removeAttribute('src'); try { seevid.load(); } catch (e) {} }
+  function closeSee() {
+    const was = !seeit.hidden;
+    seeit.hidden = true; seevid.pause(); seevid.removeAttribute('src'); try { seevid.load(); } catch (e) {}
+    if (was && !terms.hidden) terms.scrollTop = tscroll;   /* back exactly where they were, the term still open */
+  }
   $('.js-seeclose').addEventListener('click', closeSee);
   seeit.addEventListener('click', (e) => { if (e.target.closest('.chip')) return; if (seevid.paused) play(seevid); else seevid.pause(); });
 
@@ -620,7 +644,10 @@ video.js-preload { display: none !important; }
     $('.js-next').textContent = S.step === STEPS.length - 1 ? 'Finish ▶' : 'Next ▶';
     closePop();
     const isTerms = s.view === 'terms';
+    if (!terms.hidden && !isTerms) tscroll = terms.scrollTop;
+    const back = isTerms && terms.hidden;
     stage.classList.toggle('terms-on', isTerms); terms.hidden = !isTerms; if (!isTerms) closeSee();
+    if (back) terms.scrollTop = tscroll;
     if (s.img) { setClip(null); still.hidden = false; still.src = STILL(s.img); still.alt = s.title; } else { still.hidden = true; still.removeAttribute('src'); }
     if (!s.img) setClip(isTerms ? null : s.clip);
     const ex = $('.js-extra'); let html = s.extra || '';
@@ -635,12 +662,14 @@ video.js-preload { display: none !important; }
     warmNext();
   }
   function go(i) { S.step = Math.max(0, Math.min(STEPS.length - 1, i)); render(); if (S.screen !== 'steps') show('steps'); else idle(); }
-  function restart() { closePop(); S.step = -1; S.from = -1; card.hidden = true; closeSee(); $('.js-filter').value = ''; filter(''); $$('.term.open').forEach((e) => toggleTerm(e.dataset.id, false)); show('welcome'); }
+  function restart() { closePop(); tscroll = 0; terms.scrollTop = 0; S.step = -1; S.from = -1; card.hidden = true; closeSee(); $('.js-filter').value = ''; filter(''); $$('.term.open').forEach((e) => toggleTerm(e.dataset.id, false)); show('welcome'); }
 
   $('.js-start').addEventListener('click', () => go(0));
   $('.js-words').addEventListener('click', () => go(TERMS_STEP));
   $('.js-next').addEventListener('click', () => { S.from = -1; if (S.step === STEPS.length - 1) show('end'); else go(S.step + 1); });
   $('.js-back').addEventListener('click', () => {
+    if (!seeit.hidden) { closeSee(); return; }   /* v0.84: Back closes a See it or cross-link pop-up first */
+    if (!sketch.hidden) { closePop(); return; }
     if (S.from >= 0) { const f = S.from; S.from = -1; go(f); return; }   /* a term opened from Part 3 goes back there */
     if (S.step === 0) restart(); else go(S.step - 1);
   });
@@ -682,7 +711,7 @@ video.js-preload { display: none !important; }
   const t0 = (location.hash.match(/term=([a-z-]+)/) || [])[1];
   if (t0 && TERMS.some((t) => t.id === t0)) { go(TERMS_STEP); openTerm(t0); }
   else if (st0 >= 0 && st0 < STEPS.length) go(st0); else if (p0 >= 0) go(p0); else show('welcome');
-  window.SHOULDERMRI = { S, go, STEPS, PARTS, TERMS, CARDS, render, show, restart, openTerm, filter, seeIt, pop, closePop, POPS, version: '0.82' };
+  window.SHOULDERMRI = { S, go, STEPS, PARTS, TERMS, CARDS, render, show, restart, openTerm, filter, seeIt, seeCap, closeSee, pop, closePop, POPS, version: '0.84' };
   window.READY = true;
 })();
 </script>
