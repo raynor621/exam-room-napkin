@@ -167,6 +167,10 @@ video.js-preload { display: none !important; }
 .seeit .chip { position: absolute; top: 10px; right: 10px; z-index: 2; }
 .seeit .ttl { position: absolute; left: 12px; bottom: 10px; z-index: 2; color: #e3e9f5; font-weight: 700; font-size: 17px; background: rgba(10, 20, 36, .7); padding: 6px 12px; border-radius: 10px; }
 .qbtns { display: flex; flex-wrap: wrap; gap: 8px; }
+/* v0.82: the in-place pop-up for an animation from another walkthrough (its own step, shown inside this module) */
+.sketch { position: absolute; inset: 0; z-index: 7; background: var(--paper); }
+.sketch iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: var(--paper); }
+.sketch .chip { position: absolute; top: 10px; right: 10px; z-index: 2; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
 
 @media (max-width: 760px) {
   .pt-welcome { grid-template-columns: 1fr; gap: 14px; justify-items: center; text-align: center; }
@@ -234,6 +238,10 @@ video.js-preload { display: none !important; }
       <img class="js-seeimg" alt="" hidden>
       <span class="ttl js-seettl"></span>
       <button class="chip primary js-seeclose" type="button">✕ Back to the list</button>
+    </div>
+    <div class="sketch js-sketch" hidden>
+      <iframe class="js-sketchframe" title="The animation" loading="eager"></iframe>
+      <button class="chip primary js-sketchclose" type="button">✕ Back</button>
     </div>
     <div class="card js-card" hidden></div>
   </div>
@@ -346,7 +354,7 @@ video.js-preload { display: none !important; }
       pt: 'An MRI shows the shoulder in thin slices, like slices of bread, and most reports focus on a slice straight through the top tendon. On this kind of picture, a healthy tendon is a dark band that runs all the way down to the bone, and fluid shows up bright white.' },
     { part: 'read', title: 'Tendinitis and bursitis', clip: ['irritated'],
       pt: 'An irritated tendon looks a little thicker and grayer, and the bursa above it, a small fluid-filled sac, can fill with fluid. This is irritation, not a tear, and it can settle down.',
-      extra: '<a class="chip js-inlink" href="/learn/shoulder">How bursitis and tendinitis start ▶</a>' },
+      extra: '<button class="chip js-pop" type="button" data-pop="pinch">How bursitis and tendinitis start ▶</button>' },
     { part: 'read', title: 'Partial-thickness tears', clip: ['partial-under', 'partial-top'],
       pt: 'A partial-thickness tear goes only part of the way through the tendon. It can start on the underside, facing the joint, or on the top side, facing the bursa. Either way the tendon is damaged, but it is still attached to the bone.' },
     { part: 'read', title: 'Full-thickness tears', clip: ['full-small', 'full-large'],
@@ -456,12 +464,12 @@ video.js-preload { display: none !important; }
       vars: ['AC joint arthrosis', 'AC joint osteoarthritis', 'degenerative AC joint', 'capsular hypertrophy', 'hypertrophic AC joint', 'AC joint osteophytes', 'mass effect on the supraspinatus'],
       meaning: 'Arthritis, or wear, in the small joint at the top of the shoulder where the collarbone meets the acromion. MRIs often show it, and it is very common with age: in one MRI study of people without shoulder symptoms, about three in four had it. It does not always mean this joint is causing your symptoms; the exam tells that.',
       src: 'Needell SD, et al. AJR Am J Roentgenol 1996;166:863-7.' },
-    { id: 'acromion', group: 'around', phrase: 'Acromion shape, spurs, impingement', links: [L('/learn/shoulder', 'How the pinch happens ▶')],
+    { id: 'acromion', group: 'around', phrase: 'Acromion shape, spurs, impingement', pops: [['pinch', 'How the pinch happens ▶']],
       vars: ['type II acromion', 'type III (hooked) acromion', 'lateral downsloping of the acromion', 'subacromial spur', 'subacromial enthesophyte', 'narrowing of the subacromial space', 'findings may predispose to impingement'],
       meaning: 'The acromion is the bony roof of the shoulder. Reports sometimes describe its shape or a small spur on its underside, which can narrow the space the tendon and bursa pass through. “Impingement” means the tendon and bursa may be pinched under that roof when the arm is raised. Spurs are also common in people without pain, so the exam matters more than the description.',
       src: 'Bigliani LU, et al. Clin Sports Med 1991;10:823-38. Needell SD, et al. AJR Am J Roentgenol 1996;166:863-7.' },
 
-    { id: 'biceps-tendinosis', group: 'biceps', phrase: 'Biceps tendinosis or tenosynovitis', links: [L('/learn/shoulder', 'The biceps turn ▶')],
+    { id: 'biceps-tendinosis', group: 'biceps', phrase: 'Biceps tendinosis or tenosynovitis', pops: [['biceps', 'The biceps turn ▶']],
       vars: ['long head biceps tendinosis', 'tenosynovitis', 'fluid in the biceps tendon sheath', 'biceps tendinopathy', 'LHBT'],
       meaning: 'Irritation of the long head of the biceps, the tendon that runs up the front of the arm, turns sharply through a narrow groove and attaches at the top of the socket. That turn is a common source of pain in the front of the shoulder. A little fluid around it is common because its sheath connects with the joint.' },
     { id: 'biceps-subluxation', group: 'biceps', phrase: 'Biceps subluxation or dislocation', see: ['biceps-out'],
@@ -476,7 +484,7 @@ video.js-preload { display: none !important; }
       vars: ['superior migration of the humeral head', 'high-riding humeral head', 'decreased acromiohumeral distance', 'decreased acromiohumeral interval', 'narrowed acromiohumeral interval'],
       meaning: 'The ball of the shoulder has ridden up toward the bone above it, because the rotator cuff is no longer holding it down and centered in the socket. It is usually seen with large, long-standing tears, and it affects which treatments make sense.',
       src: 'Hsu KL, et al. J Shoulder Elbow Surg 2024;33(9):e465-77.' },
-    { id: 'labrum', group: 'joint', phrase: 'Labral tear or degenerative labral fraying', links: [L('/learn/instability', 'Labral tears after a dislocation ▶')],
+    { id: 'labrum', group: 'joint', phrase: 'Labral tear or degenerative labral fraying', pops: [['labrum', 'Labral tears after a dislocation ▶']],
       vars: ['labral fraying', 'degenerative labral tearing', 'superior labral degeneration', 'SLAP tear', 'superior labral tear', 'posterosuperior labral fraying'],
       meaning: 'The labrum is a rim of tissue around the edge of the socket, like a bumper. With age it commonly frays or shows changes that read as a tear: in one study of people aged 45 to 60 with no shoulder symptoms, radiologists read a tear at the top of the labrum in more than half. In an older shoulder this is often an age-related finding rather than the source of pain. Labral tears after a dislocation are a different problem.',
       src: 'Schwartzberg R, et al. Orthop J Sports Med 2016;4:2325967115623212.' },
@@ -525,13 +533,14 @@ video.js-preload { display: none !important; }
         <div class="body" id="tb-${t.id}" hidden>
           <p>${esc(t.meaning)}</p>
           ${t.surgery ? `<p class="surg"><b>Does this usually mean surgery?</b>${esc(t.surgery)}</p>` : ''}
-          ${t.see || t.img || t.links ? `<div class="acts">${t.see || t.img ? `<button class="chip primary js-see" type="button">See it ▶</button>` : ''}${(t.links || []).map((l) => `<a class="chip js-inlink" href="${esc(l.href)}">${esc(l.label)}</a>`).join('')}</div>` : ''}
+          ${t.see || t.img || t.pops ? `<div class="acts">${t.see || t.img ? `<button class="chip primary js-see" type="button">See it ▶</button>` : ''}${(t.pops || []).map(([k, label]) => `<button class="chip js-pop" type="button" data-pop="${k}">${esc(label)}</button>`).join('')}</div>` : ''}
           <p class="vars">On a report it may also read: ${t.vars.map(esc).join('; ')}.</p>
           ${t.src ? `<p class="src">Source: ${esc(t.src)}</p>` : ''}
         </div></div>`).join('') + '</section>').join('');
     TERMS.forEach((t) => { t.hay = [t.phrase, ...t.vars, t.meaning].join(' ').toLowerCase(); });
     $$('.term > button', host).forEach((b) => b.addEventListener('click', () => toggleTerm(b.parentElement.dataset.id)));
     $$('.js-see', host).forEach((b) => b.addEventListener('click', () => seeIt(b.closest('.term').dataset.id)));
+    $$('.js-pop', host).forEach((b) => b.addEventListener('click', () => pop(b.dataset.pop)));
     wireLinks(host);
   }
   function toggleTerm(id, force) {
@@ -561,6 +570,18 @@ video.js-preload { display: none !important; }
     seevid.onended = () => { if (names.length > 1) { k = (k + 1) % names.length; go(); } };
     go();
   }
+  /* v0.82: animations from the other walkthroughs, shown in place (an embedded single step of that walkthrough) */
+  const POPS = { pinch: ['shoulder', 6, 'The overhead pinch'], biceps: ['shoulder', 4, 'The biceps turn'], labrum: ['instability', 3, 'The labrum after a dislocation'] };
+  const sketch = $('.js-sketch'), sframe = $('.js-sketchframe');
+  function pop(k) {
+    const P = POPS[k]; if (!P) return;
+    closeSee(); video.pause();
+    sframe.title = P[2]; sframe.src = '/learn/' + P[0] + '?embed&solo=' + P[1];
+    sketch.hidden = false; idle();
+  }
+  function closePop() { if (sketch.hidden) return; sketch.hidden = true; sframe.removeAttribute('src'); try { sframe.src = 'about:blank'; } catch (e) {} if (S.screen === 'steps' && list && STEPS[S.step] && STEPS[S.step].clip) play(); }
+  $('.js-sketchclose').addEventListener('click', closePop);
+
   function closeSee() { seeit.hidden = true; seevid.pause(); seevid.removeAttribute('src'); try { seevid.load(); } catch (e) {} }
   $('.js-seeclose').addEventListener('click', closeSee);
   seeit.addEventListener('click', (e) => { if (e.target.closest('.chip')) return; if (seevid.paused) play(seevid); else seevid.pause(); });
@@ -597,6 +618,7 @@ video.js-preload { display: none !important; }
     $('.js-fill').style.width = ((S.step + 1) / STEPS.length * 100) + '%';
     $('.js-count').textContent = (S.step + 1) + ' of ' + STEPS.length;
     $('.js-next').textContent = S.step === STEPS.length - 1 ? 'Finish ▶' : 'Next ▶';
+    closePop();
     const isTerms = s.view === 'terms';
     stage.classList.toggle('terms-on', isTerms); terms.hidden = !isTerms; if (!isTerms) closeSee();
     if (s.img) { setClip(null); still.hidden = false; still.src = STILL(s.img); still.alt = s.title; } else { still.hidden = true; still.removeAttribute('src'); }
@@ -606,13 +628,14 @@ video.js-preload { display: none !important; }
     ex.innerHTML = html; ex.hidden = false; ex.hidden = ![...ex.children].some((c) => getComputedStyle(c).display !== 'none');
     wireLinks(ex);
     $$('.js-q', ex).forEach((b) => b.addEventListener('click', () => { S.from = S.step; go(TERMS_STEP); openTerm(b.dataset.term); }));
+    $$('.js-pop', ex).forEach((b) => b.addEventListener('click', () => pop(b.dataset.pop)));
     const sc = $('.js-stagechips'); sc.innerHTML = s.chip ? `<button class="chip primary js-chipcard" type="button">${esc(s.chip.label)} ▸</button>` : '';
     if (s.chip) $('.js-chipcard', sc).addEventListener('click', (e) => { e.stopPropagation(); openCard(s.chip.card); });
     if (s.card) openCard(s.card); else { card.hidden = true; card.innerHTML = ''; }
     warmNext();
   }
   function go(i) { S.step = Math.max(0, Math.min(STEPS.length - 1, i)); render(); if (S.screen !== 'steps') show('steps'); else idle(); }
-  function restart() { S.step = -1; S.from = -1; card.hidden = true; closeSee(); $('.js-filter').value = ''; filter(''); $$('.term.open').forEach((e) => toggleTerm(e.dataset.id, false)); show('welcome'); }
+  function restart() { closePop(); S.step = -1; S.from = -1; card.hidden = true; closeSee(); $('.js-filter').value = ''; filter(''); $$('.term.open').forEach((e) => toggleTerm(e.dataset.id, false)); show('welcome'); }
 
   $('.js-start').addEventListener('click', () => go(0));
   $('.js-words').addEventListener('click', () => go(TERMS_STEP));
@@ -625,10 +648,10 @@ video.js-preload { display: none !important; }
   $$('.js-restart').forEach((b) => b.addEventListener('click', restart));
   document.addEventListener('keydown', (e) => {
     if (e.target && e.target.matches && e.target.matches('input')) return;
-    if (S.screen === 'steps') { if (e.key === 'ArrowRight') $('.js-next').click(); else if (e.key === 'ArrowLeft') $('.js-back').click(); else if (e.key === 'Escape') { closeSee(); card.hidden = true; } }
+    if (S.screen === 'steps') { if (e.key === 'ArrowRight') $('.js-next').click(); else if (e.key === 'ArrowLeft') $('.js-back').click(); else if (e.key === 'Escape') { closePop(); closeSee(); card.hidden = true; } }
     else if (S.screen === 'end' && e.key === 'ArrowLeft') go(STEPS.length - 1);
   });
-  stage.addEventListener('click', (e) => { if (e.target.closest('.card, .terms, .seeit, .chips-on-stage')) return; if (!list) return; if (video.paused) play(); else video.pause(); });   /* tap the film: pause or play */
+  stage.addEventListener('click', (e) => { if (e.target.closest('.card, .terms, .seeit, .sketch, .chips-on-stage')) return; if (!list) return; if (video.paused) play(); else video.pause(); });   /* tap the film: pause or play */
   wireLinks(document);
 
   // ---------- Take Home QR (as the kneecap and meniscus repair pages: qrcodejs from cdnjs, the typed address if offline) ----------
@@ -659,7 +682,7 @@ video.js-preload { display: none !important; }
   const t0 = (location.hash.match(/term=([a-z-]+)/) || [])[1];
   if (t0 && TERMS.some((t) => t.id === t0)) { go(TERMS_STEP); openTerm(t0); }
   else if (st0 >= 0 && st0 < STEPS.length) go(st0); else if (p0 >= 0) go(p0); else show('welcome');
-  window.SHOULDERMRI = { S, go, STEPS, PARTS, TERMS, CARDS, render, show, restart, openTerm, filter, seeIt, version: '0.78' };
+  window.SHOULDERMRI = { S, go, STEPS, PARTS, TERMS, CARDS, render, show, restart, openTerm, filter, seeIt, pop, closePop, POPS, version: '0.82' };
   window.READY = true;
 })();
 </script>

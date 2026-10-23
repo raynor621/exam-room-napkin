@@ -539,6 +539,9 @@
   /* v0.24 website embeds: a topic page stays on its topic, and on a phone a vertical swipe over the 3D knee scrolls the
      page instead of being trapped by the spin (sideways drags still spin it) */
   html.pt-locked .js-pt-topics { display: none !important; }
+  /* v0.82: one walkthrough step on its own, for the MRI module's in-place pop-ups (?embed&solo=N) */
+  html.pt-solo .pt-bar, html.pt-solo .pt-progress, html.pt-solo .js-pt-back, html.pt-solo .js-pt-next, html.pt-solo .js-pt-count,
+  html.pt-solo .js-pt-skip { display: none !important; }
   html.embedded .stage.k3d canvas.js-3d { touch-action: pan-y !important; }
 
   /* v0.24 short frames (a website embed on a laptop, a phone with its browser bars): the panel and the cards tighten so a card
@@ -8525,6 +8528,9 @@ three/build/three.module.js:
     window.addEventListener('hashchange', () => { const w = wanted(); if (w && (!root.classList.contains('explore') || formalURL() !== formal)) enter(w); });
     const w0 = wanted();
     if (w0) enter(w0);
+    /* v0.82: ?embed&solo=N opens step N of that walkthrough on its own (the MRI module's pop-ups); no welcome, no navigation */
+    { const sm = location.search.match(/[?&]solo=(\d+)/), F0 = w0 && FLOWS[w0];
+      if (sm && F0 && embedded && +sm[1] < F0.steps.length) { root.classList.add('pt-solo'); screen(F0, +sm[1], true); } }
     window.__pt = { enter, handoff, FLOWS, state: () => ({ entry, cur: cur && cur.key, idx: cur ? cur.idx : null, skipped: cur ? cur.skipped : null,
       explore: root.classList.contains('explore'), formal, handoff: root.classList.contains('handoff'), embedded }) };
   })();
