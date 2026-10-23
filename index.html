@@ -2354,6 +2354,7 @@
       <h1 class="js-pt-handoff">Thanks for looking through it</h1>
       <div class="pt-video js-pt-video" hidden><h2 class="js-pt-watch-label"></h2><p class="pt-video-sub js-pt-watch-sub"></p><div class="pt-video-frame js-pt-watch-frame"></div></div>
       <div class="pt-video js-pt-video2" hidden><h2 class="js-pt-watch-label2"></h2><p class="pt-video-sub js-pt-watch-sub2"></p><div class="pt-video-frame js-pt-watch-frame js-pt-watch-frame2"></div></div>
+      <p class="pt-lead js-pt-mrilink" hidden><b>Have an MRI report?</b> <a class="pt-btn primary js-roadmap-link" href="/learn/shoulder-mri">Your Shoulder MRI Explained ▶</a></p>
       <p class="pt-lead k-only">I’ll be in shortly. A few things to think about before I get there, so we can make the most of our time together:</p>
       <p class="pt-lead e-only">If you’re coming in to see me, a few things to think about before your visit, so we can make the most of our time together:</p>
       <div class="pt-roadmap js-pt-roadmap" hidden>
@@ -7676,6 +7677,7 @@ three/build/three.module.js:
           sub: 'What the six months after a rotator cuff repair look like, stage by stage: the sling, the stiff weeks, strengthening, and when you drive and golf again. Enter your surgery date and it shows you where you are.' },
         video: { id: 'pSbQwo1MedA', label: 'What your MRI shows', sub: 'Partial and full-thickness rotator cuff tears on MRI, explained by Dr. Raynor (about 3 minutes)' },
         video2: { id: '3Xcmzt_7waQ', label: 'Watch how I do the surgery', sub: 'Arthroscopic rotator cuff repair with a biceps tenodesis, narrated by Dr. Raynor (about 4 minutes)' },
+        mriLink: true,   /* v0.78: "Have an MRI report? Your Shoulder MRI Explained" under the films */
         steps: [
           { ch: 0, doc: 0, set: s => { }, text: 'Your shoulder is a ball and socket joint. The ball is the top of your arm bone, and the socket is part of your shoulder blade.' },
           { ch: 0, doc: 1, set: s => { s.cuff = 1; }, text: 'Your rotator cuff is four tendons that wrap around that ball. There’s one up top…' },
@@ -8280,6 +8282,7 @@ three/build/three.module.js:
         q('.js-pt-watch-sub').textContent = F.video.sub || ''; ptVideo(F, q('.js-pt-watch-frame')); }
       if (F.video2) { q('.js-pt-video2').hidden = false; q('.js-pt-watch-label2').textContent = F.video2.label;
         q('.js-pt-watch-sub2').textContent = F.video2.sub || ''; ptVideo(F, q('.js-pt-watch-frame2'), F.video2); }
+      if (F.mriLink) { const ml = q('.js-pt-mrilink'); ml.hidden = false; $('a', ml).href = (/^\/explore\b/.test(location.pathname) ? '/explore' : '/learn') + '/shoulder-mri'; }   /* v0.78 */
       if (F.roadmap) { const rm = q('.js-pt-roadmap'); rm.hidden = false; const a = q('.js-pt-roadmap-link'); a.href = F.roadmap.href; a.textContent = F.roadmap.label;
         if (F.roadmap.h) q('.js-pt-roadmap-h').textContent = F.roadmap.h; if (F.roadmap.sub) q('.js-pt-roadmap-sub').textContent = F.roadmap.sub;
         const mo = q('.js-pt-roadmap-more'); mo.textContent = '';
@@ -8332,6 +8335,12 @@ three/build/three.module.js:
       if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
       const b = document.createElement('b'); b.textContent = 'Meniscus tear'; const sm = document.createElement('small'); sm.textContent = 'tear types, treatment, surgery';
       a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
+    /* Your Shoulder MRI Explained (v0.78) lives on its own page (shoulder-mri.html: MRI film loops, the words on the report, what I look at); its picker tile is a link there */
+    { const src = $('.tile[data-go="shoulder"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'shoulder-mri';
+      a.href = (/^\/explore\b/.test(location.pathname) ? '/explore' : '/learn') + '/shoulder-mri'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
+      if (src && $('svg', src)) a.appendChild($('svg', src).cloneNode(true));
+      const b = document.createElement('b'); b.textContent = 'Your Shoulder MRI Explained'; const sm = document.createElement('small'); sm.textContent = 'reading the report: partial and full-thickness tears';
+      a.appendChild(b); a.appendChild(sm); tiles.appendChild(a); }
     /* Recovery roadmaps (v0.36) live on their own page; the picker tile opens the chooser (v0.42: ACL, meniscus repair, rotator cuff repair) */
     { const src = $('.tile[data-go="knee"]', views.home); const a = document.createElement('a'); a.className = 'tile'; a.dataset.pt = 'recovery';
       a.href = '/recovery'; a.style.color = 'inherit'; a.style.textDecoration = 'none';
@@ -8357,7 +8366,7 @@ three/build/three.module.js:
       const GROUPS = [
         { key: 'knee', name: 'Knee', sub: 'pain, meniscus and ACL tears, kneecap dislocation, arthritis', icon: 'knee', items: ['knee', 'meniscus', 'acl', 'kneecap', 'arthritis'] },
         { key: 'hip', name: 'Hip', sub: 'hip and groin pain, the labrum', icon: 'hip', items: ['hip'] },
-        { key: 'shoulder', name: 'Shoulder', sub: 'pain, rotator cuff, dislocations', icon: 'shoulder', items: ['shoulder', 'instability'] },
+        { key: 'shoulder', name: 'Shoulder', sub: 'pain, rotator cuff, MRI, dislocations', icon: 'shoulder', items: ['shoulder', 'instability', 'shoulder-mri'] },
         { key: 'postop', name: 'Post-op', sub: 'recovery after surgery', icon: null, items: ROADMAPS.map(r => 'road-' + r[0]) }];
       const RENAME = { acl: 'ACL tear' };
       const mk = (tag, cls) => { const e = document.createElement(tag); e.className = cls; return e; };

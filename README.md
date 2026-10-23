@@ -51,6 +51,7 @@ Each topic is the doctor module behind a second door: the same drawings and card
 ## Files
 
 - `index.html`: the whole app, one self-contained file (no build step, no external CSS or fonts; three.js r169 is bundled inside for the 3D knee; the take-home QR loads one library from cdnjs and falls back to the typed address offline).
+- `shoulder-mri.html` (v0.78): **Your Shoulder MRI Explained**, a While You Wait topic only (`/learn/shoulder-mri`, `/explore/shoulder-mri`; Shoulder, third tile; the Shoulder pain end screen links to it). The MRI film's loops (`clips/mri/`, cut by `tools/mri-film/make_mri_clips.sh`; `migrate` and `biceps-out` are new renders in the film's look), a tap-to-decode list of 29 report terms with a filter box that runs on the device (nothing typed is saved or sent), what Dr. Raynor looks at, and the full film to close. Hand-written page, its own source; every number carries its source. Deep links: `?part=words`, `#term=<id>`, `?step=N`.
 - `kneecap-steps.html`, `meniscus-repair.html`, `acl-steps.html`, `grafts.html`: the pages the Kneecap dislocation tile, the retired ACL surgery steps door (by address only since v0.70) and the new ACL in 3D open (no build step; sources and clip scripts in `tools/`). `clips/<module>/`: the silent film loops and their posters.
 - `sw.js`: service worker. Page loads are network-first (a new version shows up on the next open); the cached shell is the offline fallback once the app has been loaded once.
 - `apple-touch-icon.png`: the home screen icon on the iPad.
