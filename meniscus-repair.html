@@ -181,6 +181,8 @@ html.patient .cue { font-size: 21px; padding-bottom: 18px; }
   if (embedded) root.classList.add('embedded');
   const patient = qs.has('patient') || location.hash === '#patient' || /^\/(learn|explore)\//.test(location.pathname);
   if (patient) { root.classList.add('patient'); const t = $('.js-topics'); t.hidden = false; t.href = /^\/explore\b/.test(location.pathname) ? '/explore' : '/learn'; }
+  /* v0.83: Brett's mode moved to the Meniscus tear page; this file stays the patient twin (/learn/meniscus-repair) */
+  if (!patient) { qs.set('part', 'repair'); location.replace('/meniscus-tear?' + qs.toString() + location.hash); return; }
 
   const BASE = (document.currentScript && document.currentScript.dataset.clips) || (qs.get('clips') || '/clips/meniscus/');
   const CLIP = (n) => BASE + n + '.mp4';

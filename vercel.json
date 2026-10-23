@@ -41,8 +41,12 @@
       "destination": "/kneecap-steps.html"
     },
     {
+      "source": "/meniscus-tear",
+      "destination": "/meniscus-tear.html"
+    },
+    {
       "source": "/meniscus-repair",
-      "destination": "/meniscus-repair.html"
+      "destination": "/meniscus-tear.html"
     },
     {
       "source": "/recovery",

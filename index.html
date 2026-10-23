@@ -662,7 +662,7 @@
         </svg>
         <b>Knee pain</b><small>normal X-rays, what else hurts</small>
       </div>
-      <div class="tile" role="button" tabindex="0" data-go="meniscus" data-href="/meniscus-repair">
+      <div class="tile" role="button" tabindex="0" data-go="meniscus" data-href="/meniscus-tear">
         <svg viewBox="0 0 120 100" aria-hidden="true">
           <path d="M30 70 C22 50 34 30 60 30 C86 30 98 50 90 70" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
           <path d="M44 54 C40 44 48 38 60 38 C72 38 80 44 76 54" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
@@ -670,7 +670,7 @@
           <path d="M62 36 L70 56" stroke="var(--hot)" stroke-width="3.5" stroke-linecap="round"/>
           <path d="M57 40 L67 44 M59 46 L69 50 M61 52 L71 56" stroke="var(--bursa)" stroke-width="3" stroke-linecap="round"/>
         </svg>
-        <b>Meniscus repair</b><small>trim, stitches, root repair</small>
+        <b>Meniscus tear</b><small>tear types, trim, repairs</small>
       </div>
       <div class="tile" role="button" tabindex="0" data-go="arthritis" data-href="/arthritis">
         <svg viewBox="0 0 120 100" aria-hidden="true">
@@ -2275,7 +2275,7 @@
         <button class="chip action film-chip" data-toggle="treat-trim">Trim it ▶</button>
         <button class="chip action film-chip" data-toggle="treat-repair">Stitch it ▶</button>
         <button class="chip action film-chip" data-toggle="treat-root">Root repair ▶</button>
-        <button class="chip film-chip js-go-meniscus" type="button">Meniscus repair ▸</button>
+        <button class="chip film-chip js-go-meniscus" type="button">Meniscus tear ▸</button>
       </div>
       <div class="row scene-side">
         <span class="k">Side</span>
@@ -7642,7 +7642,7 @@ three/build/three.module.js:
     document.querySelectorAll('.js-go-meniscus').forEach(b => b.addEventListener('click', () => {   /* v0.72: the Meniscus repair page, from the Knee pain view */
       if (document.documentElement.classList.contains('explore')) return;
       const left = document.querySelector('#view-kneepain .js-side-left')?.classList.contains('on');
-      location.href = '/meniscus-repair' + (left ? '?side=L' : '');
+      location.href = '/meniscus-tear' + (left ? '?side=L' : '');   /* v0.83: Meniscus tear (was Meniscus repair) */
     }));
     window.addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.napkin === 'grafts-close') close(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && !ov.hidden) close(); });
