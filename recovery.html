@@ -2396,6 +2396,9 @@ html.inapp .backbar { display: block; }
       '<p>7115 Greenville Ave, Suite 310, Dallas, TX 75231 · <a href="' + TEL + '">' + PHONE + '</a></p>' +
       '<p class="note">This is a general guide. If your own instructions from our team are different, follow those.</p></footer>';
 
+  // v0.87: a link from this roadmap to another one keeps the way back to While You Wait (patient view only; clinic and ?embed unchanged)
+  if (backHref) document.querySelectorAll('#app a[href^="/recovery/"]').forEach(a => { const h = a.getAttribute('href'); if (!/[?#]/.test(h)) a.setAttribute('href', h + '?from=' + encodeURIComponent(backHref)); });
+
   const $ = id => document.getElementById(id);
   const details = [...document.querySelectorAll('details.stage')];
   const segs = [...document.querySelectorAll('.seg')];
