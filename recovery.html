@@ -143,6 +143,7 @@ details.stage.now .now-tag { display: inline-block; }
 .foot .note { margin-top: 12px; font-size: 13px; }
 
 html.embedded .wrap { padding-top: 16px; }
+html.autoh, html.autoh body { overflow: hidden; }  /* v0.94: the website sizes the frame to fit */
 .backbar { display: none; margin: 0 0 14px; }
 .backbar a { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: var(--navy); text-decoration: none; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); min-height: 40px; }
 html.inapp .backbar { display: block; }
@@ -2597,6 +2598,35 @@ html.inapp .backbar { display: block; }
   if (/[?&]embed\b/.test(location.search)) embedded = true;
   if (embedded) document.documentElement.classList.add('embedded');
 
+  /* v0.94 auto-height: on brettraynormd.com a footer script grows the frame to the page's height,
+     so the visitor scrolls one page, not a box inside a page. Until the website answers ('ack'),
+     nothing changes: the frame keeps its own height and scrolls inside, as before. */
+  const MSG = 'raynor-wyw';
+  const toParent = m => { try { window.parent.postMessage(Object.assign({ napkin: MSG }, m), '*'); } catch (e) {} };
+  let autoh = false;
+  if (embedded && window.parent !== window) {
+    let last = 0;
+    const report = () => {
+      const app = document.getElementById('app');
+      if (!app) return;
+      const h = Math.ceil(app.getBoundingClientRect().bottom + window.scrollY);
+      if (h > 0 && Math.abs(h - last) > 1) { last = h; toParent({ type: 'height', height: h }); }
+    };
+    window.addEventListener('message', e => {
+      if (e.source !== window.parent || !e.data || e.data.napkin !== MSG) return;
+      if (e.data.type === 'ack' && !autoh) { autoh = true; document.documentElement.classList.add('autoh'); last = 0; report(); }
+    });
+    if (window.ResizeObserver) new ResizeObserver(report).observe(document.documentElement);
+    window.addEventListener('load', report);
+    document.addEventListener('toggle', report, true);
+    setTimeout(report, 0);
+  }
+  // scroll to a stage: inside the frame as before, or ask the website to scroll its page once the frame fits
+  const jumpTo = (el, smooth) => {
+    if (autoh) toParent({ type: 'scroll', top: Math.round(el.getBoundingClientRect().top + window.scrollY), smooth: !!smooth });
+    else el.scrollIntoView(smooth ? { behavior: 'smooth', block: 'start' } : { block: 'start' });
+  };
+
   const ALL = JSON.parse(document.getElementById('roadmaps').textContent);
   const seg = location.pathname.split('/').filter(Boolean);
   const qTopic = new URLSearchParams(location.search).get('topic');
@@ -2807,7 +2837,7 @@ html.inapp .backbar { display: block; }
     $('sx-next').textContent = nextText(i, days);
     $('sx-status').classList.add('on');
     $('sx-clear').hidden = false;
-    $('sx-jump').addEventListener('click', e => { e.preventDefault(); details[i].open = true; details[i].scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    $('sx-jump').addEventListener('click', e => { e.preventDefault(); details[i].open = true; jumpTo(details[i], true); });
     if (opts && opts.save) store.set(dateStr);
     return true;
   }
@@ -2833,7 +2863,7 @@ html.inapp .backbar { display: block; }
   document.querySelectorAll('#app details.stage').forEach(d => d.addEventListener('toggle', () => { if (!d.open) vidReset(d); }));
   segs.forEach((g, k) => g.addEventListener('click', () => {
     details[k].open = true;
-    details[k].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    jumpTo(details[k], true);
   }));
 
   const toggle = $('toggle-all');
@@ -2852,7 +2882,7 @@ html.inapp .backbar { display: block; }
   else { details[0].open = false; }
   if (location.hash && /^#stage-/.test(location.hash)) {
     const el = document.querySelector(location.hash);
-    if (el) { el.open = true; setTimeout(() => el.scrollIntoView({ block: 'start' }), 50); }
+    if (el) { el.open = true; setTimeout(() => jumpTo(el, false), 50); }
   }
   syncToggle();
 
